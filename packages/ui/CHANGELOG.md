@@ -1,5 +1,13 @@
 # @tpmjs/ui
 
+## 0.1.3
+
+### Patch Changes
+
+- refactor(ui): convert all components from createElement to JSX syntax
+
+  All UI components now use JSX instead of createElement for better readability and maintainability.
+
 ## 0.1.2
 
 ### Patch Changes
