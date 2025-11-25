@@ -1,5 +1,11 @@
 # @tpmjs/ui
 
+## 0.1.2
+
+### Patch Changes
+
+- Fix test setup by adding @testing-library/jest-dom matchers for proper DOM assertions in Vitest
+
 ## 0.1.1
 
 ### Patch Changes
