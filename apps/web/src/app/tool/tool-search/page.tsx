@@ -43,7 +43,7 @@ export default function ToolSearchPage(): React.ReactElement {
 			)
 		: displayedTools;
 
-	return createElement("div", { className: "min-h-screen bg-black" }, [
+	return createElement("div", { className: "min-h-screen bg-background" }, [
 		// Header
 		createElement(Header, {
 			key: "header",
@@ -72,7 +72,7 @@ export default function ToolSearchPage(): React.ReactElement {
 						href: "https://github.com/tpmjs/tpmjs",
 						target: "_blank",
 						rel: "noopener noreferrer",
-						className: "text-zinc-400 hover:text-zinc-100 transition-colors",
+						className: "text-foreground-secondary hover:text-foreground transition-colors",
 					},
 					createElement(Icon, { icon: "github", size: "md" }),
 				),
@@ -98,12 +98,12 @@ export default function ToolSearchPage(): React.ReactElement {
 					[
 						createElement(
 							"h1",
-							{ key: "title", className: "text-4xl font-bold text-zinc-100" },
+							{ key: "title", className: "text-4xl font-bold text-foreground" },
 							"Tool Registry",
 						),
 						createElement(
 							"p",
-							{ key: "description", className: "text-lg text-zinc-400" },
+							{ key: "description", className: "text-lg text-foreground-secondary" },
 							"Discover, share, and integrate tools that give your AI agents superpowers.",
 						),
 					],
@@ -165,7 +165,7 @@ export default function ToolSearchPage(): React.ReactElement {
 															target: "_blank",
 															rel: "noopener noreferrer",
 															className:
-																"text-zinc-400 hover:text-zinc-100 transition-colors",
+																"text-foreground-secondary hover:text-foreground transition-colors",
 														},
 														createElement(Icon, {
 															icon: "externalLink",
@@ -205,7 +205,7 @@ export default function ToolSearchPage(): React.ReactElement {
 															"span",
 															{
 																key: "version",
-																className: "text-xs text-zinc-500",
+																className: "text-xs text-foreground-tertiary",
 															},
 															`v${tool.version}`,
 														),
@@ -240,12 +240,12 @@ export default function ToolSearchPage(): React.ReactElement {
 															[
 																createElement(
 																	"span",
-																	{ key: "text", className: "text-zinc-400" },
+																	{ key: "text", className: "text-foreground-secondary" },
 																	"Usage",
 																),
 																createElement(
 																	"span",
-																	{ key: "stars", className: "text-zinc-500" },
+																	{ key: "stars", className: "text-foreground-tertiary" },
 																	`⭐ ${tool.stars.toLocaleString()}`,
 																),
 															],
@@ -292,7 +292,7 @@ export default function ToolSearchPage(): React.ReactElement {
 									"div",
 									{
 										key: "no-results",
-										className: "col-span-full text-center py-12 text-zinc-500",
+										className: "col-span-full text-center py-12 text-foreground-tertiary",
 									},
 									`No tools found matching "${searchQuery}"`,
 								),
