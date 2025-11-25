@@ -1,5 +1,5 @@
 import { cn } from "@tpmjs/utils/cn";
-import { createElement, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import { Icon } from "../Icon/Icon";
 import type { CodeBlockProps } from "./types";
 import {
@@ -13,20 +13,21 @@ import {
  *
  * Displays formatted code with optional copy functionality.
  * Includes syntax-highlighted display and copy-to-clipboard button.
- * Built with .ts-only React using createElement.
+ * Built with React and JSX.
  *
  * @example
  * ```typescript
  * import { CodeBlock } from '@tpmjs/ui/CodeBlock/CodeBlock';
- * import { createElement } from 'react';
  *
  * function MyComponent() {
- *   return createElement(CodeBlock, {
- *     code: 'npm install @tpmjs/registry',
- *     language: 'bash',
- *     size: 'md',
- *     showCopy: true,
- *   });
+ *   return (
+ *     <CodeBlock
+ *       code="npm install @tpmjs/registry"
+ *       language="bash"
+ *       size="md"
+ *       showCopy={true}
+ *     />
+ *   );
  * }
  * ```
  */
@@ -55,42 +56,32 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(
 			}
 		};
 
-		return createElement(
-			"div",
-			{
-				className: cn(codeBlockContainerVariants(), className),
-				ref,
-				...props,
-			},
-			[
-				createElement(
-					"code",
-					{
-						key: "code",
-						className: codeBlockCodeVariants({
-							size,
-						}),
-						"data-language": language,
-					},
-					code,
-				),
-				showCopy &&
-					createElement(
-						"button",
-						{
-							key: "copy-button",
-							type: "button",
-							className: codeBlockCopyButtonVariants(),
-							onClick: handleCopy,
-							"aria-label": copied ? "Copied!" : "Copy code",
-							"data-testid": "copy-button",
-						},
-						createElement(Icon, {
-							icon: copied ? "check" : "copy",
-							size: "sm",
-						}),
-					),
-			].filter(Boolean),
+		return (
+			<div
+				ref={ref}
+				className={cn(codeBlockContainerVariants(), className)}
+				{...props}
+			>
+				<code
+					className={codeBlockCodeVariants({
+						size,
+					})}
+					data-language={language}
+				>
+					{code}
+				</code>
+				{showCopy && (
+					<button
+						type="button"
+						className={codeBlockCopyButtonVariants()}
+						onClick={handleCopy}
+						aria-label={copied ? "Copied!" : "Copy code"}
+						data-testid="copy-button"
+					>
+						<Icon icon={copied ? "check" : "copy"} size="sm" />
+					</button>
+				)}
+			</div>
 		);
 	},
 );

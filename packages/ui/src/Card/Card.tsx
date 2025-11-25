@@ -1,5 +1,5 @@
 import { cn } from "@tpmjs/utils/cn";
-import { createElement, forwardRef } from "react";
+import { forwardRef } from "react";
 import type {
 	CardContentProps,
 	CardDescriptionProps,
@@ -21,38 +21,41 @@ import {
  * Card component
  *
  * A flexible container component with multiple variants and sub-components.
- * Built with .ts-only React using createElement.
+ * Built with React and JSX.
  *
  * @example
  * ```typescript
  * import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tpmjs/ui/Card/Card';
- * import { createElement } from 'react';
  *
  * function MyComponent() {
- *   return createElement(Card, { variant: 'elevated' },
- *     createElement(CardHeader, null,
- *       createElement(CardTitle, null, 'Card Title'),
- *       createElement(CardDescription, null, 'Card description text')
- *     ),
- *     createElement(CardContent, null, 'Card content goes here'),
- *     createElement(CardFooter, null, 'Footer content')
+ *   return (
+ *     <Card variant="elevated">
+ *       <CardHeader>
+ *         <CardTitle>Card Title</CardTitle>
+ *         <CardDescription>Card description text</CardDescription>
+ *       </CardHeader>
+ *       <CardContent>Card content goes here</CardContent>
+ *       <CardFooter>Footer content</CardFooter>
+ *     </Card>
  *   );
  * }
  * ```
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
 	({ className, variant = "default", padding = "none", ...props }, ref) => {
-		return createElement("div", {
-			ref,
-			className: cn(
-				cardVariants({
-					variant,
-					padding,
-				}),
-				className,
-			),
-			...props,
-		});
+		return (
+			<div
+				ref={ref}
+				className={cn(
+					cardVariants({
+						variant,
+						padding,
+					}),
+					className,
+				)}
+				{...props}
+			/>
+		);
 	},
 );
 
@@ -65,16 +68,18 @@ Card.displayName = "Card";
  */
 export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
 	({ className, padding = "md", ...props }, ref) => {
-		return createElement("div", {
-			ref,
-			className: cn(
-				cardHeaderVariants({
-					padding,
-				}),
-				className,
-			),
-			...props,
-		});
+		return (
+			<div
+				ref={ref}
+				className={cn(
+					cardHeaderVariants({
+						padding,
+					}),
+					className,
+				)}
+				{...props}
+			/>
+		);
 	},
 );
 
@@ -87,11 +92,14 @@ CardHeader.displayName = "CardHeader";
  */
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
 	({ className, as = "h3", ...props }, ref) => {
-		return createElement(as, {
-			ref,
-			className: cn(cardTitleVariants(), className),
-			...props,
-		});
+		const Component = as;
+		return (
+			<Component
+				ref={ref}
+				className={cn(cardTitleVariants(), className)}
+				{...props}
+			/>
+		);
 	},
 );
 
@@ -106,11 +114,13 @@ export const CardDescription = forwardRef<
 	HTMLParagraphElement,
 	CardDescriptionProps
 >(({ className, ...props }, ref) => {
-	return createElement("p", {
-		ref,
-		className: cn(cardDescriptionVariants(), className),
-		...props,
-	});
+	return (
+		<p
+			ref={ref}
+			className={cn(cardDescriptionVariants(), className)}
+			{...props}
+		/>
+	);
 });
 
 CardDescription.displayName = "CardDescription";
@@ -122,16 +132,18 @@ CardDescription.displayName = "CardDescription";
  */
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
 	({ className, padding = "md", ...props }, ref) => {
-		return createElement("div", {
-			ref,
-			className: cn(
-				cardContentVariants({
-					padding,
-				}),
-				className,
-			),
-			...props,
-		});
+		return (
+			<div
+				ref={ref}
+				className={cn(
+					cardContentVariants({
+						padding,
+					}),
+					className,
+				)}
+				{...props}
+			/>
+		);
 	},
 );
 
@@ -144,16 +156,18 @@ CardContent.displayName = "CardContent";
  */
 export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
 	({ className, padding = "md", ...props }, ref) => {
-		return createElement("div", {
-			ref,
-			className: cn(
-				cardFooterVariants({
-					padding,
-				}),
-				className,
-			),
-			...props,
-		});
+		return (
+			<div
+				ref={ref}
+				className={cn(
+					cardFooterVariants({
+						padding,
+					}),
+					className,
+				)}
+				{...props}
+			/>
+		);
 	},
 );
 

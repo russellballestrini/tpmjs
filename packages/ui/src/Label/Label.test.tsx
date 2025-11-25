@@ -1,19 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { Label } from "./Label";
 
 describe("Label", () => {
 	describe("Rendering", () => {
 		it("renders a label element", () => {
-			render(createElement(Label, { "data-testid": "label" }, "Label text"));
+			render(<Label data-testid="label">Label text</Label>);
 			const label = screen.getByTestId("label");
 			expect(label).toBeInTheDocument();
 			expect(label.tagName).toBe("LABEL");
 		});
 
 		it("renders children text", () => {
-			render(createElement(Label, null, "Email Address"));
+			render(<Label>Email Address</Label>);
 			expect(screen.getByText("Email Address")).toBeInTheDocument();
 		});
 	});
@@ -21,14 +20,9 @@ describe("Label", () => {
 	describe("Sizes", () => {
 		it("applies small size classes", () => {
 			render(
-				createElement(
-					Label,
-					{
-						size: "sm",
-						"data-testid": "label",
-					},
-					"Small label",
-				),
+				<Label size="sm" data-testid="label">
+					Small label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-sm");
@@ -36,14 +30,9 @@ describe("Label", () => {
 
 		it("applies medium size classes (default)", () => {
 			render(
-				createElement(
-					Label,
-					{
-						size: "md",
-						"data-testid": "label",
-					},
-					"Medium label",
-				),
+				<Label size="md" data-testid="label">
+					Medium label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-base");
@@ -51,29 +40,16 @@ describe("Label", () => {
 
 		it("applies large size classes", () => {
 			render(
-				createElement(
-					Label,
-					{
-						size: "lg",
-						"data-testid": "label",
-					},
-					"Large label",
-				),
+				<Label size="lg" data-testid="label">
+					Large label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-lg");
 		});
 
 		it("uses medium size by default", () => {
-			render(
-				createElement(
-					Label,
-					{
-						"data-testid": "label",
-					},
-					"Default label",
-				),
-			);
+			render(<Label data-testid="label">Default label</Label>);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-base");
 		});
@@ -81,62 +57,33 @@ describe("Label", () => {
 
 	describe("Required Indicator", () => {
 		it("does not show required indicator by default", () => {
-			render(createElement(Label, null, "Label"));
+			render(<Label>Label</Label>);
 			expect(screen.queryByText("*")).not.toBeInTheDocument();
 		});
 
 		it("shows required indicator when required is true", () => {
-			render(
-				createElement(
-					Label,
-					{
-						required: true,
-					},
-					"Required field",
-				),
-			);
+			render(<Label required>Required field</Label>);
 			expect(screen.getByText("*")).toBeInTheDocument();
 		});
 
 		it("hides required indicator from screen readers", () => {
 			render(
-				createElement(
-					Label,
-					{
-						required: true,
-						"data-testid": "label",
-					},
-					"Required field",
-				),
+				<Label required data-testid="label">
+					Required field
+				</Label>,
 			);
 			const asterisk = screen.getByText("*");
 			expect(asterisk).toHaveAttribute("aria-hidden", "true");
 		});
 
 		it("applies error color to required indicator", () => {
-			render(
-				createElement(
-					Label,
-					{
-						required: true,
-					},
-					"Required field",
-				),
-			);
+			render(<Label required>Required field</Label>);
 			const asterisk = screen.getByText("*");
 			expect(asterisk.className).toContain("text-error");
 		});
 
 		it("applies proper spacing to required indicator", () => {
-			render(
-				createElement(
-					Label,
-					{
-						required: true,
-					},
-					"Required field",
-				),
-			);
+			render(<Label required>Required field</Label>);
 			const asterisk = screen.getByText("*");
 			expect(asterisk.className).toContain("ml-1");
 		});
@@ -144,15 +91,7 @@ describe("Label", () => {
 
 	describe("Disabled State", () => {
 		it("is not disabled by default", () => {
-			render(
-				createElement(
-					Label,
-					{
-						"data-testid": "label",
-					},
-					"Label",
-				),
-			);
+			render(<Label data-testid="label">Label</Label>);
 			const label = screen.getByTestId("label");
 			// Should not have the direct opacity-50 class (peer-disabled:opacity-50 is okay)
 			expect(label.className).toContain("peer-disabled:opacity-50");
@@ -161,14 +100,9 @@ describe("Label", () => {
 
 		it("applies disabled classes when disabled is true", () => {
 			render(
-				createElement(
-					Label,
-					{
-						disabled: true,
-						"data-testid": "label",
-					},
-					"Disabled label",
-				),
+				<Label disabled data-testid="label">
+					Disabled label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("opacity-50");
@@ -179,14 +113,9 @@ describe("Label", () => {
 	describe("HTML Attributes", () => {
 		it("associates with input using htmlFor", () => {
 			render(
-				createElement(
-					Label,
-					{
-						htmlFor: "email-input",
-						"data-testid": "label",
-					},
-					"Email",
-				),
+				<Label htmlFor="email-input" data-testid="label">
+					Email
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label).toHaveAttribute("for", "email-input");
@@ -194,14 +123,9 @@ describe("Label", () => {
 
 		it("passes through id attribute", () => {
 			render(
-				createElement(
-					Label,
-					{
-						id: "label-id",
-						"data-testid": "label",
-					},
-					"Label",
-				),
+				<Label id="label-id" data-testid="label">
+					Label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label).toHaveAttribute("id", "label-id");
@@ -209,14 +133,9 @@ describe("Label", () => {
 
 		it("passes through className", () => {
 			render(
-				createElement(
-					Label,
-					{
-						className: "custom-label",
-						"data-testid": "label",
-					},
-					"Custom",
-				),
+				<Label className="custom-label" data-testid="label">
+					Custom
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("custom-label");
@@ -225,16 +144,14 @@ describe("Label", () => {
 		it("passes through onClick handler", () => {
 			let clicked = false;
 			render(
-				createElement(
-					Label,
-					{
-						onClick: () => {
-							clicked = true;
-						},
-						"data-testid": "label",
-					},
-					"Clickable",
-				),
+				<Label
+					onClick={() => {
+						clicked = true;
+					}}
+					data-testid="label"
+				>
+					Clickable
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			label.click();
@@ -245,14 +162,9 @@ describe("Label", () => {
 	describe("ARIA Attributes", () => {
 		it("passes through aria-label", () => {
 			render(
-				createElement(
-					Label,
-					{
-						"aria-label": "Field label",
-						"data-testid": "label",
-					},
-					"Label",
-				),
+				<Label aria-label="Field label" data-testid="label">
+					Label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label).toHaveAttribute("aria-label", "Field label");
@@ -260,14 +172,9 @@ describe("Label", () => {
 
 		it("passes through aria-describedby", () => {
 			render(
-				createElement(
-					Label,
-					{
-						"aria-describedby": "description-id",
-						"data-testid": "label",
-					},
-					"Label",
-				),
+				<Label aria-describedby="description-id" data-testid="label">
+					Label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label).toHaveAttribute("aria-describedby", "description-id");
@@ -277,14 +184,9 @@ describe("Label", () => {
 	describe("Custom className", () => {
 		it("merges custom className with base classes", () => {
 			render(
-				createElement(
-					Label,
-					{
-						className: "custom-class",
-						"data-testid": "label",
-					},
-					"Label",
-				),
+				<Label className="custom-class" data-testid="label">
+					Label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("custom-class");
@@ -297,15 +199,13 @@ describe("Label", () => {
 		it("forwards ref to label element", () => {
 			let ref: HTMLLabelElement | null = null;
 			render(
-				createElement(
-					Label,
-					{
-						ref: (el: HTMLLabelElement | null) => {
-							ref = el;
-						},
-					},
-					"Label",
-				),
+				<Label
+					ref={(el) => {
+						ref = el;
+					}}
+				>
+					Label
+				</Label>,
 			);
 			expect(ref).toBeInstanceOf(HTMLLabelElement);
 			expect(ref?.tagName).toBe("LABEL");
@@ -314,15 +214,7 @@ describe("Label", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(
-				createElement(
-					Label,
-					{
-						"data-testid": "label",
-					},
-					"Label",
-				),
-			);
+			render(<Label data-testid="label">Label</Label>);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("font-medium");
 			expect(label.className).toContain("text-foreground");
@@ -330,15 +222,7 @@ describe("Label", () => {
 		});
 
 		it("includes peer-disabled classes", () => {
-			render(
-				createElement(
-					Label,
-					{
-						"data-testid": "label",
-					},
-					"Label",
-				),
-			);
+			render(<Label data-testid="label">Label</Label>);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("peer-disabled:cursor-not-allowed");
 			expect(label.className).toContain("peer-disabled:opacity-50");
@@ -348,15 +232,9 @@ describe("Label", () => {
 	describe("Compound Scenarios", () => {
 		it("works correctly with required and small size", () => {
 			render(
-				createElement(
-					Label,
-					{
-						required: true,
-						size: "sm",
-						"data-testid": "label",
-					},
-					"Small required",
-				),
+				<Label required size="sm" data-testid="label">
+					Small required
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-sm");
@@ -365,15 +243,9 @@ describe("Label", () => {
 
 		it("works correctly with disabled and required", () => {
 			render(
-				createElement(
-					Label,
-					{
-						disabled: true,
-						required: true,
-						"data-testid": "label",
-					},
-					"Disabled required",
-				),
+				<Label disabled required data-testid="label">
+					Disabled required
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("opacity-50");
@@ -383,15 +255,9 @@ describe("Label", () => {
 
 		it("works correctly with htmlFor and required", () => {
 			render(
-				createElement(
-					Label,
-					{
-						htmlFor: "field-id",
-						required: true,
-						"data-testid": "label",
-					},
-					"Field label",
-				),
+				<Label htmlFor="field-id" required data-testid="label">
+					Field label
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label).toHaveAttribute("for", "field-id");
@@ -400,15 +266,9 @@ describe("Label", () => {
 
 		it("works correctly with large size and custom className", () => {
 			render(
-				createElement(
-					Label,
-					{
-						size: "lg",
-						className: "font-bold",
-						"data-testid": "label",
-					},
-					"Large bold",
-				),
+				<Label size="lg" className="font-bold" data-testid="label">
+					Large bold
+				</Label>,
 			);
 			const label = screen.getByTestId("label");
 			expect(label.className).toContain("text-lg");
@@ -419,12 +279,10 @@ describe("Label", () => {
 	describe("Integration with Form Controls", () => {
 		it("associates correctly with input element", () => {
 			const { container } = render(
-				createElement(
-					"div",
-					null,
-					createElement(Label, { htmlFor: "test-input" }, "Test Label"),
-					createElement("input", { id: "test-input", type: "text" }),
-				),
+				<div>
+					<Label htmlFor="test-input">Test Label</Label>
+					<input id="test-input" type="text" />
+				</div>,
 			);
 
 			const label = container.querySelector("label");
@@ -435,21 +293,13 @@ describe("Label", () => {
 		});
 
 		it("clicking label focuses associated input", () => {
-			const { container } = render(
-				createElement(
-					"div",
-					null,
-					createElement(
-						Label,
-						{ htmlFor: "focus-input", "data-testid": "label" },
-						"Click me",
-					),
-					createElement("input", {
-						id: "focus-input",
-						type: "text",
-						"data-testid": "input",
-					}),
-				),
+			render(
+				<div>
+					<Label htmlFor="focus-input" data-testid="label">
+						Click me
+					</Label>
+					<input id="focus-input" type="text" data-testid="input" />
+				</div>,
 			);
 
 			const label = screen.getByTestId("label");

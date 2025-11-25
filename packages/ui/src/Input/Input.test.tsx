@@ -1,19 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Input } from "./Input";
 
 describe("Input", () => {
 	describe("Rendering", () => {
 		it("renders an input element", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toBeInTheDocument();
 			expect(input.tagName).toBe("INPUT");
 		});
 
 		it('renders with default type="text"', () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "text");
 		});
@@ -21,46 +20,38 @@ describe("Input", () => {
 
 	describe("States", () => {
 		it("applies default state classes", () => {
-			render(
-				createElement(Input, { state: "default", "data-testid": "input" }),
-			);
+			render(<Input state="default" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("border-border");
 			expect(input.className).toContain("text-foreground");
 		});
 
 		it("applies error state classes", () => {
-			render(createElement(Input, { state: "error", "data-testid": "input" }));
+			render(<Input state="error" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("border-error");
 		});
 
 		it("applies success state classes", () => {
-			render(
-				createElement(Input, { state: "success", "data-testid": "input" }),
-			);
+			render(<Input state="success" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("border-success");
 		});
 
 		it("sets aria-invalid on error state", () => {
-			render(createElement(Input, { state: "error", "data-testid": "input" }));
+			render(<Input state="error" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("aria-invalid", "true");
 		});
 
 		it("does not set aria-invalid on default state", () => {
-			render(
-				createElement(Input, { state: "default", "data-testid": "input" }),
-			);
+			render(<Input state="default" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).not.toHaveAttribute("aria-invalid");
 		});
 
 		it("does not set aria-invalid on success state", () => {
-			render(
-				createElement(Input, { state: "success", "data-testid": "input" }),
-			);
+			render(<Input state="success" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).not.toHaveAttribute("aria-invalid");
 		});
@@ -68,7 +59,7 @@ describe("Input", () => {
 
 	describe("Sizes", () => {
 		it("applies small size classes", () => {
-			render(createElement(Input, { size: "sm", "data-testid": "input" }));
+			render(<Input size="sm" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("h-9");
 			expect(input.className).toContain("px-3");
@@ -76,7 +67,7 @@ describe("Input", () => {
 		});
 
 		it("applies medium size classes (default)", () => {
-			render(createElement(Input, { size: "md", "data-testid": "input" }));
+			render(<Input size="md" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("h-10");
 			expect(input.className).toContain("px-3");
@@ -84,7 +75,7 @@ describe("Input", () => {
 		});
 
 		it("applies large size classes", () => {
-			render(createElement(Input, { size: "lg", "data-testid": "input" }));
+			render(<Input size="lg" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("h-11");
 			expect(input.className).toContain("px-4");
@@ -94,21 +85,19 @@ describe("Input", () => {
 
 	describe("Full Width", () => {
 		it("is full width by default", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("w-full");
 		});
 
 		it("applies full width when explicitly true", () => {
-			render(createElement(Input, { fullWidth: true, "data-testid": "input" }));
+			render(<Input fullWidth data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("w-full");
 		});
 
 		it("does not apply full width when false", () => {
-			render(
-				createElement(Input, { fullWidth: false, "data-testid": "input" }),
-			);
+			render(<Input fullWidth={false} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("w-auto");
 		});
@@ -116,57 +105,55 @@ describe("Input", () => {
 
 	describe("Input Types", () => {
 		it('renders with type="email"', () => {
-			render(createElement(Input, { type: "email", "data-testid": "input" }));
+			render(<Input type="email" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "email");
 		});
 
 		it('renders with type="password"', () => {
-			render(
-				createElement(Input, { type: "password", "data-testid": "input" }),
-			);
+			render(<Input type="password" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "password");
 		});
 
 		it('renders with type="number"', () => {
-			render(createElement(Input, { type: "number", "data-testid": "input" }));
+			render(<Input type="number" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "number");
 		});
 
 		it('renders with type="tel"', () => {
-			render(createElement(Input, { type: "tel", "data-testid": "input" }));
+			render(<Input type="tel" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "tel");
 		});
 
 		it('renders with type="url"', () => {
-			render(createElement(Input, { type: "url", "data-testid": "input" }));
+			render(<Input type="url" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "url");
 		});
 
 		it('renders with type="search"', () => {
-			render(createElement(Input, { type: "search", "data-testid": "input" }));
+			render(<Input type="search" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "search");
 		});
 
 		it('renders with type="date"', () => {
-			render(createElement(Input, { type: "date", "data-testid": "input" }));
+			render(<Input type="date" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "date");
 		});
 
 		it('renders with type="time"', () => {
-			render(createElement(Input, { type: "time", "data-testid": "input" }));
+			render(<Input type="time" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "time");
 		});
 
 		it('renders with type="file"', () => {
-			render(createElement(Input, { type: "file", "data-testid": "input" }));
+			render(<Input type="file" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("type", "file");
 		});
@@ -174,19 +161,19 @@ describe("Input", () => {
 
 	describe("Disabled State", () => {
 		it("is not disabled by default", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).not.toBeDisabled();
 		});
 
 		it("disables input when disabled prop is true", () => {
-			render(createElement(Input, { disabled: true, "data-testid": "input" }));
+			render(<Input disabled data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toBeDisabled();
 		});
 
 		it("applies disabled opacity class", () => {
-			render(createElement(Input, { disabled: true, "data-testid": "input" }));
+			render(<Input disabled data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("disabled:opacity-50");
 			expect(input.className).toContain("disabled:cursor-not-allowed");
@@ -195,23 +182,13 @@ describe("Input", () => {
 
 	describe("Placeholder", () => {
 		it("renders with placeholder text", () => {
-			render(
-				createElement(Input, {
-					placeholder: "Enter your email",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input placeholder="Enter your email" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("placeholder", "Enter your email");
 		});
 
 		it("applies placeholder styling classes", () => {
-			render(
-				createElement(Input, {
-					placeholder: "Placeholder text",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input placeholder="Placeholder text" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("placeholder:text-foreground-tertiary");
 		});
@@ -220,11 +197,7 @@ describe("Input", () => {
 	describe("Value and onChange", () => {
 		it("renders with initial value", () => {
 			render(
-				createElement(Input, {
-					value: "test value",
-					onChange: () => {},
-					"data-testid": "input",
-				}),
+				<Input value="test value" onChange={() => {}} data-testid="input" />,
 			);
 			const input = screen.getByTestId("input") as HTMLInputElement;
 			expect(input.value).toBe("test value");
@@ -232,24 +205,14 @@ describe("Input", () => {
 
 		it("calls onChange when input value changes", () => {
 			const handleChange = vi.fn();
-			render(
-				createElement(Input, {
-					onChange: handleChange,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input onChange={handleChange} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			fireEvent.change(input, { target: { value: "new value" } });
 			expect(handleChange).toHaveBeenCalledTimes(1);
 		});
 
 		it("updates value correctly when typing", () => {
-			render(
-				createElement(Input, {
-					defaultValue: "",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input defaultValue="" data-testid="input" />);
 			const input = screen.getByTestId("input") as HTMLInputElement;
 			fireEvent.change(input, { target: { value: "typed text" } });
 			expect(input.value).toBe("typed text");
@@ -258,104 +221,56 @@ describe("Input", () => {
 
 	describe("HTML Attributes", () => {
 		it("passes through id attribute", () => {
-			render(
-				createElement(Input, {
-					id: "test-input",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input id="test-input" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("id", "test-input");
 		});
 
 		it("passes through name attribute", () => {
-			render(
-				createElement(Input, {
-					name: "email",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input name="email" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("name", "email");
 		});
 
 		it("passes through required attribute", () => {
-			render(
-				createElement(Input, {
-					required: true,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input required data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("required");
 		});
 
 		it("passes through maxLength attribute", () => {
-			render(
-				createElement(Input, {
-					maxLength: 100,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input maxLength={100} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("maxLength", "100");
 		});
 
 		it("passes through pattern attribute", () => {
-			render(
-				createElement(Input, {
-					pattern: "[0-9]*",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input pattern="[0-9]*" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("pattern", "[0-9]*");
 		});
 
 		it("passes through min and max for number input", () => {
-			render(
-				createElement(Input, {
-					type: "number",
-					min: 0,
-					max: 100,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input type="number" min={0} max={100} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("min", "0");
 			expect(input).toHaveAttribute("max", "100");
 		});
 
 		it("passes through step for number input", () => {
-			render(
-				createElement(Input, {
-					type: "number",
-					step: 0.01,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input type="number" step={0.01} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("step", "0.01");
 		});
 
 		it("passes through autoComplete attribute", () => {
-			render(
-				createElement(Input, {
-					autoComplete: "email",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input autoComplete="email" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("autoComplete", "email");
 		});
 
 		it("passes through autoFocus attribute", () => {
-			render(
-				createElement(Input, {
-					autoFocus: true,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input autoFocus data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveFocus();
 		});
@@ -363,34 +278,19 @@ describe("Input", () => {
 
 	describe("ARIA Attributes", () => {
 		it("passes through aria-label", () => {
-			render(
-				createElement(Input, {
-					"aria-label": "Email address",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input aria-label="Email address" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("aria-label", "Email address");
 		});
 
 		it("passes through aria-describedby", () => {
-			render(
-				createElement(Input, {
-					"aria-describedby": "helper-text",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input aria-describedby="helper-text" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("aria-describedby", "helper-text");
 		});
 
 		it("passes through aria-labelledby", () => {
-			render(
-				createElement(Input, {
-					"aria-labelledby": "label-id",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input aria-labelledby="label-id" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toHaveAttribute("aria-labelledby", "label-id");
 		});
@@ -398,12 +298,7 @@ describe("Input", () => {
 
 	describe("Custom className", () => {
 		it("merges custom className with variant classes", () => {
-			render(
-				createElement(Input, {
-					className: "custom-input",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input className="custom-input" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("custom-input");
 			expect(input.className).toContain("rounded-md");
@@ -415,11 +310,11 @@ describe("Input", () => {
 		it("forwards ref to input element", () => {
 			let ref: HTMLInputElement | null = null;
 			render(
-				createElement(Input, {
-					ref: (el: HTMLInputElement | null) => {
+				<Input
+					ref={(el: HTMLInputElement | null) => {
 						ref = el;
-					},
-				}),
+					}}
+				/>,
 			);
 			expect(ref).toBeInstanceOf(HTMLInputElement);
 			expect(ref?.tagName).toBe("INPUT");
@@ -428,12 +323,12 @@ describe("Input", () => {
 		it("can focus input through ref", () => {
 			let ref: HTMLInputElement | null = null;
 			render(
-				createElement(Input, {
-					ref: (el: HTMLInputElement | null) => {
+				<Input
+					ref={(el: HTMLInputElement | null) => {
 						ref = el;
-					},
-					"data-testid": "input",
-				}),
+					}}
+					data-testid="input"
+				/>,
 			);
 			ref?.focus();
 			expect(screen.getByTestId("input")).toHaveFocus();
@@ -442,7 +337,7 @@ describe("Input", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("flex");
 			expect(input.className).toContain("w-full");
@@ -453,13 +348,13 @@ describe("Input", () => {
 		});
 
 		it("includes transition classes", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("transition-base");
 		});
 
 		it("includes focus ring classes", () => {
-			render(createElement(Input, { "data-testid": "input" }));
+			render(<Input data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("focus-ring");
 		});
@@ -468,12 +363,7 @@ describe("Input", () => {
 	describe("Event Handlers", () => {
 		it("calls onFocus when input is focused", () => {
 			const handleFocus = vi.fn();
-			render(
-				createElement(Input, {
-					onFocus: handleFocus,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input onFocus={handleFocus} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			fireEvent.focus(input);
 			expect(handleFocus).toHaveBeenCalledTimes(1);
@@ -481,12 +371,7 @@ describe("Input", () => {
 
 		it("calls onBlur when input loses focus", () => {
 			const handleBlur = vi.fn();
-			render(
-				createElement(Input, {
-					onBlur: handleBlur,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input onBlur={handleBlur} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			fireEvent.focus(input);
 			fireEvent.blur(input);
@@ -495,12 +380,7 @@ describe("Input", () => {
 
 		it("calls onKeyDown when key is pressed", () => {
 			const handleKeyDown = vi.fn();
-			render(
-				createElement(Input, {
-					onKeyDown: handleKeyDown,
-					"data-testid": "input",
-				}),
-			);
+			render(<Input onKeyDown={handleKeyDown} data-testid="input" />);
 			const input = screen.getByTestId("input");
 			fireEvent.keyDown(input, { key: "Enter" });
 			expect(handleKeyDown).toHaveBeenCalledTimes(1);
@@ -509,13 +389,7 @@ describe("Input", () => {
 
 	describe("Compound Scenarios", () => {
 		it("works correctly with error state and small size", () => {
-			render(
-				createElement(Input, {
-					state: "error",
-					size: "sm",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input state="error" size="sm" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("border-error");
 			expect(input.className).toContain("h-9");
@@ -523,26 +397,14 @@ describe("Input", () => {
 		});
 
 		it("works correctly with success state and large size", () => {
-			render(
-				createElement(Input, {
-					state: "success",
-					size: "lg",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input state="success" size="lg" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input.className).toContain("border-success");
 			expect(input.className).toContain("h-11");
 		});
 
 		it("works correctly with disabled state and error state", () => {
-			render(
-				createElement(Input, {
-					disabled: true,
-					state: "error",
-					"data-testid": "input",
-				}),
-			);
+			render(<Input disabled state="error" data-testid="input" />);
 			const input = screen.getByTestId("input");
 			expect(input).toBeDisabled();
 			expect(input.className).toContain("border-error");

@@ -1,5 +1,5 @@
 import { cn } from "@tpmjs/utils/cn";
-import { createElement, forwardRef } from "react";
+import { forwardRef } from "react";
 import type { LabelProps } from "./types";
 import { labelVariants } from "./variants";
 
@@ -7,18 +7,13 @@ import { labelVariants } from "./variants";
  * Label component
  *
  * A label component for form inputs with proper accessibility.
- * Built with .ts-only React using createElement.
  *
  * @example
- * ```typescript
+ * ```tsx
  * import { Label } from '@tpmjs/ui/Label/Label';
- * import { createElement } from 'react';
  *
  * function MyComponent() {
- *   return createElement(Label, {
- *     htmlFor: 'email',
- *     children: 'Email Address',
- *   });
+ *   return <Label htmlFor="email">Email Address</Label>;
  * }
  * ```
  */
@@ -34,30 +29,26 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(
 		},
 		ref,
 	) => {
-		return createElement(
-			"label",
-			{
-				className: cn(
+		return (
+			// biome-ignore lint/a11y/noLabelWithoutControl: This is a generic label component that can be used with htmlFor or wrap inputs
+			<label
+				ref={ref}
+				className={cn(
 					labelVariants({
 						size,
 						disabled: disabled ? "true" : "false",
 					}),
 					className,
-				),
-				ref,
-				...props,
-			},
-			children,
-			required
-				? createElement(
-						"span",
-						{
-							className: "ml-1 text-error",
-							"aria-hidden": "true",
-						},
-						"*",
-					)
-				: null,
+				)}
+				{...props}
+			>
+				{children}
+				{required && (
+					<span className="ml-1 text-error" aria-hidden="true">
+						*
+					</span>
+				)}
+			</label>
 		);
 	},
 );

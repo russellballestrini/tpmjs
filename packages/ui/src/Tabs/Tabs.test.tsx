@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Tabs } from "./Tabs";
 import type { Tab } from "./types";
@@ -15,12 +14,12 @@ describe("Tabs", () => {
 		it("renders tabs container", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs).toBeInTheDocument();
@@ -30,12 +29,12 @@ describe("Tabs", () => {
 		it("has tablist role", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs).toHaveAttribute("role", "tablist");
@@ -44,11 +43,7 @@ describe("Tabs", () => {
 		it("renders all tabs", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			expect(screen.getByTestId("tab-all")).toBeInTheDocument();
 			expect(screen.getByTestId("tab-featured")).toBeInTheDocument();
@@ -58,11 +53,7 @@ describe("Tabs", () => {
 		it("renders tab labels", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			expect(screen.getByText("All Tools")).toBeInTheDocument();
 			expect(screen.getByText("Featured")).toBeInTheDocument();
@@ -72,11 +63,7 @@ describe("Tabs", () => {
 		it("renders tabs as buttons", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.tagName).toBe("BUTTON");
@@ -88,11 +75,11 @@ describe("Tabs", () => {
 		it("marks active tab with aria-selected", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "featured",
-					onTabChange: handleChange,
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="featured"
+					onTabChange={handleChange}
+				/>,
 			);
 			expect(screen.getByTestId("tab-featured")).toHaveAttribute(
 				"aria-selected",
@@ -111,11 +98,7 @@ describe("Tabs", () => {
 		it("applies active styling to active tab", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const activeTab = screen.getByTestId("tab-all");
 			expect(activeTab.className).toContain("text-zinc-100");
@@ -125,11 +108,7 @@ describe("Tabs", () => {
 		it("applies inactive styling to inactive tabs", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const inactiveTab = screen.getByTestId("tab-featured");
 			expect(inactiveTab.className).toContain("text-zinc-400");
@@ -141,11 +120,7 @@ describe("Tabs", () => {
 		it("calls onTabChange when tab is clicked", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			screen.getByTestId("tab-featured").click();
 			expect(handleChange).toHaveBeenCalledWith("featured");
@@ -154,11 +129,7 @@ describe("Tabs", () => {
 		it("calls onTabChange with correct tab ID", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			screen.getByTestId("tab-recent").click();
 			expect(handleChange).toHaveBeenCalledWith("recent");
@@ -168,11 +139,7 @@ describe("Tabs", () => {
 		it("allows clicking already active tab", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			screen.getByTestId("tab-all").click();
 			expect(handleChange).toHaveBeenCalledWith("all");
@@ -183,11 +150,7 @@ describe("Tabs", () => {
 		it("renders count badge when count is provided", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			expect(screen.getByText("1234")).toBeInTheDocument();
 			expect(screen.getByText("42")).toBeInTheDocument();
@@ -196,11 +159,7 @@ describe("Tabs", () => {
 		it("does not render count badge when count is undefined", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const recentTab = screen.getByTestId("tab-recent");
 			const badge = recentTab.querySelector("span[aria-label]");
@@ -210,11 +169,7 @@ describe("Tabs", () => {
 		it("count badge has aria-label", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const badge = screen.getByText("1234");
 			expect(badge).toHaveAttribute("aria-label", "1234 items");
@@ -223,11 +178,7 @@ describe("Tabs", () => {
 		it("applies active styling to count badge on active tab", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const activeBadge = screen.getByText("1234");
 			expect(activeBadge.className).toContain("text-zinc-100");
@@ -236,11 +187,7 @@ describe("Tabs", () => {
 		it("applies inactive styling to count badge on inactive tab", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const inactiveBadge = screen.getByText("42");
 			expect(inactiveBadge.className).toContain("text-zinc-500");
@@ -250,11 +197,11 @@ describe("Tabs", () => {
 			const handleChange = vi.fn();
 			const tabsWithZero: Tab[] = [{ id: "empty", label: "Empty", count: 0 }];
 			render(
-				createElement(Tabs, {
-					tabs: tabsWithZero,
-					activeTab: "empty",
-					onTabChange: handleChange,
-				}),
+				<Tabs
+					tabs={tabsWithZero}
+					activeTab="empty"
+					onTabChange={handleChange}
+				/>,
 			);
 			expect(screen.getByText("0")).toBeInTheDocument();
 		});
@@ -264,12 +211,12 @@ describe("Tabs", () => {
 		it("applies small size", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					size: "sm",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					size="sm"
+				/>,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.className).toContain("text-sm");
@@ -280,12 +227,12 @@ describe("Tabs", () => {
 		it("applies medium size", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					size: "md",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					size="md"
+				/>,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.className).toContain("text-base");
@@ -296,12 +243,12 @@ describe("Tabs", () => {
 		it("applies large size", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					size: "lg",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					size="lg"
+				/>,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.className).toContain("text-lg");
@@ -312,11 +259,7 @@ describe("Tabs", () => {
 		it("uses md size by default", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.className).toContain("text-base");
@@ -329,11 +272,7 @@ describe("Tabs", () => {
 		it('tabs have role="tab"', () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab).toHaveAttribute("role", "tab");
@@ -342,11 +281,7 @@ describe("Tabs", () => {
 		it("tabs have unique IDs", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			expect(screen.getByTestId("tab-all")).toHaveAttribute("id", "tab-all");
 			expect(screen.getByTestId("tab-featured")).toHaveAttribute(
@@ -362,11 +297,7 @@ describe("Tabs", () => {
 		it("tabs have aria-controls attribute", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			expect(screen.getByTestId("tab-all")).toHaveAttribute(
 				"aria-controls",
@@ -383,13 +314,13 @@ describe("Tabs", () => {
 		it("passes through id attribute", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					id: "tabs-id",
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					id="tabs-id"
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs).toHaveAttribute("id", "tabs-id");
@@ -398,13 +329,13 @@ describe("Tabs", () => {
 		it("passes through data attributes", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					"data-custom": "test",
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					data-custom="test"
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs).toHaveAttribute("data-custom", "test");
@@ -415,13 +346,13 @@ describe("Tabs", () => {
 		it("merges custom className with variant classes", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					className: "custom-class",
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					className="custom-class"
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs.className).toContain("custom-class");
@@ -435,14 +366,14 @@ describe("Tabs", () => {
 			const handleChange = vi.fn();
 			let ref: HTMLDivElement | null = null;
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					ref: (el: HTMLDivElement | null) => {
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					ref={(el: HTMLDivElement | null) => {
 						ref = el;
-					},
-				}),
+					}}
+				/>,
 			);
 			expect(ref).toBeInstanceOf(HTMLDivElement);
 			expect(ref).toHaveAttribute("role", "tablist");
@@ -453,12 +384,12 @@ describe("Tabs", () => {
 		it("container includes base classes", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-					"data-testid": "tabs",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="all"
+					onTabChange={handleChange}
+					data-testid="tabs"
+				/>,
 			);
 			const tabs = screen.getByTestId("tabs");
 			expect(tabs.className).toContain("flex");
@@ -470,11 +401,7 @@ describe("Tabs", () => {
 		it("tab buttons include base classes", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "all",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={mockTabs} activeTab="all" onTabChange={handleChange} />,
 			);
 			const tab = screen.getByTestId("tab-all");
 			expect(tab.className).toContain("inline-flex");
@@ -490,12 +417,12 @@ describe("Tabs", () => {
 		it("works correctly with large size and active tab with count", () => {
 			const handleChange = vi.fn();
 			render(
-				createElement(Tabs, {
-					tabs: mockTabs,
-					activeTab: "featured",
-					onTabChange: handleChange,
-					size: "lg",
-				}),
+				<Tabs
+					tabs={mockTabs}
+					activeTab="featured"
+					onTabChange={handleChange}
+					size="lg"
+				/>,
 			);
 			const tab = screen.getByTestId("tab-featured");
 			expect(tab.className).toContain("text-lg");
@@ -511,11 +438,7 @@ describe("Tabs", () => {
 			const handleChange = vi.fn();
 			const singleTab: Tab[] = [{ id: "only", label: "Only Tab" }];
 			render(
-				createElement(Tabs, {
-					tabs: singleTab,
-					activeTab: "only",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={singleTab} activeTab="only" onTabChange={handleChange} />,
 			);
 			expect(screen.getByTestId("tab-only")).toBeInTheDocument();
 			expect(screen.getByText("Only Tab")).toBeInTheDocument();
@@ -524,11 +447,7 @@ describe("Tabs", () => {
 		it("handles empty tabs array", () => {
 			const handleChange = vi.fn();
 			const { container } = render(
-				createElement(Tabs, {
-					tabs: [],
-					activeTab: "",
-					onTabChange: handleChange,
-				}),
+				<Tabs tabs={[]} activeTab="" onTabChange={handleChange} />,
 			);
 			const buttons = container.querySelectorAll("button");
 			expect(buttons.length).toBe(0);

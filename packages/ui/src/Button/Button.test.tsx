@@ -1,19 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { Button } from "./Button";
 
 describe("Button", () => {
 	describe("Rendering", () => {
 		it("renders with default variant and size", () => {
-			render(createElement(Button, {}, "Click me"));
+			render(<Button>Click me</Button>);
 			const button = screen.getByRole("button");
 			expect(button).toBeInTheDocument();
 			expect(button).toHaveTextContent("Click me");
 		});
 
 		it("renders as a button element", () => {
-			render(createElement(Button, {}, "Test"));
+			render(<Button>Test</Button>);
 			expect(screen.getByRole("button").tagName).toBe("BUTTON");
 		});
 	});
@@ -21,11 +20,9 @@ describe("Button", () => {
 	describe("Variants", () => {
 		it("applies default variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "default",
-					"data-testid": "button",
-					children: "Default",
-				}),
+				<Button variant="default" data-testid="button">
+					Default
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("bg-primary");
@@ -34,11 +31,9 @@ describe("Button", () => {
 
 		it("applies destructive variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "destructive",
-					"data-testid": "button",
-					children: "Delete",
-				}),
+				<Button variant="destructive" data-testid="button">
+					Delete
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("bg-error");
@@ -47,11 +42,9 @@ describe("Button", () => {
 
 		it("applies outline variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "outline",
-					"data-testid": "button",
-					children: "Outline",
-				}),
+				<Button variant="outline" data-testid="button">
+					Outline
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("border");
@@ -60,11 +53,9 @@ describe("Button", () => {
 
 		it("applies secondary variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "secondary",
-					"data-testid": "button",
-					children: "Secondary",
-				}),
+				<Button variant="secondary" data-testid="button">
+					Secondary
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("bg-secondary");
@@ -73,11 +64,9 @@ describe("Button", () => {
 
 		it("applies ghost variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "ghost",
-					"data-testid": "button",
-					children: "Ghost",
-				}),
+				<Button variant="ghost" data-testid="button">
+					Ghost
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("hover:bg-accent");
@@ -85,11 +74,9 @@ describe("Button", () => {
 
 		it("applies link variant classes", () => {
 			render(
-				createElement(Button, {
-					variant: "link",
-					"data-testid": "button",
-					children: "Link",
-				}),
+				<Button variant="link" data-testid="button">
+					Link
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("text-primary");
@@ -100,11 +87,9 @@ describe("Button", () => {
 	describe("Sizes", () => {
 		it("applies small size classes", () => {
 			render(
-				createElement(Button, {
-					size: "sm",
-					"data-testid": "button",
-					children: "Small",
-				}),
+				<Button size="sm" data-testid="button">
+					Small
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("h-9");
@@ -113,11 +98,9 @@ describe("Button", () => {
 
 		it("applies medium size classes (default)", () => {
 			render(
-				createElement(Button, {
-					size: "md",
-					"data-testid": "button",
-					children: "Medium",
-				}),
+				<Button size="md" data-testid="button">
+					Medium
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("h-10");
@@ -126,11 +109,9 @@ describe("Button", () => {
 
 		it("applies large size classes", () => {
 			render(
-				createElement(Button, {
-					size: "lg",
-					"data-testid": "button",
-					children: "Large",
-				}),
+				<Button size="lg" data-testid="button">
+					Large
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("h-11");
@@ -139,11 +120,7 @@ describe("Button", () => {
 
 		it("applies icon size classes", () => {
 			render(
-				createElement(Button, {
-					size: "icon",
-					"data-testid": "button",
-					"aria-label": "Icon button",
-				}),
+				<Button size="icon" data-testid="button" aria-label="Icon button" />,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("h-10");
@@ -154,12 +131,9 @@ describe("Button", () => {
 	describe("Compound Variants", () => {
 		it("applies compound variant for outline + small", () => {
 			render(
-				createElement(Button, {
-					variant: "outline",
-					size: "sm",
-					"data-testid": "button",
-					children: "Small Outline",
-				}),
+				<Button variant="outline" size="sm" data-testid="button">
+					Small Outline
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("border");
@@ -168,12 +142,9 @@ describe("Button", () => {
 
 		it("applies compound variant for link variants (removes padding)", () => {
 			render(
-				createElement(Button, {
-					variant: "link",
-					size: "md",
-					"data-testid": "button",
-					children: "Link",
-				}),
+				<Button variant="link" size="md" data-testid="button">
+					Link
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("px-0");
@@ -182,7 +153,7 @@ describe("Button", () => {
 
 	describe("Loading State", () => {
 		it("shows loading spinner when loading is true", () => {
-			render(createElement(Button, { loading: true, children: "Loading" }));
+			render(<Button loading>Loading</Button>);
 			const button = screen.getByRole("button");
 
 			// Should have loading indicator
@@ -192,7 +163,7 @@ describe("Button", () => {
 		});
 
 		it("disables button when loading", () => {
-			render(createElement(Button, { loading: true, children: "Loading" }));
+			render(<Button loading>Loading</Button>);
 			const button = screen.getByRole("button");
 			expect(button).toBeDisabled();
 			expect(button).toHaveAttribute("aria-busy", "true");
@@ -200,25 +171,23 @@ describe("Button", () => {
 
 		it("applies cursor-wait class when loading", () => {
 			render(
-				createElement(Button, {
-					loading: true,
-					"data-testid": "button",
-					children: "Loading",
-				}),
+				<Button loading data-testid="button">
+					Loading
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("cursor-wait");
 		});
 
 		it("still shows children text when loading", () => {
-			render(createElement(Button, { loading: true, children: "Processing" }));
+			render(<Button loading>Processing</Button>);
 			expect(screen.getByText("Processing")).toBeInTheDocument();
 		});
 	});
 
 	describe("Disabled State", () => {
 		it("disables button when disabled prop is true", () => {
-			render(createElement(Button, { disabled: true, children: "Disabled" }));
+			render(<Button disabled>Disabled</Button>);
 			const button = screen.getByRole("button");
 			expect(button).toBeDisabled();
 			expect(button).toHaveAttribute("aria-disabled", "true");
@@ -226,11 +195,9 @@ describe("Button", () => {
 
 		it("applies disabled opacity class", () => {
 			render(
-				createElement(Button, {
-					disabled: true,
-					"data-testid": "button",
-					children: "Disabled",
-				}),
+				<Button disabled data-testid="button">
+					Disabled
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("disabled:opacity-50");
@@ -239,11 +206,9 @@ describe("Button", () => {
 
 		it("is disabled when both disabled and loading are true", () => {
 			render(
-				createElement(Button, {
-					disabled: true,
-					loading: true,
-					children: "Both",
-				}),
+				<Button disabled loading>
+					Both
+				</Button>,
 			);
 			const button = screen.getByRole("button");
 			expect(button).toBeDisabled();
@@ -253,11 +218,9 @@ describe("Button", () => {
 	describe("Custom className", () => {
 		it("merges custom className with variant classes", () => {
 			render(
-				createElement(Button, {
-					className: "custom-class",
-					"data-testid": "button",
-					children: "Custom",
-				}),
+				<Button className="custom-class" data-testid="button">
+					Custom
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("custom-class");
@@ -269,12 +232,13 @@ describe("Button", () => {
 		it("forwards ref to button element", () => {
 			let ref: HTMLButtonElement | null = null;
 			render(
-				createElement(Button, {
-					ref: (el: HTMLButtonElement | null) => {
+				<Button
+					ref={(el: HTMLButtonElement | null) => {
 						ref = el;
-					},
-					children: "Ref Test",
-				}),
+					}}
+				>
+					Ref Test
+				</Button>,
 			);
 			expect(ref).toBeInstanceOf(HTMLButtonElement);
 			expect(ref?.tagName).toBe("BUTTON");
@@ -284,13 +248,14 @@ describe("Button", () => {
 	describe("HTML Attributes", () => {
 		it("passes through HTML button attributes", () => {
 			render(
-				createElement(Button, {
-					type: "submit",
-					name: "test-button",
-					value: "test-value",
-					"data-testid": "button",
-					children: "Submit",
-				}),
+				<Button
+					type="submit"
+					name="test-button"
+					value="test-value"
+					data-testid="button"
+				>
+					Submit
+				</Button>,
 			);
 			const button = screen.getByTestId("button");
 			expect(button).toHaveAttribute("type", "submit");
@@ -301,12 +266,13 @@ describe("Button", () => {
 		it("supports onClick handler", () => {
 			let clicked = false;
 			render(
-				createElement(Button, {
-					onClick: () => {
+				<Button
+					onClick={() => {
 						clicked = true;
-					},
-					children: "Click",
-				}),
+					}}
+				>
+					Click
+				</Button>,
 			);
 			const button = screen.getByRole("button");
 			button.click();
@@ -316,20 +282,20 @@ describe("Button", () => {
 
 	describe("Accessibility", () => {
 		it("has proper ARIA attributes for loading state", () => {
-			render(createElement(Button, { loading: true, children: "Loading" }));
+			render(<Button loading>Loading</Button>);
 			const button = screen.getByRole("button");
 			expect(button).toHaveAttribute("aria-busy", "true");
 			expect(button).toHaveAttribute("aria-disabled", "true");
 		});
 
 		it("has proper ARIA attributes for disabled state", () => {
-			render(createElement(Button, { disabled: true, children: "Disabled" }));
+			render(<Button disabled>Disabled</Button>);
 			const button = screen.getByRole("button");
 			expect(button).toHaveAttribute("aria-disabled", "true");
 		});
 
 		it("hides loading spinner from screen readers", () => {
-			render(createElement(Button, { loading: true, children: "Loading" }));
+			render(<Button loading>Loading</Button>);
 			const button = screen.getByRole("button");
 			const spinner = button.querySelector('[aria-hidden="true"]');
 			expect(spinner).toHaveAttribute("aria-hidden", "true");
@@ -337,11 +303,9 @@ describe("Button", () => {
 
 		it("supports aria-label for icon buttons", () => {
 			render(
-				createElement(Button, {
-					size: "icon",
-					"aria-label": "Close dialog",
-					children: "X",
-				}),
+				<Button size="icon" aria-label="Close dialog">
+					X
+				</Button>,
 			);
 			const button = screen.getByRole("button");
 			expect(button).toHaveAccessibleName("Close dialog");
@@ -350,9 +314,7 @@ describe("Button", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(
-				createElement(Button, { "data-testid": "button", children: "Base" }),
-			);
+			render(<Button data-testid="button">Base</Button>);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("inline-flex");
 			expect(button.className).toContain("items-center");
@@ -362,20 +324,13 @@ describe("Button", () => {
 		});
 
 		it("includes focus ring classes", () => {
-			render(
-				createElement(Button, { "data-testid": "button", children: "Focus" }),
-			);
+			render(<Button data-testid="button">Focus</Button>);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("focus-ring");
 		});
 
 		it("includes transition classes", () => {
-			render(
-				createElement(Button, {
-					"data-testid": "button",
-					children: "Transition",
-				}),
-			);
+			render(<Button data-testid="button">Transition</Button>);
 			const button = screen.getByTestId("button");
 			expect(button.className).toContain("transition-base");
 		});

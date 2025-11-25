@@ -1,21 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { Container } from "./Container";
 
 describe("Container", () => {
 	describe("Rendering", () => {
 		it("renders a container element", () => {
-			render(
-				createElement(Container, { "data-testid": "container" }, "Content"),
-			);
+			render(<Container data-testid="container">Content</Container>);
 			const container = screen.getByTestId("container");
 			expect(container).toBeInTheDocument();
 			expect(container.tagName).toBe("DIV");
 		});
 
 		it("renders children content", () => {
-			render(createElement(Container, null, "Container content"));
+			render(<Container>Container content</Container>);
 			expect(screen.getByText("Container content")).toBeInTheDocument();
 		});
 	});
@@ -23,11 +20,9 @@ describe("Container", () => {
 	describe("Size Variants", () => {
 		it("applies small size max-width", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "sm", "data-testid": "container" },
-					"Small",
-				),
+				<Container size="sm" data-testid="container">
+					Small
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-sm");
@@ -35,11 +30,9 @@ describe("Container", () => {
 
 		it("applies medium size max-width", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "md", "data-testid": "container" },
-					"Medium",
-				),
+				<Container size="md" data-testid="container">
+					Medium
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-md");
@@ -47,11 +40,9 @@ describe("Container", () => {
 
 		it("applies large size max-width", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "lg", "data-testid": "container" },
-					"Large",
-				),
+				<Container size="lg" data-testid="container">
+					Large
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-lg");
@@ -59,11 +50,9 @@ describe("Container", () => {
 
 		it("applies extra-large size max-width (default)", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "xl", "data-testid": "container" },
-					"XLarge",
-				),
+				<Container size="xl" data-testid="container">
+					XLarge
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-xl");
@@ -71,11 +60,9 @@ describe("Container", () => {
 
 		it("applies 2xl size max-width", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "2xl", "data-testid": "container" },
-					"2XLarge",
-				),
+				<Container size="2xl" data-testid="container">
+					2XLarge
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-2xl");
@@ -83,20 +70,16 @@ describe("Container", () => {
 
 		it("applies full width", () => {
 			render(
-				createElement(
-					Container,
-					{ size: "full", "data-testid": "container" },
-					"Full",
-				),
+				<Container size="full" data-testid="container">
+					Full
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-full");
 		});
 
 		it("uses xl size by default", () => {
-			render(
-				createElement(Container, { "data-testid": "container" }, "Default"),
-			);
+			render(<Container data-testid="container">Default</Container>);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-xl");
 		});
@@ -105,11 +88,9 @@ describe("Container", () => {
 	describe("Padding Variants", () => {
 		it("applies no padding", () => {
 			render(
-				createElement(
-					Container,
-					{ padding: "none", "data-testid": "container" },
-					"None",
-				),
+				<Container padding="none" data-testid="container">
+					None
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("px-0");
@@ -117,11 +98,9 @@ describe("Container", () => {
 
 		it("applies small padding", () => {
 			render(
-				createElement(
-					Container,
-					{ padding: "sm", "data-testid": "container" },
-					"Small",
-				),
+				<Container padding="sm" data-testid="container">
+					Small
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("px-4");
@@ -129,11 +108,9 @@ describe("Container", () => {
 
 		it("applies medium padding (default)", () => {
 			render(
-				createElement(
-					Container,
-					{ padding: "md", "data-testid": "container" },
-					"Medium",
-				),
+				<Container padding="md" data-testid="container">
+					Medium
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("px-6");
@@ -141,20 +118,16 @@ describe("Container", () => {
 
 		it("applies large padding", () => {
 			render(
-				createElement(
-					Container,
-					{ padding: "lg", "data-testid": "container" },
-					"Large",
-				),
+				<Container padding="lg" data-testid="container">
+					Large
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("px-8");
 		});
 
 		it("uses md padding by default", () => {
-			render(
-				createElement(Container, { "data-testid": "container" }, "Default"),
-			);
+			render(<Container data-testid="container">Default</Container>);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("px-6");
 		});
@@ -163,15 +136,9 @@ describe("Container", () => {
 	describe("Compound Scenarios", () => {
 		it("works correctly with small size and no padding", () => {
 			render(
-				createElement(
-					Container,
-					{
-						size: "sm",
-						padding: "none",
-						"data-testid": "container",
-					},
-					"Small no padding",
-				),
+				<Container size="sm" padding="none" data-testid="container">
+					Small no padding
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-screen-sm");
@@ -180,15 +147,9 @@ describe("Container", () => {
 
 		it("works correctly with full width and large padding", () => {
 			render(
-				createElement(
-					Container,
-					{
-						size: "full",
-						padding: "lg",
-						"data-testid": "container",
-					},
-					"Full large padding",
-				),
+				<Container size="full" padding="lg" data-testid="container">
+					Full large padding
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("max-w-full");
@@ -199,14 +160,9 @@ describe("Container", () => {
 	describe("HTML Attributes", () => {
 		it("passes through id attribute", () => {
 			render(
-				createElement(
-					Container,
-					{
-						id: "container-id",
-						"data-testid": "container",
-					},
-					"Container",
-				),
+				<Container id="container-id" data-testid="container">
+					Container
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container).toHaveAttribute("id", "container-id");
@@ -215,16 +171,14 @@ describe("Container", () => {
 		it("passes through onClick handler", () => {
 			let clicked = false;
 			render(
-				createElement(
-					Container,
-					{
-						onClick: () => {
-							clicked = true;
-						},
-						"data-testid": "container",
-					},
-					"Clickable",
-				),
+				<Container
+					onClick={() => {
+						clicked = true;
+					}}
+					data-testid="container"
+				>
+					Clickable
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			container.click();
@@ -233,14 +187,9 @@ describe("Container", () => {
 
 		it("passes through aria attributes", () => {
 			render(
-				createElement(
-					Container,
-					{
-						"aria-label": "Main container",
-						"data-testid": "container",
-					},
-					"Container",
-				),
+				<Container aria-label="Main container" data-testid="container">
+					Container
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container).toHaveAttribute("aria-label", "Main container");
@@ -250,14 +199,9 @@ describe("Container", () => {
 	describe("Custom className", () => {
 		it("merges custom className with variant classes", () => {
 			render(
-				createElement(
-					Container,
-					{
-						className: "custom-class",
-						"data-testid": "container",
-					},
-					"Custom",
-				),
+				<Container className="custom-class" data-testid="container">
+					Custom
+				</Container>,
 			);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("custom-class");
@@ -270,15 +214,13 @@ describe("Container", () => {
 		it("forwards ref to container element", () => {
 			let ref: HTMLDivElement | null = null;
 			render(
-				createElement(
-					Container,
-					{
-						ref: (el: HTMLDivElement | null) => {
-							ref = el;
-						},
-					},
-					"Container",
-				),
+				<Container
+					ref={(el: HTMLDivElement | null) => {
+						ref = el;
+					}}
+				>
+					Container
+				</Container>,
 			);
 			expect(ref).toBeInstanceOf(HTMLDivElement);
 			expect(ref?.tagName).toBe("DIV");
@@ -287,9 +229,7 @@ describe("Container", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(
-				createElement(Container, { "data-testid": "container" }, "Container"),
-			);
+			render(<Container data-testid="container">Container</Container>);
 			const container = screen.getByTestId("container");
 			expect(container.className).toContain("mx-auto");
 			expect(container.className).toContain("w-full");
