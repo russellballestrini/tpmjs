@@ -9,12 +9,11 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "@tpmjs/config",
-    "@tpmjs/eslint-config",
-    "@tpmjs/tailwind-config",
-    "@tpmjs/tsconfig",
-    "@tpmjs/test",
-    "@tpmjs/mocks",
     "@tpmjs/storybook",
     "@tpmjs/web"
-  ]
+  ],
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  }
 }
