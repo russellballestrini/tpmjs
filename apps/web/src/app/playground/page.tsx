@@ -30,13 +30,21 @@ export default function PlaygroundPage() {
 		<div className="min-h-screen flex flex-col">
 			{/* Header */}
 			<Header
-				title={<Link href="/">TPMJS Playground</Link>}
+				title={
+					<Link href="/" className="text-foreground hover:text-foreground">
+						TPMJS Playground
+					</Link>
+				}
 				size="md"
 				sticky={true}
 				actions={
 					<div className="flex items-center gap-4">
 						<Link href="/">
-							<Button variant="ghost" size="sm">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="text-foreground hover:text-foreground"
+							>
 								Home
 							</Button>
 						</Link>

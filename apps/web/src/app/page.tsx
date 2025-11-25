@@ -14,26 +14,50 @@ export default function HomePage(): React.ReactElement {
 		<div className="min-h-screen flex flex-col">
 			{/* Header */}
 			<Header
-				title={<Link href="/">TPMJS</Link>}
+				title={
+					<Link href="/" className="text-foreground hover:text-foreground">
+						TPMJS
+					</Link>
+				}
 				size="md"
 				sticky={true}
 				actions={
 					<div className="flex items-center gap-4">
 						<Link href="/playground">
-							<Button variant="ghost" size="sm">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="text-foreground hover:text-foreground"
+							>
 								Playground
 							</Button>
 						</Link>
-						<Button variant="ghost" size="sm">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="text-foreground hover:text-foreground"
+						>
 							Pro
 						</Button>
-						<Button variant="ghost" size="sm">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="text-foreground hover:text-foreground"
+						>
 							Teams
 						</Button>
-						<Button variant="ghost" size="sm">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="text-foreground hover:text-foreground"
+						>
 							Pricing
 						</Button>
-						<Button variant="ghost" size="sm">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="text-foreground hover:text-foreground"
+						>
 							Documentation
 						</Button>
 						<Button variant="secondary" size="sm">
