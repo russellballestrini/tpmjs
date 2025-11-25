@@ -1,38 +1,37 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { Icon } from "./Icon";
 
 describe("Icon", () => {
 	describe("Rendering", () => {
 		it("renders an SVG element", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toBeInTheDocument();
 			expect(icon.tagName).toBe("svg");
 		});
 
 		it("renders with correct viewBox", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("viewBox", "0 0 24 24");
 		});
 
 		it("renders with currentColor fill", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("fill", "currentColor");
 		});
 
 		it("includes path element", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toBeInTheDocument();
 		});
 
 		it("is aria-hidden by default", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("aria-hidden", "true");
 		});
@@ -40,46 +39,28 @@ describe("Icon", () => {
 
 	describe("Size Variants", () => {
 		it("applies small size", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					size: "sm",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" size="sm" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-4");
 			expect(icon.className).toContain("h-4");
 		});
 
 		it("applies medium size", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					size: "md",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" size="md" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-5");
 			expect(icon.className).toContain("h-5");
 		});
 
 		it("applies large size", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					size: "lg",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" size="lg" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-6");
 			expect(icon.className).toContain("h-6");
 		});
 
 		it("uses md size by default", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-5");
 			expect(icon.className).toContain("h-5");
@@ -88,7 +69,7 @@ describe("Icon", () => {
 
 	describe("Icon Variants", () => {
 		it("renders copy icon", () => {
-			render(createElement(Icon, { icon: "copy", "data-testid": "icon" }));
+			render(<Icon icon="copy" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toHaveAttribute(
@@ -98,9 +79,7 @@ describe("Icon", () => {
 		});
 
 		it("renders externalLink icon", () => {
-			render(
-				createElement(Icon, { icon: "externalLink", "data-testid": "icon" }),
-			);
+			render(<Icon icon="externalLink" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toHaveAttribute(
@@ -110,14 +89,14 @@ describe("Icon", () => {
 		});
 
 		it("renders github icon", () => {
-			render(createElement(Icon, { icon: "github", "data-testid": "icon" }));
+			render(<Icon icon="github" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path?.getAttribute("d")).toContain("M12 2C6.477 2 2 6.477 2 12");
 		});
 
 		it("renders check icon", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toHaveAttribute(
@@ -127,7 +106,7 @@ describe("Icon", () => {
 		});
 
 		it("renders x icon", () => {
-			render(createElement(Icon, { icon: "x", "data-testid": "icon" }));
+			render(<Icon icon="x" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toHaveAttribute(
@@ -137,9 +116,7 @@ describe("Icon", () => {
 		});
 
 		it("renders chevronDown icon", () => {
-			render(
-				createElement(Icon, { icon: "chevronDown", "data-testid": "icon" }),
-			);
+			render(<Icon icon="chevronDown" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			const path = icon.querySelector("path");
 			expect(path).toHaveAttribute(
@@ -151,25 +128,13 @@ describe("Icon", () => {
 
 	describe("SVG Attributes", () => {
 		it("passes through className", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					className: "custom-class",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" className="custom-class" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("custom-class");
 		});
 
 		it("merges custom className with variant classes", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					className: "text-red-500",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" className="text-red-500" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("text-red-500");
 			expect(icon.className).toContain("inline-block");
@@ -177,38 +142,26 @@ describe("Icon", () => {
 		});
 
 		it("allows custom aria-hidden", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					"aria-hidden": false,
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" aria-hidden={false} data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("aria-hidden", "false");
 		});
 
 		it("passes through aria-label", () => {
 			render(
-				createElement(Icon, {
-					icon: "check",
-					"aria-label": "Success",
-					"aria-hidden": false,
-					"data-testid": "icon",
-				}),
+				<Icon
+					icon="check"
+					aria-label="Success"
+					aria-hidden={false}
+					data-testid="icon"
+				/>,
 			);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("aria-label", "Success");
 		});
 
 		it("passes through id attribute", () => {
-			render(
-				createElement(Icon, {
-					icon: "check",
-					id: "icon-id",
-					"data-testid": "icon",
-				}),
-			);
+			render(<Icon icon="check" id="icon-id" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon).toHaveAttribute("id", "icon-id");
 		});
@@ -218,12 +171,12 @@ describe("Icon", () => {
 		it("forwards ref to SVG element", () => {
 			let ref: SVGSVGElement | null = null;
 			render(
-				createElement(Icon, {
-					icon: "check",
-					ref: (el: SVGSVGElement | null) => {
+				<Icon
+					icon="check"
+					ref={(el: SVGSVGElement | null) => {
 						ref = el;
-					},
-				}),
+					}}
+				/>,
 			);
 			expect(ref).toBeInstanceOf(SVGSVGElement);
 			expect(ref?.tagName).toBe("svg");
@@ -232,7 +185,7 @@ describe("Icon", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(createElement(Icon, { icon: "check", "data-testid": "icon" }));
+			render(<Icon icon="check" data-testid="icon" />);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("inline-block");
 			expect(icon.className).toContain("fill-current");
@@ -242,12 +195,12 @@ describe("Icon", () => {
 	describe("Compound Scenarios", () => {
 		it("works correctly with custom size and className", () => {
 			render(
-				createElement(Icon, {
-					icon: "github",
-					size: "lg",
-					className: "text-zinc-400 hover:text-zinc-100",
-					"data-testid": "icon",
-				}),
+				<Icon
+					icon="github"
+					size="lg"
+					className="text-zinc-400 hover:text-zinc-100"
+					data-testid="icon"
+				/>,
 			);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-6");
@@ -258,13 +211,13 @@ describe("Icon", () => {
 
 		it("works correctly with aria attributes and custom size", () => {
 			render(
-				createElement(Icon, {
-					icon: "externalLink",
-					size: "sm",
-					"aria-label": "Opens in new tab",
-					"aria-hidden": false,
-					"data-testid": "icon",
-				}),
+				<Icon
+					icon="externalLink"
+					size="sm"
+					aria-label="Opens in new tab"
+					aria-hidden={false}
+					data-testid="icon"
+				/>,
 			);
 			const icon = screen.getByTestId("icon");
 			expect(icon.className).toContain("w-4");

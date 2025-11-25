@@ -1,5 +1,5 @@
 import { cn } from "@tpmjs/utils/cn";
-import { createElement, forwardRef } from "react";
+import { forwardRef } from "react";
 import type { BadgeProps } from "./types";
 import { badgeVariants } from "./variants";
 
@@ -7,34 +7,31 @@ import { badgeVariants } from "./variants";
  * Badge component
  *
  * A versatile badge component for status indicators, tags, and labels.
- * Built with .ts-only React using createElement.
  *
  * @example
- * ```typescript
+ * ```tsx
  * import { Badge } from '@tpmjs/ui/Badge/Badge';
- * import { createElement } from 'react';
  *
  * function MyComponent() {
- *   return createElement(Badge, {
- *     variant: 'success',
- *     children: 'Active',
- *   });
+ *   return <Badge variant="success">Active</Badge>;
  * }
  * ```
  */
 export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
 	({ className, variant = "default", size = "md", ...props }, ref) => {
-		return createElement("div", {
-			className: cn(
-				badgeVariants({
-					variant,
-					size,
-				}),
-				className,
-			),
-			ref,
-			...props,
-		});
+		return (
+			<div
+				ref={ref}
+				className={cn(
+					badgeVariants({
+						variant,
+						size,
+					}),
+					className,
+				)}
+				{...props}
+			/>
+		);
 	},
 );
 

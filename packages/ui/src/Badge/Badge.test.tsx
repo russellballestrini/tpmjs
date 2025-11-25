@@ -1,19 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
 import { describe, expect, it } from "vitest";
 import { Badge } from "./Badge";
 
 describe("Badge", () => {
 	describe("Rendering", () => {
 		it("renders a badge element", () => {
-			render(createElement(Badge, { "data-testid": "badge" }, "Badge"));
+			render(<Badge data-testid="badge">Badge</Badge>);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toBeInTheDocument();
 			expect(badge.tagName).toBe("DIV");
 		});
 
 		it("renders children text", () => {
-			render(createElement(Badge, null, "Active"));
+			render(<Badge>Active</Badge>);
 			expect(screen.getByText("Active")).toBeInTheDocument();
 		});
 	});
@@ -21,14 +20,9 @@ describe("Badge", () => {
 	describe("Variants", () => {
 		it("applies default variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "default",
-						"data-testid": "badge",
-					},
-					"Default",
-				),
+				<Badge variant="default" data-testid="badge">
+					Default
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-primary");
@@ -38,14 +32,9 @@ describe("Badge", () => {
 
 		it("applies secondary variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "secondary",
-						"data-testid": "badge",
-					},
-					"Secondary",
-				),
+				<Badge variant="secondary" data-testid="badge">
+					Secondary
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-secondary");
@@ -54,14 +43,9 @@ describe("Badge", () => {
 
 		it("applies outline variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "outline",
-						"data-testid": "badge",
-					},
-					"Outline",
-				),
+				<Badge variant="outline" data-testid="badge">
+					Outline
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-transparent");
@@ -71,14 +55,9 @@ describe("Badge", () => {
 
 		it("applies success variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "success",
-						"data-testid": "badge",
-					},
-					"Success",
-				),
+				<Badge variant="success" data-testid="badge">
+					Success
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-success");
@@ -87,14 +66,9 @@ describe("Badge", () => {
 
 		it("applies error variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "error",
-						"data-testid": "badge",
-					},
-					"Error",
-				),
+				<Badge variant="error" data-testid="badge">
+					Error
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-error");
@@ -103,14 +77,9 @@ describe("Badge", () => {
 
 		it("applies warning variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "warning",
-						"data-testid": "badge",
-					},
-					"Warning",
-				),
+				<Badge variant="warning" data-testid="badge">
+					Warning
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-warning");
@@ -119,14 +88,9 @@ describe("Badge", () => {
 
 		it("applies info variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "info",
-						"data-testid": "badge",
-					},
-					"Info",
-				),
+				<Badge variant="info" data-testid="badge">
+					Info
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-info");
@@ -137,14 +101,9 @@ describe("Badge", () => {
 	describe("Sizes", () => {
 		it("applies small size classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						size: "sm",
-						"data-testid": "badge",
-					},
-					"Small",
-				),
+				<Badge size="sm" data-testid="badge">
+					Small
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("px-2");
@@ -154,14 +113,9 @@ describe("Badge", () => {
 
 		it("applies medium size classes (default)", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						size: "md",
-						"data-testid": "badge",
-					},
-					"Medium",
-				),
+				<Badge size="md" data-testid="badge">
+					Medium
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("px-2.5");
@@ -171,14 +125,9 @@ describe("Badge", () => {
 
 		it("applies large size classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						size: "lg",
-						"data-testid": "badge",
-					},
-					"Large",
-				),
+				<Badge size="lg" data-testid="badge">
+					Large
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("px-3");
@@ -187,15 +136,7 @@ describe("Badge", () => {
 		});
 
 		it("uses medium size by default", () => {
-			render(
-				createElement(
-					Badge,
-					{
-						"data-testid": "badge",
-					},
-					"Default",
-				),
-			);
+			render(<Badge data-testid="badge">Default</Badge>);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("text-sm");
 		});
@@ -204,14 +145,9 @@ describe("Badge", () => {
 	describe("HTML Attributes", () => {
 		it("passes through id attribute", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						id: "badge-id",
-						"data-testid": "badge",
-					},
-					"Badge",
-				),
+				<Badge id="badge-id" data-testid="badge">
+					Badge
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("id", "badge-id");
@@ -219,14 +155,9 @@ describe("Badge", () => {
 
 		it("passes through title attribute", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						title: "Badge tooltip",
-						"data-testid": "badge",
-					},
-					"Badge",
-				),
+				<Badge title="Badge tooltip" data-testid="badge">
+					Badge
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("title", "Badge tooltip");
@@ -235,16 +166,14 @@ describe("Badge", () => {
 		it("passes through onClick handler", () => {
 			let clicked = false;
 			render(
-				createElement(
-					Badge,
-					{
-						onClick: () => {
-							clicked = true;
-						},
-						"data-testid": "badge",
-					},
-					"Clickable",
-				),
+				<Badge
+					onClick={() => {
+						clicked = true;
+					}}
+					data-testid="badge"
+				>
+					Clickable
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			badge.click();
@@ -253,14 +182,9 @@ describe("Badge", () => {
 
 		it("passes through role attribute", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						role: "status",
-						"data-testid": "badge",
-					},
-					"Status",
-				),
+				<Badge role="status" data-testid="badge">
+					Status
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("role", "status");
@@ -270,14 +194,9 @@ describe("Badge", () => {
 	describe("ARIA Attributes", () => {
 		it("passes through aria-label", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						"aria-label": "Status badge",
-						"data-testid": "badge",
-					},
-					"Active",
-				),
+				<Badge aria-label="Status badge" data-testid="badge">
+					Active
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("aria-label", "Status badge");
@@ -285,14 +204,9 @@ describe("Badge", () => {
 
 		it("passes through aria-describedby", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						"aria-describedby": "description-id",
-						"data-testid": "badge",
-					},
-					"Badge",
-				),
+				<Badge aria-describedby="description-id" data-testid="badge">
+					Badge
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("aria-describedby", "description-id");
@@ -300,14 +214,9 @@ describe("Badge", () => {
 
 		it("passes through aria-live for dynamic status", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						"aria-live": "polite",
-						"data-testid": "badge",
-					},
-					"Updating",
-				),
+				<Badge aria-live="polite" data-testid="badge">
+					Updating
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("aria-live", "polite");
@@ -317,14 +226,9 @@ describe("Badge", () => {
 	describe("Custom className", () => {
 		it("merges custom className with variant classes", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						className: "custom-badge",
-						"data-testid": "badge",
-					},
-					"Custom",
-				),
+				<Badge className="custom-badge" data-testid="badge">
+					Custom
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("custom-badge");
@@ -337,15 +241,13 @@ describe("Badge", () => {
 		it("forwards ref to badge element", () => {
 			let ref: HTMLDivElement | null = null;
 			render(
-				createElement(
-					Badge,
-					{
-						ref: (el: HTMLDivElement | null) => {
-							ref = el;
-						},
-					},
-					"Badge",
-				),
+				<Badge
+					ref={(el: HTMLDivElement | null) => {
+						ref = el;
+					}}
+				>
+					Badge
+				</Badge>,
 			);
 			expect(ref).toBeInstanceOf(HTMLDivElement);
 			expect(ref?.tagName).toBe("DIV");
@@ -354,15 +256,7 @@ describe("Badge", () => {
 
 	describe("Base Classes", () => {
 		it("always includes base classes", () => {
-			render(
-				createElement(
-					Badge,
-					{
-						"data-testid": "badge",
-					},
-					"Badge",
-				),
-			);
+			render(<Badge data-testid="badge">Badge</Badge>);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("inline-flex");
 			expect(badge.className).toContain("items-center");
@@ -372,15 +266,7 @@ describe("Badge", () => {
 		});
 
 		it("includes transition classes", () => {
-			render(
-				createElement(
-					Badge,
-					{
-						"data-testid": "badge",
-					},
-					"Badge",
-				),
-			);
+			render(<Badge data-testid="badge">Badge</Badge>);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("transition-base");
 		});
@@ -389,15 +275,9 @@ describe("Badge", () => {
 	describe("Compound Scenarios", () => {
 		it("works correctly with success variant and small size", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "success",
-						size: "sm",
-						"data-testid": "badge",
-					},
-					"Success",
-				),
+				<Badge variant="success" size="sm" data-testid="badge">
+					Success
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-success");
@@ -406,15 +286,9 @@ describe("Badge", () => {
 
 		it("works correctly with error variant and large size", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "error",
-						size: "lg",
-						"data-testid": "badge",
-					},
-					"Error",
-				),
+				<Badge variant="error" size="lg" data-testid="badge">
+					Error
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-error");
@@ -423,15 +297,13 @@ describe("Badge", () => {
 
 		it("works correctly with outline variant and custom className", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "outline",
-						className: "hover:bg-accent",
-						"data-testid": "badge",
-					},
-					"Outlined",
-				),
+				<Badge
+					variant="outline"
+					className="hover:bg-accent"
+					data-testid="badge"
+				>
+					Outlined
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-transparent");
@@ -441,17 +313,15 @@ describe("Badge", () => {
 		it("works correctly with warning variant and onClick", () => {
 			let clicked = false;
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "warning",
-						onClick: () => {
-							clicked = true;
-						},
-						"data-testid": "badge",
-					},
-					"Warning",
-				),
+				<Badge
+					variant="warning"
+					onClick={() => {
+						clicked = true;
+					}}
+					data-testid="badge"
+				>
+					Warning
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-warning");
@@ -462,23 +332,20 @@ describe("Badge", () => {
 
 	describe("Content Types", () => {
 		it("renders with text content", () => {
-			render(createElement(Badge, null, "Text"));
+			render(<Badge>Text</Badge>);
 			expect(screen.getByText("Text")).toBeInTheDocument();
 		});
 
 		it("renders with numeric content", () => {
-			render(createElement(Badge, null, "42"));
+			render(<Badge>42</Badge>);
 			expect(screen.getByText("42")).toBeInTheDocument();
 		});
 
 		it("renders with multiple children", () => {
 			render(
-				createElement(
-					Badge,
-					null,
-					"Count: ",
-					createElement("strong", null, "5"),
-				),
+				<Badge>
+					Count: <strong>5</strong>
+				</Badge>,
 			);
 			expect(screen.getByText("Count:")).toBeInTheDocument();
 			expect(screen.getByText("5")).toBeInTheDocument();
@@ -488,16 +355,14 @@ describe("Badge", () => {
 	describe("Semantic Usage", () => {
 		it("can be used as status indicator with role", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "success",
-						role: "status",
-						"aria-label": "Online status",
-						"data-testid": "badge",
-					},
-					"Online",
-				),
+				<Badge
+					variant="success"
+					role="status"
+					aria-label="Online status"
+					data-testid="badge"
+				>
+					Online
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("role", "status");
@@ -507,16 +372,14 @@ describe("Badge", () => {
 
 		it("can be used as notification count", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "error",
-						size: "sm",
-						"aria-label": "3 unread messages",
-						"data-testid": "badge",
-					},
-					"3",
-				),
+				<Badge
+					variant="error"
+					size="sm"
+					aria-label="3 unread messages"
+					data-testid="badge"
+				>
+					3
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge).toHaveAttribute("aria-label", "3 unread messages");
@@ -525,14 +388,9 @@ describe("Badge", () => {
 
 		it("can be used as tag/label", () => {
 			render(
-				createElement(
-					Badge,
-					{
-						variant: "outline",
-						"data-testid": "badge",
-					},
-					"TypeScript",
-				),
+				<Badge variant="outline" data-testid="badge">
+					TypeScript
+				</Badge>,
 			);
 			const badge = screen.getByTestId("badge");
 			expect(badge.className).toContain("bg-transparent");
