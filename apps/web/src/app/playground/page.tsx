@@ -30,6 +30,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ThemeToggle } from '../../components/ThemeToggle';
 
+// Disable static generation for this page due to context provider requirements
+export const dynamic = 'force-dynamic';
+
 export default function PlaygroundPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [progress, setProgress] = useState(65);
