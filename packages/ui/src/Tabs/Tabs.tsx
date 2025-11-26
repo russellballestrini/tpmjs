@@ -1,11 +1,14 @@
 import { cn } from "@tpmjs/utils/cn";
 import { forwardRef } from "react";
-import type { TabsProps } from "./types";
+import type { Tab, TabsProps } from "./types";
 import {
 	tabButtonVariants,
 	tabCountVariants,
 	tabsContainerVariants,
 } from "./variants";
+
+// Re-export types for consumers
+export type { Tab, TabsProps };
 
 /**
  * Tabs component

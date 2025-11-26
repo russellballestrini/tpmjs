@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tabs } from "@tpmjs/ui/Tabs/Tabs";
-import type { Tab } from "@tpmjs/ui/Tabs/types";
+import { type Tab, Tabs } from "@tpmjs/ui/Tabs/Tabs";
 import { createElement } from "react";
 
 const meta = {
