@@ -15,20 +15,7 @@ export const RadioGroupContext = createContext<RadioGroupContextValue | null>(nu
 export const useRadioGroup = () => {
   const context = useContext(RadioGroupContext);
   if (!context) {
-    // During SSR/prerendering, context might not be available yet
-    // Only throw during actual runtime (browser or test environment)
-    if (typeof window !== 'undefined' || process.env.NODE_ENV === 'test') {
-      throw new Error('Radio must be used within a RadioGroup');
-    }
-    // Return default values for SSR/prerendering
-    return {
-      name: '',
-      value: undefined,
-      onChange: () => {},
-      state: 'default' as const,
-      size: 'md' as const,
-      disabled: false,
-    };
+    throw new Error('Radio must be used within a RadioGroup');
   }
   return context;
 };
