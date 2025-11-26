@@ -56,9 +56,7 @@
 			"default": "./dist/GridContainer/GridContainer.js"
 		}
 	},
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",
@@ -83,6 +81,7 @@
 		"@tpmjs/tsconfig": "workspace:*",
 		"@types/react": "^19.0.2",
 		"@types/react-dom": "^19.0.2",
+		"eslint": "^9.39.1",
 		"glob": "^13.0.0",
 		"happy-dom": "^15.11.7",
 		"react": "^19.0.0",
