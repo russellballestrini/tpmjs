@@ -113,7 +113,7 @@ export function HeroSection(): React.ReactElement {
               {/* Search Button */}
               <Button
                 size="lg"
-                className="brutalist-border-thick absolute right-2 top-1/2 -translate-y-1/2 h-12 md:h-16 px-6 md:px-8 bg-brutalist-accent text-background hover:bg-brutalist-accent-hover font-bold uppercase tracking-wider shadow-lg"
+                className="brutalist-border-thick absolute right-2 top-1/2 -translate-y-1/2 h-12 md:h-16 px-6 md:px-8 bg-brutalist-accent text-foreground hover:bg-brutalist-accent-hover font-bold uppercase tracking-wider shadow-lg"
                 style={{ borderRadius: 0, borderColor: 'hsl(var(--foreground))' }}
               >
                 Search
