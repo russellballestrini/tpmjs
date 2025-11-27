@@ -107,11 +107,10 @@ export default function ToolSearchPage(): React.ReactElement {
   }, [searchQuery, activeTab, categoryFilter]);
 
   // Filter tools by selected tags (client-side)
-  const displayedTools = selectedTags.length > 0
-    ? tools.filter((tool) =>
-        selectedTags.some((tag) => tool.tags.includes(tag))
-      )
-    : tools;
+  const displayedTools =
+    selectedTags.length > 0
+      ? tools.filter((tool) => selectedTags.some((tag) => tool.tags.includes(tag)))
+      : tools;
 
   return createElement('div', { className: 'min-h-screen bg-background' }, [
     // Header
@@ -195,7 +194,7 @@ export default function ToolSearchPage(): React.ReactElement {
           ),
 
           // Clear filters button
-          (categoryFilter !== 'all' || selectedTags.length > 0)
+          categoryFilter !== 'all' || selectedTags.length > 0
             ? createElement(
                 Button,
                 {

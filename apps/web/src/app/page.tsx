@@ -56,7 +56,8 @@ export default function HomePage(): React.ReactElement {
                 Discover AI Tools
               </h2>
               <p className="text-lg text-foreground-secondary max-w-2xl mx-auto mb-8">
-                Browse our collection of AI-ready tools. Search, filter, and integrate the perfect tools for your AI agents.
+                Browse our collection of AI-ready tools. Search, filter, and integrate the perfect
+                tools for your AI agents.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link href="/tool/tool-search">
@@ -78,7 +79,8 @@ export default function HomePage(): React.ReactElement {
                 <div className="text-4xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold mb-2 text-foreground">Smart Search</h3>
                 <p className="text-foreground-secondary">
-                  Find tools by name, category, tags, or functionality. Advanced filters help you discover exactly what you need.
+                  Find tools by name, category, tags, or functionality. Advanced filters help you
+                  discover exactly what you need.
                 </p>
               </div>
 
@@ -86,7 +88,8 @@ export default function HomePage(): React.ReactElement {
                 <div className="text-4xl mb-4">⚡</div>
                 <h3 className="text-xl font-semibold mb-2 text-foreground">Quality Metrics</h3>
                 <p className="text-foreground-secondary">
-                  Every tool includes quality scores, download stats, and community feedback to help you choose wisely.
+                  Every tool includes quality scores, download stats, and community feedback to help
+                  you choose wisely.
                 </p>
               </div>
 
@@ -94,7 +97,8 @@ export default function HomePage(): React.ReactElement {
                 <div className="text-4xl mb-4">🤖</div>
                 <h3 className="text-xl font-semibold mb-2 text-foreground">AI Agent Ready</h3>
                 <p className="text-foreground-secondary">
-                  All tools include AI agent integration guides, parameter specs, and usage examples.
+                  All tools include AI agent integration guides, parameter specs, and usage
+                  examples.
                 </p>
               </div>
             </div>
