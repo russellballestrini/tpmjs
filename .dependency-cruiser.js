@@ -105,6 +105,8 @@ export default {
       from: {},
       to: {
         couldNotResolve: true,
+        // Allow TypeScript path aliases that are resolved by the TS compiler
+        pathNot: ['^~/'],
       },
     },
     {
@@ -148,9 +150,6 @@ export default {
     enhancedResolveOptions: {
       exportsFields: ['exports'],
       conditionNames: ['import', 'require', 'node', 'default'],
-      alias: {
-        '~': path.resolve(__dirname, 'apps/web/src'),
-      },
     },
     reporterOptions: {
       dot: {
