@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/tool.ts', 'src/registry.ts'],
+  entry: ['src/tool.ts', 'src/registry.ts', 'src/tpmjs.ts'],
   format: ['esm'],
   dts: true,
   clean: true,

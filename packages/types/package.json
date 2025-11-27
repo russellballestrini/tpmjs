@@ -10,6 +10,10 @@
     "./registry": {
       "types": "./dist/registry.d.ts",
       "default": "./dist/registry.js"
+    },
+    "./tpmjs": {
+      "types": "./dist/tpmjs.d.ts",
+      "default": "./dist/tpmjs.js"
     }
   },
   "files": ["dist"],
