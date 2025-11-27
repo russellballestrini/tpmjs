@@ -42,3 +42,4 @@ storybook-static
 # changesets
 .changeset/*.md
 !.changeset/README.md
+.vercel

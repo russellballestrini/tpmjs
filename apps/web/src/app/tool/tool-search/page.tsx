@@ -17,6 +17,7 @@ import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Input } from '@tpmjs/ui/Input/Input';
 import { ProgressBar } from '@tpmjs/ui/ProgressBar/ProgressBar';
 import { Tabs } from '@tpmjs/ui/Tabs/Tabs';
+import Link from 'next/link';
 import { createElement, useEffect, useState } from 'react';
 
 interface Tool {
@@ -322,9 +323,13 @@ export default function ToolSearchPage(): React.ReactElement {
                       CardFooter,
                       { key: 'footer' },
                       createElement(
-                        Button,
-                        { variant: 'outline', size: 'sm', className: 'w-full' },
-                        'View Details'
+                        Link,
+                        { href: `/tool/${encodeURIComponent(tool.npmPackageName)}` },
+                        createElement(
+                          Button,
+                          { variant: 'outline', size: 'sm', className: 'w-full' },
+                          'View Details'
+                        )
                       )
                     ),
                   ])
