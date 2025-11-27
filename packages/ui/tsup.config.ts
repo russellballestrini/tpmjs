@@ -33,6 +33,11 @@ const entries = allFiles.filter((file) => {
 // Manually add RadioGroup which doesn't match the folder/file naming convention
 entries.push('src/Radio/RadioGroup.tsx');
 
+// Manually add system hooks
+entries.push('src/system/hooks/useScrollReveal.ts');
+entries.push('src/system/hooks/useCountUp.ts');
+entries.push('src/system/hooks/useParallax.ts');
+
 export default defineConfig({
   entry: entries,
   format: ['esm'],
@@ -44,12 +49,17 @@ export default defineConfig({
     },
   },
   clean: true,
-  treeshake: true,
+  treeshake: false, // Disable treeshaking to preserve 'use client'
   splitting: false,
   external: ['react', 'react-dom'],
+  banner: {
+    js: '"use client";',
+  },
   esbuildOptions(options) {
     options.jsx = 'automatic';
+    // Try to preserve directives
+    options.legalComments = 'inline';
   },
   // Reduce bundle size by minifying in production
-  minify: process.env.NODE_ENV === 'production',
+  minify: false, // Disable minification to preserve directives
 });

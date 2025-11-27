@@ -1,5 +1,5 @@
 import { cn } from '@tpmjs/utils/cn';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { useControlled } from '../system/useControlled';
 import type { RadioGroupContextValue, RadioGroupProps } from './types';
 import { radioGroupVariants } from './variants';

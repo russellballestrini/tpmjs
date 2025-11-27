@@ -86,6 +86,26 @@
     "./FormField/FormField": {
       "types": "./dist/FormField/FormField.d.ts",
       "default": "./dist/FormField/FormField.js"
+    },
+    "./AnimatedCounter/AnimatedCounter": {
+      "types": "./dist/AnimatedCounter/AnimatedCounter.d.ts",
+      "default": "./dist/AnimatedCounter/AnimatedCounter.js"
+    },
+    "./StatCard/StatCard": {
+      "types": "./dist/StatCard/StatCard.d.ts",
+      "default": "./dist/StatCard/StatCard.js"
+    },
+    "./system/hooks/useScrollReveal": {
+      "types": "./dist/system/hooks/useScrollReveal.d.ts",
+      "default": "./dist/system/hooks/useScrollReveal.js"
+    },
+    "./system/hooks/useCountUp": {
+      "types": "./dist/system/hooks/useCountUp.d.ts",
+      "default": "./dist/system/hooks/useCountUp.js"
+    },
+    "./system/hooks/useParallax": {
+      "types": "./dist/system/hooks/useParallax.d.ts",
+      "default": "./dist/system/hooks/useParallax.js"
     }
   },
   "files": ["dist"],

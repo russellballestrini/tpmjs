@@ -8,13 +8,23 @@ import { RadioGroup } from './RadioGroup';
 
 describe('Radio', () => {
   describe('Rendering', () => {
-    it('should throw error when not used within RadioGroup', () => {
-      // Suppress console.error for this test
+    it('should render with default values when not used within RadioGroup (SSR/hydration compatibility)', () => {
+      // In development mode, should log a console.error after mounting
       const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      expect(() => render(<Radio value="test" />)).toThrow(
-        'Radio must be used within a RadioGroup'
-      );
+      const { container } = render(<Radio value="test" />);
+
+      // Should render successfully (for SSR/hydration compatibility)
+      const radio = container.querySelector('input[type="radio"]');
+      expect(radio).toBeInTheDocument();
+      expect(radio).toHaveAttribute('value', 'test');
+
+      // In development, should have logged an error after mount
+      if (process.env.NODE_ENV !== 'production') {
+        expect(spy).toHaveBeenCalledWith(
+          expect.stringContaining('Radio must be used within a RadioGroup')
+        );
+      }
 
       spy.mockRestore();
     });

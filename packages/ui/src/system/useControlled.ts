@@ -64,6 +64,7 @@ export function useControlled<T>({
   }
 
   // Callback to update the value
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- isControlled is a ref value and never changes
   const setValueIfUncontrolled = useCallback((newValue: T) => {
     if (!isControlled) {
       setValue(newValue);

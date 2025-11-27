@@ -4,9 +4,11 @@ import { Card, CardContent } from '@tpmjs/ui/Card/Card';
 import { Container } from '@tpmjs/ui/Container/Container';
 import { Header } from '@tpmjs/ui/Header/Header';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
-import { Input } from '@tpmjs/ui/Input/Input';
+import { StatCard } from '@tpmjs/ui/StatCard/StatCard';
 import Link from 'next/link';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { CategoryGrid } from '../components/home/CategoryGrid';
+import { HeroSection } from '../components/home/HeroSection';
 import { categories, featuredTools, statistics } from '../data/homePageData';
 
 export default function HomePage(): React.ReactElement {
@@ -50,49 +52,42 @@ export default function HomePage(): React.ReactElement {
       />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative py-24 overflow-hidden dotted-grid-background">
-          <div className="absolute inset-0 bg-background/95" />
-          <Container size="xl" padding="lg">
-            <div className="max-w-3xl mx-auto text-center space-y-8 relative z-10">
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-                Tool Registry for AI Agents
-              </h1>
-              <p className="text-xl text-foreground-secondary">
-                Discover, share, and integrate tools that give your agents superpowers. The registry
-                for AI tools.
-              </p>
-              <div className="flex gap-3 items-center max-w-2xl mx-auto">
-                <Input size="lg" placeholder="Search tools..." className="flex-1" />
-                <Button size="lg" className="px-8">
-                  Search
-                </Button>
-              </div>
-            </div>
-          </Container>
-        </section>
+        {/* Hero Section - Brutalist Design */}
+        <HeroSection />
 
-        {/* Featured Tools Section */}
-        <section className="py-16 bg-surface blueprint-background">
+        {/* Featured Tools Section - Brutalist Cards */}
+        <section className="py-16 md:py-24 bg-background">
           <Container size="xl" padding="lg">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-semibold">Featured Tools</h2>
-              <Button variant="ghost">View all tools →</Button>
+            <div className="flex items-center justify-between mb-12">
+              <h2 className="brutalist-subheading">Featured Tools</h2>
+              <Button variant="ghost" className="uppercase tracking-wider font-bold">
+                View all →
+              </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredTools.map((tool) => (
-                <Card key={tool.id} className="hover:shadow-lg transition-shadow">
+              {featuredTools.map((tool, index) => (
+                <Card
+                  key={tool.id}
+                  variant="brutalist"
+                  className={`opacity-0 animate-brutalist-entrance stagger-${index % 6}`}
+                >
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-start gap-4">
-                      <Icon icon={tool.icon} size="lg" className="text-primary" />
+                      <Icon icon={tool.icon} size="lg" className="text-brutalist-accent" />
                       <div className="flex-1 space-y-2">
-                        <h3 className="text-lg font-semibold">{tool.name}</h3>
-                        <p className="text-sm text-foreground-secondary">{tool.description}</p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={tool.categoryVariant} size="sm">
+                        <h3 className="text-lg font-bold uppercase tracking-tight">{tool.name}</h3>
+                        <p className="text-sm text-foreground-secondary leading-relaxed">
+                          {tool.description}
+                        </p>
+                        <div className="flex items-center gap-3 pt-2">
+                          <Badge
+                            variant={tool.categoryVariant}
+                            size="sm"
+                            className="uppercase font-mono text-xs"
+                          >
                             {tool.category}
                           </Badge>
-                          <span className="text-xs text-foreground-tertiary">
+                          <span className="text-sm font-mono font-bold text-foreground">
                             {tool.weeklyUsage}
                           </span>
                         </div>
@@ -105,46 +100,42 @@ export default function HomePage(): React.ReactElement {
           </Container>
         </section>
 
-        {/* Categories Section */}
-        <section className="py-16">
+        {/* Categories Section - Brutalist Masonry Grid */}
+        <section className="py-16 md:py-24 bg-surface">
           <Container size="xl" padding="lg">
-            <h2 className="text-3xl font-semibold mb-8">Browse by Category</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {categories.map((category) => (
-                <Card
-                  key={category.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <CardContent className={`p-6 ${category.colorClass}`}>
-                    <div className="space-y-3">
-                      <Icon icon={category.icon} size="lg" />
-                      <h3 className="font-semibold">{category.name}</h3>
-                      <p className="text-sm opacity-90">{category.toolCount} tools</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <h2 className="brutalist-subheading mb-12">Browse by Category</h2>
+            <CategoryGrid categories={categories} />
           </Container>
         </section>
 
-        {/* Statistics Section */}
-        <section className="py-16 bg-surface grid-background">
-          <Container size="xl" padding="lg">
-            <h2 className="text-3xl font-semibold mb-8 text-center">Platform Statistics</h2>
+        {/* Statistics Section - Brutalist Stat Cards */}
+        <section className="py-16 md:py-24 bg-background relative overflow-hidden">
+          {/* Subtle grid background */}
+          <div className="absolute inset-0 opacity-[0.02] grid-background" />
+
+          <Container size="xl" padding="lg" className="relative z-10">
+            <h2 className="brutalist-subheading mb-12 text-center">Platform Statistics</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {statistics.map((stat) => (
-                <Card key={stat.label}>
-                  <CardContent className="p-6 text-center space-y-3">
-                    <Icon icon={stat.icon} size="lg" className="mx-auto text-primary" />
-                    <div className="text-4xl font-bold">{stat.value}</div>
-                    <div className="text-sm font-medium">{stat.label}</div>
-                    {stat.subtext && (
-                      <div className="text-xs text-foreground-tertiary">{stat.subtext}</div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+              {statistics.map((stat, index) => {
+                // Extract number from value string
+                const numValue = Number.parseInt(stat.value.replace(/[^0-9]/g, ''), 10);
+                const suffix = stat.value.replace(/[0-9,]/g, '');
+
+                return (
+                  <StatCard
+                    key={stat.label}
+                    value={numValue}
+                    label={stat.label}
+                    subtext={stat.subtext}
+                    suffix={suffix}
+                    variant="brutalist"
+                    size="md"
+                    showBar={true}
+                    barProgress={60 + index * 10}
+                    className={`opacity-0 animate-brutalist-entrance stagger-${index + 1}`}
+                  />
+                );
+              })}
             </div>
           </Container>
         </section>

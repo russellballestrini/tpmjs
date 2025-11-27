@@ -38,6 +38,17 @@ export const cardVariants = createVariants({
       ].join(' '),
 
       ghost: ['bg-transparent text-foreground'].join(' '),
+
+      brutalist: [
+        'border-[6px] border-foreground',
+        'bg-background text-foreground',
+        'rounded-none',
+        'hover:shadow-[0_10px_0_0_hsl(var(--brutalist-accent))]',
+        'hover:-translate-y-1',
+        'active:shadow-[0_6px_0_0_hsl(var(--brutalist-accent))]',
+        'active:translate-y-0',
+        'transition-all duration-200',
+      ].join(' '),
     },
 
     padding: {
