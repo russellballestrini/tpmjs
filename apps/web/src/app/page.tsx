@@ -22,20 +22,16 @@ export default function HomePage(): React.ReactElement {
         sticky={true}
         actions={
           <div className="flex items-center gap-4">
+            <Link href="/tool/tool-search">
+              <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
+                Tools
+              </Button>
+            </Link>
             <Link href="/playground">
               <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
                 Playground
               </Button>
             </Link>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
-              Pro
-            </Button>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
-              Teams
-            </Button>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
-              Pricing
-            </Button>
             <Button variant="ghost" size="sm" className="text-foreground hover:text-foreground">
               Documentation
             </Button>
@@ -51,6 +47,59 @@ export default function HomePage(): React.ReactElement {
       <main className="flex-1">
         {/* Hero Section - Dithered Design */}
         <HeroSection />
+
+        {/* Featured Tools Section */}
+        <section className="py-16 bg-background">
+          <Container size="xl" padding="lg">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+                Discover AI Tools
+              </h2>
+              <p className="text-lg text-foreground-secondary max-w-2xl mx-auto mb-8">
+                Browse our collection of AI-ready tools. Search, filter, and integrate the perfect tools for your AI agents.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link href="/tool/tool-search">
+                  <Button size="lg" variant="default">
+                    Browse All Tools
+                  </Button>
+                </Link>
+                <Link href="/tool/tool-search">
+                  <Button size="lg" variant="outline">
+                    Search Tools
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              {/* Feature cards */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="text-4xl mb-4">🔍</div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Smart Search</h3>
+                <p className="text-foreground-secondary">
+                  Find tools by name, category, tags, or functionality. Advanced filters help you discover exactly what you need.
+                </p>
+              </div>
+
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="text-4xl mb-4">⚡</div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">Quality Metrics</h3>
+                <p className="text-foreground-secondary">
+                  Every tool includes quality scores, download stats, and community feedback to help you choose wisely.
+                </p>
+              </div>
+
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="text-4xl mb-4">🤖</div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">AI Agent Ready</h3>
+                <p className="text-foreground-secondary">
+                  All tools include AI agent integration guides, parameter specs, and usage examples.
+                </p>
+              </div>
+            </div>
+          </Container>
+        </section>
       </main>
 
       {/* Footer */}
