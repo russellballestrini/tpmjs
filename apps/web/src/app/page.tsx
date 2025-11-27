@@ -3,11 +3,7 @@ import { Container } from '@tpmjs/ui/Container/Container';
 import { Header } from '@tpmjs/ui/Header/Header';
 import Link from 'next/link';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { DeveloperStories } from '../components/home/DeveloperStories';
-import { EcosystemStats } from '../components/home/EcosystemStats';
 import { HeroSection } from '../components/home/HeroSection';
-import { ProblemSection } from '../components/home/ProblemSection';
-import { VisionSection } from '../components/home/VisionSection';
 
 export default function HomePage(): React.ReactElement {
   return (
@@ -55,18 +51,6 @@ export default function HomePage(): React.ReactElement {
       <main className="flex-1">
         {/* Hero Section - Dithered Design */}
         <HeroSection />
-
-        {/* Problem Section - The fragmented world before tpmjs */}
-        <ProblemSection />
-
-        {/* Vision Section - The dynamic ecosystem with tpmjs */}
-        <VisionSection />
-
-        {/* Ecosystem Stats - Live metrics with dithered counters */}
-        <EcosystemStats />
-
-        {/* Developer Stories - Code-first testimonials */}
-        <DeveloperStories />
       </main>
 
       {/* Footer */}
