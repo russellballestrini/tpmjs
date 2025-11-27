@@ -17,30 +17,69 @@ import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Input } from '@tpmjs/ui/Input/Input';
 import { ProgressBar } from '@tpmjs/ui/ProgressBar/ProgressBar';
 import { Tabs } from '@tpmjs/ui/Tabs/Tabs';
-import { createElement, useState } from 'react';
-import { getFeaturedTools, mockTools } from '../../../data/toolData';
+import { createElement, useEffect, useState } from 'react';
+
+interface Tool {
+  id: string;
+  npmPackageName: string;
+  npmVersion: string;
+  description: string;
+  category: string;
+  tags: string[];
+  npmRepository: { url: string; type: string } | null;
+  qualityScore: string;
+  isOfficial: boolean;
+  npmDownloadsLastMonth: number;
+}
 
 /**
  * Tool Registry Search Page
  *
- * Demonstrates all UI components in a realistic tool registry layout.
+ * Fetches tools from the /api/tools endpoint and displays them in a searchable grid.
  * Built with .ts-only React using createElement.
  */
 export default function ToolSearchPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Get tools based on active tab
-  const displayedTools = activeTab === 'featured' ? getFeaturedTools() : mockTools;
+  // Fetch tools from API
+  useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
 
-  // Filter by search query
-  const filteredTools = searchQuery
-    ? displayedTools.filter(
-        (tool) =>
-          tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : displayedTools;
+        if (searchQuery) {
+          params.set('q', searchQuery);
+        }
+
+        if (activeTab === 'featured') {
+          params.set('official', 'true');
+        }
+
+        const response = await fetch(`/api/tools?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.success) {
+          setTools(data.data);
+          setError(null);
+        } else {
+          setError(data.error || 'Failed to fetch tools');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTools();
+  }, [searchQuery, activeTab]);
+
+  const displayedTools = tools;
 
   return createElement('div', { className: 'min-h-screen bg-background' }, [
     // Header
@@ -98,11 +137,11 @@ export default function ToolSearchPage(): React.ReactElement {
       createElement(Tabs, {
         key: 'tabs',
         tabs: [
-          { id: 'all', label: 'All Tools', count: mockTools.length },
+          { id: 'all', label: 'All Tools', count: tools.length },
           {
             id: 'featured',
-            label: 'Featured',
-            count: getFeaturedTools().length,
+            label: 'Official',
+            count: tools.filter((t) => t.isOfficial).length,
           },
         ],
         activeTab,
@@ -111,144 +150,199 @@ export default function ToolSearchPage(): React.ReactElement {
         className: 'mb-8',
       }),
 
+      // Loading state
+      loading
+        ? createElement(
+            'div',
+            {
+              key: 'loading',
+              className: 'text-center py-12 text-foreground-secondary',
+            },
+            'Loading tools...'
+          )
+        : null,
+
+      // Error state
+      error
+        ? createElement(
+            'div',
+            {
+              key: 'error',
+              className: 'text-center py-12 text-red-500',
+            },
+            `Error: ${error}`
+          )
+        : null,
+
       // Tool grid
-      createElement(
-        'div',
-        {
-          key: 'tools-grid',
-          className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
-        },
-        filteredTools.length > 0
-          ? filteredTools.map((tool) =>
-              createElement(Card, { key: tool.id, className: 'flex flex-col' }, [
-                createElement(CardHeader, { key: 'header' }, [
-                  createElement(
-                    'div',
-                    {
-                      key: 'title-row',
-                      className: 'flex items-start justify-between gap-2',
-                    },
-                    [
-                      createElement(CardTitle, { key: 'title' }, tool.name),
+      !loading && !error
+        ? createElement(
+            'div',
+            {
+              key: 'tools-grid',
+              className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+            },
+            displayedTools.length > 0
+              ? displayedTools.map((tool) =>
+                  createElement(Card, { key: tool.id, className: 'flex flex-col' }, [
+                    createElement(CardHeader, { key: 'header' }, [
                       createElement(
-                        'a',
+                        'div',
                         {
-                          key: 'link',
-                          href: tool.repository,
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                          className:
-                            'text-foreground-secondary hover:text-foreground transition-colors',
+                          key: 'title-row',
+                          className: 'flex items-start justify-between gap-2',
                         },
-                        createElement(Icon, {
-                          icon: 'externalLink',
-                          size: 'sm',
-                        })
+                        [
+                          createElement(CardTitle, { key: 'title' }, tool.npmPackageName),
+                          tool.npmRepository
+                            ? createElement(
+                                'a',
+                                {
+                                  key: 'link',
+                                  href: tool.npmRepository.url
+                                    .replace('git+', '')
+                                    .replace('.git', ''),
+                                  target: '_blank',
+                                  rel: 'noopener noreferrer',
+                                  className:
+                                    'text-foreground-secondary hover:text-foreground transition-colors',
+                                },
+                                createElement(Icon, {
+                                  icon: 'externalLink',
+                                  size: 'sm',
+                                })
+                              )
+                            : null,
+                        ]
                       ),
-                    ]
-                  ),
-                  createElement(CardDescription, { key: 'description' }, tool.description),
-                ]),
-                createElement(CardContent, { key: 'content', className: 'flex-1 space-y-4' }, [
-                  // Category badge
-                  createElement(
-                    'div',
-                    {
-                      key: 'category',
-                      className: 'flex items-center gap-2',
-                    },
-                    [
+                      createElement(CardDescription, { key: 'description' }, tool.description),
+                    ]),
+                    createElement(CardContent, { key: 'content', className: 'flex-1 space-y-4' }, [
+                      // Category badge and version
                       createElement(
-                        Badge,
+                        'div',
                         {
-                          key: 'badge',
-                          variant: 'secondary',
-                          size: 'sm',
+                          key: 'category',
+                          className: 'flex items-center gap-2 flex-wrap',
                         },
-                        tool.category
+                        [
+                          createElement(
+                            Badge,
+                            {
+                              key: 'badge',
+                              variant: 'secondary',
+                              size: 'sm',
+                            },
+                            tool.category
+                          ),
+                          createElement(
+                            'span',
+                            {
+                              key: 'version',
+                              className: 'text-xs text-foreground-tertiary',
+                            },
+                            `v${tool.npmVersion}`
+                          ),
+                          tool.isOfficial
+                            ? createElement(
+                                Badge,
+                                {
+                                  key: 'official',
+                                  variant: 'default',
+                                  size: 'sm',
+                                },
+                                'Official'
+                              )
+                            : null,
+                        ]
                       ),
-                      createElement(
-                        'span',
-                        {
-                          key: 'version',
-                          className: 'text-xs text-foreground-tertiary',
-                        },
-                        `v${tool.version}`
-                      ),
-                    ]
-                  ),
 
-                  // Tags
-                  createElement(
-                    'div',
-                    { key: 'tags', className: 'flex flex-wrap gap-2' },
-                    tool.tags.map((tag) =>
-                      createElement(Badge, { key: tag, variant: 'outline', size: 'sm' }, tag)
-                    )
-                  ),
+                      // Tags
+                      tool.tags.length > 0
+                        ? createElement(
+                            'div',
+                            { key: 'tags', className: 'flex flex-wrap gap-2' },
+                            tool.tags
+                              .slice(0, 5)
+                              .map((tag) =>
+                                createElement(
+                                  Badge,
+                                  { key: tag, variant: 'outline', size: 'sm' },
+                                  tag
+                                )
+                              )
+                          )
+                        : null,
 
-                  // Usage progress
-                  createElement('div', { key: 'usage', className: 'space-y-2' }, [
+                      // Quality score and downloads
+                      createElement('div', { key: 'stats', className: 'space-y-2' }, [
+                        createElement(
+                          'div',
+                          {
+                            key: 'label',
+                            className: 'flex items-center justify-between text-sm',
+                          },
+                          [
+                            createElement(
+                              'span',
+                              { key: 'text', className: 'text-foreground-secondary' },
+                              'Quality Score'
+                            ),
+                            createElement(
+                              'span',
+                              { key: 'downloads', className: 'text-foreground-tertiary' },
+                              `${tool.npmDownloadsLastMonth.toLocaleString()} downloads/mo`
+                            ),
+                          ]
+                        ),
+                        createElement(ProgressBar, {
+                          key: 'progress',
+                          value: Number.parseFloat(tool.qualityScore) * 100,
+                          variant:
+                            Number.parseFloat(tool.qualityScore) >= 0.7
+                              ? 'success'
+                              : Number.parseFloat(tool.qualityScore) >= 0.5
+                                ? 'primary'
+                                : 'warning',
+                          size: 'sm',
+                          showLabel: true,
+                        }),
+                      ]),
+
+                      // Install command
+                      createElement(CodeBlock, {
+                        key: 'install',
+                        code: `npm install ${tool.npmPackageName}`,
+                        language: 'bash',
+                        size: 'sm',
+                        showCopy: true,
+                      }),
+                    ]),
                     createElement(
-                      'div',
-                      {
-                        key: 'label',
-                        className: 'flex items-center justify-between text-sm',
-                      },
-                      [
-                        createElement(
-                          'span',
-                          { key: 'text', className: 'text-foreground-secondary' },
-                          'Usage'
-                        ),
-                        createElement(
-                          'span',
-                          { key: 'stars', className: 'text-foreground-tertiary' },
-                          `⭐ ${tool.stars.toLocaleString()}`
-                        ),
-                      ]
+                      CardFooter,
+                      { key: 'footer' },
+                      createElement(
+                        Button,
+                        { variant: 'outline', size: 'sm', className: 'w-full' },
+                        'View Details'
+                      )
                     ),
-                    createElement(ProgressBar, {
-                      key: 'progress',
-                      value: tool.usage,
-                      variant:
-                        tool.usage >= 70 ? 'success' : tool.usage >= 50 ? 'primary' : 'warning',
-                      size: 'sm',
-                      showLabel: true,
-                    }),
-                  ]),
-
-                  // Install command
-                  createElement(CodeBlock, {
-                    key: 'install',
-                    code: tool.installCommand,
-                    language: 'bash',
-                    size: 'sm',
-                    showCopy: true,
-                  }),
-                ]),
-                createElement(
-                  CardFooter,
-                  { key: 'footer' },
+                  ])
+                )
+              : [
                   createElement(
-                    Button,
-                    { variant: 'outline', size: 'sm', className: 'w-full' },
-                    'View Details'
-                  )
-                ),
-              ])
-            )
-          : [
-              createElement(
-                'div',
-                {
-                  key: 'no-results',
-                  className: 'col-span-full text-center py-12 text-foreground-tertiary',
-                },
-                `No tools found matching "${searchQuery}"`
-              ),
-            ]
-      ),
+                    'div',
+                    {
+                      key: 'no-results',
+                      className: 'col-span-full text-center py-12 text-foreground-tertiary',
+                    },
+                    searchQuery
+                      ? `No tools found matching "${searchQuery}"`
+                      : 'No tools available yet'
+                  ),
+                ]
+          )
+        : null,
     ]),
   ]);
 }
