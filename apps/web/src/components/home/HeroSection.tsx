@@ -113,7 +113,10 @@ export function HeroSection(): React.ReactElement {
 
             {/* Helper Text */}
             <div className="mt-4 flex items-center gap-4 font-mono text-xs text-foreground-tertiary uppercase tracking-wider">
-              <span>Try: &ldquo;web-scraper&rdquo;, &ldquo;github-manager&rdquo;, &ldquo;sql-query&rdquo;</span>
+              <span>
+                Try: &ldquo;web-scraper&rdquo;, &ldquo;github-manager&rdquo;,
+                &ldquo;sql-query&rdquo;
+              </span>
             </div>
           </div>
         </div>
