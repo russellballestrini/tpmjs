@@ -8,5 +8,19 @@
   "github": {
     "silent": false,
     "autoJobCancelation": true
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/sync/changes",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/sync/keyword",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/sync/metrics",
+      "schedule": "0 * * * *"
+    }
+  ]
 }

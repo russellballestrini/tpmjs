@@ -53,6 +53,8 @@ const PackageVersionSchema = z.object({
       tarball: z.string(),
     })
     .optional(),
+  // Publishing metadata
+  publishedAt: z.string().optional(),
 });
 
 /**
@@ -144,7 +146,18 @@ export async function fetchLatestPackageVersion(
     return null;
   }
 
-  return metadata.versions[latestTag] || null;
+  const version = metadata.versions[latestTag];
+  if (!version) {
+    return null;
+  }
+
+  // Add publishedAt from metadata.time
+  const publishedAt = metadata.time?.[latestTag];
+
+  return {
+    ...version,
+    publishedAt,
+  };
 }
 
 /**

@@ -13,6 +13,7 @@
   "dependencies": {
     "@tpmjs/db": "workspace:*",
     "@tpmjs/env": "workspace:*",
+    "@tpmjs/npm-client": "workspace:*",
     "@tpmjs/types": "workspace:*",
     "@tpmjs/ui": "workspace:*",
     "@tpmjs/utils": "workspace:*",
