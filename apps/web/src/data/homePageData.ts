@@ -220,3 +220,71 @@ export const statistics: Statistic[] = [
     subtext: '95th percentile latency',
   },
 ];
+
+export interface ProblemPoint {
+  title: string;
+  description: string;
+  icon: IconName;
+}
+
+export const problemPoints: ProblemPoint[] = [
+  {
+    title: 'Manual Configuration',
+    description:
+      'Agents require hard-coded tool imports and manual config files for every capability',
+    icon: 'copy',
+  },
+  {
+    title: 'No Discovery',
+    description: 'Tools must be known ahead of time—no way to find new capabilities on-demand',
+    icon: 'check',
+  },
+  {
+    title: 'Version Hell',
+    description: 'Breaking changes force manual updates across every agent using a tool',
+    icon: 'chevronDown',
+  },
+  {
+    title: 'Limited Capabilities',
+    description: 'Static toolsets restrict agents to predetermined functions—no room to grow',
+    icon: 'externalLink',
+  },
+];
+
+export interface DeveloperStory {
+  code: string;
+  quote: string;
+  author: string;
+  company: string;
+}
+
+export const developerStories: DeveloperStory[] = [
+  {
+    code: `const agent = new Agent({
+  tools: await tpmjs.search({
+    query: "email, slack, calendar"
+  })
+})`,
+    quote: 'Reduced config from 500 lines to 3',
+    author: 'Sarah Chen',
+    company: 'Support.ai',
+  },
+  {
+    code: `// Agents find tools semantically
+const tools = await tpmjs.search({
+  query: "parse PDF invoices",
+  limit: 5
+})`,
+    quote: 'Our agents adapt to new doc formats instantly',
+    author: 'Marcus Rodriguez',
+    company: 'DocFlow',
+  },
+  {
+    code: `// No more version conflicts
+agent.loadTool("sql-query@latest")
+// Always get the newest, tested version`,
+    quote: 'Eliminated 80% of our integration bugs',
+    author: 'Priya Patel',
+    company: 'DataSync Pro',
+  },
+];

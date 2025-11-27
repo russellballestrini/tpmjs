@@ -33,10 +33,16 @@ const entries = allFiles.filter((file) => {
 // Manually add RadioGroup which doesn't match the folder/file naming convention
 entries.push('src/Radio/RadioGroup.tsx');
 
+// Manually add DitherText components
+entries.push('src/DitherText/DitherHeadline.tsx');
+entries.push('src/DitherText/DitherSectionHeader.tsx');
+
 // Manually add system hooks
 entries.push('src/system/hooks/useScrollReveal.ts');
 entries.push('src/system/hooks/useCountUp.ts');
 entries.push('src/system/hooks/useParallax.ts');
+entries.push('src/system/hooks/useReducedMotion.ts');
+entries.push('src/system/hooks/useDitherAnimation.ts');
 
 export default defineConfig({
   entry: entries,

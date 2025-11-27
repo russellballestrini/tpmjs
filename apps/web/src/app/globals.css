@@ -449,6 +449,47 @@
     animation-delay: 400ms;
   }
 
+  /* Blueprint Scanline Animation */
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  .blueprint-scanline {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--brutalist-accent) / 0.3),
+      transparent
+    );
+    animation: scanline 30s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Slide Down Animation (for Activity Stream) */
+  @keyframes slide-down {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-down {
+    animation: slide-down 300ms ease-out forwards;
+  }
+
   /* Motion Preferences - Accessibility */
   @media (prefers-reduced-motion: reduce) {
     *,

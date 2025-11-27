@@ -2,6 +2,7 @@
 
 import { AnimatedCounter } from '@tpmjs/ui/AnimatedCounter/AnimatedCounter';
 import { Button } from '@tpmjs/ui/Button/Button';
+import { DitherHeadline } from '@tpmjs/ui/DitherText/DitherHeadline';
 import { Input } from '@tpmjs/ui/Input/Input';
 import { useParallax } from '@tpmjs/ui/system/hooks/useParallax';
 import { useState } from 'react';
@@ -12,7 +13,7 @@ export function HeroSection(): React.ReactElement {
 
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-background">
-      {/* Brutalist Grid Background - Static, Not Parallax */}
+      {/* Blueprint Grid Background - Static with Scanline */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="absolute inset-0"
@@ -25,6 +26,9 @@ export function HeroSection(): React.ReactElement {
           }}
         />
       </div>
+
+      {/* Animated Scanline */}
+      <div className="blueprint-scanline" />
 
       {/* Content Container with Parallax */}
       <div
@@ -49,15 +53,18 @@ export function HeroSection(): React.ReactElement {
           }}
         />
 
-        {/* Main Heading - Brutalist Typography */}
+        {/* Main Heading - Dithered Typography */}
         <div className="max-w-7xl">
-          <h1 className="brutalist-heading mb-8 leading-[0.85] tracking-tighter">
-            TOOL
-            <br />
-            REGISTRY
-            <br />
-            <span className="text-brutalist-accent">FOR AI AGENTS</span>
-          </h1>
+          <DitherHeadline
+            delay={500}
+            stagger={150}
+            speed={1500}
+            fontSize="clamp(60px, 12vw, 120px)"
+            fontWeight="800"
+            className="mb-8"
+          >
+            TOOL REGISTRY FOR AI AGENTS
+          </DitherHeadline>
 
           {/* Live Metrics Strip */}
           <div className="mb-12 flex flex-wrap items-center gap-3 border-l-[6px] border-brutalist-accent pl-6 font-mono text-base md:text-lg font-bold uppercase tracking-wider">

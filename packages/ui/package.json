@@ -106,6 +106,34 @@
     "./system/hooks/useParallax": {
       "types": "./dist/system/hooks/useParallax.d.ts",
       "default": "./dist/system/hooks/useParallax.js"
+    },
+    "./system/hooks/useReducedMotion": {
+      "types": "./dist/system/hooks/useReducedMotion.d.ts",
+      "default": "./dist/system/hooks/useReducedMotion.js"
+    },
+    "./system/hooks/useDitherAnimation": {
+      "types": "./dist/system/hooks/useDitherAnimation.d.ts",
+      "default": "./dist/system/hooks/useDitherAnimation.js"
+    },
+    "./DitherCanvas/DitherCanvas": {
+      "types": "./dist/DitherCanvas/DitherCanvas.d.ts",
+      "default": "./dist/DitherCanvas/DitherCanvas.js"
+    },
+    "./DitherText/DitherHeadline": {
+      "types": "./dist/DitherText/DitherHeadline.d.ts",
+      "default": "./dist/DitherText/DitherHeadline.js"
+    },
+    "./DitherText/DitherSectionHeader": {
+      "types": "./dist/DitherText/DitherSectionHeader.d.ts",
+      "default": "./dist/DitherText/DitherSectionHeader.js"
+    },
+    "./FlowDiagram/FlowDiagram": {
+      "types": "./dist/FlowDiagram/FlowDiagram.d.ts",
+      "default": "./dist/FlowDiagram/FlowDiagram.js"
+    },
+    "./ActivityStream/ActivityStream": {
+      "types": "./dist/ActivityStream/ActivityStream.d.ts",
+      "default": "./dist/ActivityStream/ActivityStream.js"
     }
   },
   "files": ["dist"],
