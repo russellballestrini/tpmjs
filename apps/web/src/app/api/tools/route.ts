@@ -1,8 +1,9 @@
-import { type Prisma, prisma } from '@tpmjs/db';
-import { type NextRequest, NextResponse } from 'next/server';
+// import { type Prisma, prisma } from '@tpmjs/db';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 /**
  * GET /api/tools
@@ -15,92 +16,99 @@ export const dynamic = 'force-dynamic';
  * - limit: Results per page (default: 20, max: 100)
  * - offset: Pagination offset (default: 0)
  */
-export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
+export async function GET() {
+  // Temporary: Return simple response to test if endpoint works
+  return NextResponse.json({
+    status: 'ok',
+    message: 'Tools endpoint working (database queries disabled for testing)',
+    timestamp: new Date().toISOString(),
+  });
 
-    // Parse query parameters
-    const query = searchParams.get('q');
-    const category = searchParams.get('category');
-    const officialParam = searchParams.get('official');
-    const limitParam = searchParams.get('limit');
-    const offsetParam = searchParams.get('offset');
+  // try {
+  //   const searchParams = request.nextUrl.searchParams;
 
-    // Validate and set defaults
-    const limit = Math.min(
-      Number.parseInt(limitParam || '20', 10),
-      100 // Max 100 results per page
-    );
-    const offset = Math.max(Number.parseInt(offsetParam || '0', 10), 0);
+  //   // Parse query parameters
+  //   const query = searchParams.get('q');
+  //   const category = searchParams.get('category');
+  //   const officialParam = searchParams.get('official');
+  //   const limitParam = searchParams.get('limit');
+  //   const offsetParam = searchParams.get('offset');
 
-    // Build where clause
-    const where: Prisma.ToolWhereInput = {};
+  //   // Validate and set defaults
+  //   const limit = Math.min(
+  //     Number.parseInt(limitParam || '20', 10),
+  //     100 // Max 100 results per page
+  //   );
+  //   const offset = Math.max(Number.parseInt(offsetParam || '0', 10), 0);
 
-    // Search filter (case-insensitive partial match)
-    if (query) {
-      where.OR = [
-        { npmPackageName: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } },
-        {
-          tags: {
-            hasSome: [query],
-          },
-        },
-      ];
-    }
+  //   // Build where clause
+  //   const where: Prisma.ToolWhereInput = {};
 
-    // Category filter
-    if (category) {
-      where.category = category;
-    }
+  //   // Search filter (case-insensitive partial match)
+  //   if (query) {
+  //     where.OR = [
+  //       { npmPackageName: { contains: query, mode: 'insensitive' } },
+  //       { description: { contains: query, mode: 'insensitive' } },
+  //       {
+  //         tags: {
+  //           hasSome: [query],
+  //         },
+  //       },
+  //     ];
+  //   }
 
-    // Official filter
-    if (officialParam !== null) {
-      where.isOfficial = officialParam === 'true';
-    }
+  //   // Category filter
+  //   if (category) {
+  //     where.category = category;
+  //   }
 
-    // Execute query with pagination
-    const [tools, totalCount] = await Promise.all([
-      prisma.tool.findMany({
-        where,
-        orderBy: [
-          { qualityScore: 'desc' },
-          { npmDownloadsLastMonth: 'desc' },
-          { createdAt: 'desc' },
-        ],
-        take: limit,
-        skip: offset,
-      }),
-      prisma.tool.count({ where }),
-    ]);
+  //   // Official filter
+  //   if (officialParam !== null) {
+  //     where.isOfficial = officialParam === 'true';
+  //   }
 
-    // Calculate pagination metadata
-    const hasMore = offset + limit < totalCount;
-    const totalPages = Math.ceil(totalCount / limit);
-    const currentPage = Math.floor(offset / limit) + 1;
+  //   // Execute query with pagination
+  //   const [tools, totalCount] = await Promise.all([
+  //     prisma.tool.findMany({
+  //       where,
+  //       orderBy: [
+  //         { qualityScore: 'desc' },
+  //         { npmDownloadsLastMonth: 'desc' },
+  //         { createdAt: 'desc' },
+  //       ],
+  //       take: limit,
+  //       skip: offset,
+  //     }),
+  //     prisma.tool.count({ where }),
+  //   ]);
 
-    return NextResponse.json({
-      success: true,
-      data: tools,
-      pagination: {
-        total: totalCount,
-        limit,
-        offset,
-        hasMore,
-        totalPages,
-        currentPage,
-      },
-    });
-  } catch (error) {
-    console.error('Error fetching tools:', error);
+  //   // Calculate pagination metadata
+  //   const hasMore = offset + limit < totalCount;
+  //   const totalPages = Math.ceil(totalCount / limit);
+  //   const currentPage = Math.floor(offset / limit) + 1;
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to fetch tools',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
-  }
+  //   return NextResponse.json({
+  //     success: true,
+  //     data: tools,
+  //     pagination: {
+  //       total: totalCount,
+  //       limit,
+  //       offset,
+  //       hasMore,
+  //       totalPages,
+  //       currentPage,
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.error('Error fetching tools:', error);
+
+  //   return NextResponse.json(
+  //     {
+  //       success: false,
+  //       error: 'Failed to fetch tools',
+  //       message: error instanceof Error ? error.message : 'Unknown error',
+  //     },
+  //     { status: 500 }
+  //   );
+  // }
 }
