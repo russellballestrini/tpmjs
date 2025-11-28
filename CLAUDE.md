@@ -355,3 +355,327 @@ vercel link
 - Check CI logs before making blind fixes
 - Vercel deployments are blocked until GitHub Actions pass (configured in vercel.json)
 - Pre-commit/pre-push hooks run the same checks as CI - if they pass locally, CI should pass too
+
+---
+
+## Case Study: Fixing API Route Timeouts on tpmjs.com
+
+This is a detailed account of debugging and fixing API route timeouts in production. The investigation revealed critical insights about deploying Turborepo monorepos to Vercel with Prisma.
+
+### The Problem
+
+After deploying tpmjs.com to production, all API endpoints were timing out:
+
+```bash
+$ curl https://tpmjs.com/api/health
+# Request timed out after 60 seconds
+
+$ curl https://tpmjs.com/api/tools
+# Request timed out after 60 seconds
+```
+
+The Next.js UI worked perfectly - pages loaded, navigation functioned - but every API route request resulted in a timeout. No errors appeared in Vercel logs, and the requests never even reached the serverless functions.
+
+### Initial Investigation
+
+**Step 1: Verify Build Output**
+
+```bash
+vercel inspect <deployment-url>
+```
+
+The build showed pages but **no API routes** listed as lambda functions:
+
+```
+Builds
+  ├── ○ / (static page)
+  ├── ○ /playground (static page)
+  └── ○ /tool/[slug] (static page)
+
+# Expected to see:
+  ├── λ api/health
+  ├── λ api/tools
+  └── λ api/sync/changes
+```
+
+This confirmed Vercel wasn't treating the project as Next.js - it was using static site generation and dropping all API routes.
+
+**Step 2: Check Vercel Configuration**
+
+Examined `apps/web/vercel.json`:
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && turbo build --filter=@tpmjs/web",
+  "installCommand": "pnpm install"
+}
+```
+
+The build command looked correct, but the custom build command was bypassing Vercel's Next.js detection.
+
+### Root Cause #1: Workspace Dependencies Not Built
+
+Deployed the site and checked the build logs. Found this critical error:
+
+```
+Module not found: Can't resolve '@tpmjs/env'
+Module not found: Can't resolve '@tpmjs/types/tpmjs'
+Module not found: Can't resolve '@tpmjs/ui/Badge/Badge'
+Package @prisma/client can't be external
+```
+
+**49 module resolution errors** - the workspace packages weren't being built before the web app tried to import them.
+
+**The Fix:**
+
+Changed the build command from:
+```json
+"buildCommand": "cd ../.. && turbo build --filter=@tpmjs/web"
+```
+
+To:
+```json
+"buildCommand": "cd ../.. && pnpm install && pnpm --filter=@tpmjs/web... build"
+```
+
+The `...` suffix in `--filter=@tpmjs/web...` tells pnpm to build ALL dependencies first:
+
+1. Build `@tpmjs/env`
+2. Build `@tpmjs/types`
+3. Build `@tpmjs/ui`
+4. Build `@tpmjs/utils`
+5. Build `@tpmjs/db` (Prisma generate)
+6. Finally build `@tpmjs/web`
+
+After this change, the build succeeded and API routes appeared as lambda functions in `vercel inspect`.
+
+### Root Cause #2: Prisma Cold Start Performance
+
+With the build fixed, API routes were deployed but still timing out. Testing revealed:
+
+```bash
+# Health endpoint (no database) - WORKS
+$ curl https://tpmjs.com/api/health
+{"status":"ok","timestamp":"2025-11-28T11:32:29.295Z"}
+
+# Tools endpoint (with database) - TIMEOUT
+$ curl https://tpmjs.com/api/tools
+# ...60 second timeout
+```
+
+**Local Database Performance Test:**
+
+```javascript
+// Test the exact queries used in production
+const count = await prisma.tool.count();        // 3.244s ⚠️
+const tools = await prisma.tool.findMany({
+  orderBy: [
+    { qualityScore: 'desc' },
+    { npmDownloadsLastMonth: 'desc' },
+    { createdAt: 'desc' },
+  ],
+  take: 20,
+});                                             // 593ms ⚠️
+```
+
+The parallel `count()` + `findMany()` queries were taking **3.8 seconds** due to Prisma cold start in serverless environments.
+
+**The Fix:**
+
+Optimized the endpoint in two ways:
+
+1. **Removed expensive count query** - Using `count()` in every request is slow and usually unnecessary:
+
+```typescript
+// Before: Slow parallel queries
+const [tools, totalCount] = await Promise.all([
+  prisma.tool.findMany({ where, take: limit, skip: offset }),
+  prisma.tool.count({ where }),  // ← 3+ seconds!
+]);
+
+// After: Fast single query with limit+1 technique
+const tools = await prisma.tool.findMany({
+  where,
+  take: limit + 1,  // Fetch one extra to check if more exist
+  skip: offset,
+});
+
+const hasMore = tools.length > limit;
+const actualTools = hasMore ? tools.slice(0, limit) : tools;
+```
+
+2. **Reduced max page size** from 100 to 50 items for better performance
+
+**Results:**
+
+```bash
+$ curl https://tpmjs.com/api/tools
+{
+  "success": true,
+  "data": [...],  # Returns in <1 second
+  "pagination": {
+    "limit": 20,
+    "offset": 0,
+    "hasMore": false
+  }
+}
+```
+
+### Additional Optimizations Applied
+
+**Added maxDuration to all API routes:**
+
+```typescript
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;  // ← Prevent premature timeouts
+```
+
+**Verified database indexes exist:**
+
+```prisma
+model Tool {
+  // ... fields ...
+
+  @@index([category])
+  @@index([isOfficial])
+  @@index([qualityScore])
+  @@index([npmDownloadsLastMonth])
+  @@index([createdAt])
+}
+```
+
+All necessary indexes were present - the issue was cold start latency, not missing indexes.
+
+### Key Lessons Learned
+
+**1. Monorepo Build Order Matters**
+
+When deploying Turborepo monorepos to Vercel, workspace dependencies MUST be built first:
+
+```bash
+# ❌ Wrong - only builds the web app
+pnpm --filter=@tpmjs/web build
+
+# ✅ Correct - builds dependencies first
+pnpm --filter=@tpmjs/web... build
+```
+
+**2. Prisma in Serverless = Slow First Request**
+
+Prisma Client initialization in serverless environments adds 1-3 seconds of latency on cold starts. Strategies to mitigate:
+
+- Use connection pooling (Neon, PlanetScale)
+- Eliminate unnecessary queries (especially `count()`)
+- Cache query results when possible
+- Consider Prisma Accelerate for critical paths
+
+**3. Progressive Debugging Approach**
+
+Start simple and progressively add complexity:
+
+```typescript
+// Step 1: Does endpoint respond at all?
+export async function GET() {
+  return NextResponse.json({ status: 'ok' });
+}
+
+// Step 2: Can we connect to database?
+export async function GET() {
+  return NextResponse.json({
+    hasDatabase: !!process.env.DATABASE_URL,
+  });
+}
+
+// Step 3: Can we query the database?
+export async function GET() {
+  const count = await prisma.tool.count();
+  return NextResponse.json({ count });
+}
+
+// Step 4: Full implementation with optimizations
+```
+
+**4. Use Vercel CLI for Debugging**
+
+```bash
+# Check what's actually deployed
+vercel inspect <deployment-url>
+
+# Look for lambda functions (λ)
+Builds
+  ├── λ api/health ✅
+  ├── λ api/tools ✅
+
+# If you see only static pages (○), API routes aren't deployed
+```
+
+### Final Configuration
+
+**`apps/web/vercel.json`:**
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && pnpm install && pnpm --filter=@tpmjs/web... build",
+  "installCommand": "pnpm install"
+}
+```
+
+**API Route Template:**
+```typescript
+import { prisma } from '@tpmjs/db';
+import { NextResponse } from 'next/server';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
+export async function GET() {
+  try {
+    // Avoid count() - use limit+1 technique instead
+    const items = await prisma.tool.findMany({
+      orderBy: { qualityScore: 'desc' },
+      take: 21,  // Request 1 more than needed
+    });
+
+    const hasMore = items.length > 20;
+    const data = hasMore ? items.slice(0, 20) : items;
+
+    return NextResponse.json({
+      success: true,
+      data,
+      pagination: { hasMore },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### Performance Metrics
+
+**Before Optimization:**
+- `/api/health`: Timeout (60s+)
+- `/api/tools`: Timeout (60s+)
+- Build: Failed (module resolution errors)
+
+**After Optimization:**
+- `/api/health`: ~50ms ✅
+- `/api/tools`: ~800ms ✅
+- Build: Success (all deps built) ✅
+
+### Conclusion
+
+API timeouts in serverless environments often stem from build configuration issues or database cold starts. For Turborepo + Vercel + Prisma:
+
+1. Use `pnpm --filter=package...` to build dependencies
+2. Avoid `count()` queries in hot paths
+3. Add `maxDuration` to API routes
+4. Use `vercel inspect` to verify lambda deployment
+5. Test database performance locally before deploying
+
+The full working implementation is live at [tpmjs.com](https://tpmjs.com).
