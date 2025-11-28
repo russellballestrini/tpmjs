@@ -22,6 +22,10 @@ export async function GET() {
     status: 'ok',
     message: 'Tools endpoint working (database queries disabled for testing)',
     timestamp: new Date().toISOString(),
+    env: {
+      hasDatabase: !!process.env.DATABASE_URL,
+      databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...', // Show first 20 chars only for security
+    },
   });
 
   // try {
