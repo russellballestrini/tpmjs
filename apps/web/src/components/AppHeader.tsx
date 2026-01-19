@@ -159,6 +159,11 @@ function NavDropdown({ label, items }: NavDropdownProps): React.ReactElement {
 
 const developerItems: DropdownItem[] = [
   { href: '/docs', label: 'Documentation', description: 'Guides and tutorials' },
+  {
+    href: '/docs/developers/guide',
+    label: 'Developers Guide',
+    description: 'Scenarios, testing & quality',
+  },
   { href: '/docs/api', label: 'API Reference', description: 'REST & MCP endpoints' },
   { href: '/docs/executors', label: 'Custom Executors', description: 'Deploy your own' },
   { href: '/sdk', label: 'SDK', description: 'Build with our SDK' },
