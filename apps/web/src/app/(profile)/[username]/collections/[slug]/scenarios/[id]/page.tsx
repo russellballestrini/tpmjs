@@ -24,7 +24,7 @@ interface ScenarioRun {
     totalTokens: number | null;
     executionTimeMs: number | null;
     estimatedCost: number | null;
-  };
+  } | null;
   timestamps: {
     startedAt: string | null;
     completedAt: string | null;
@@ -361,12 +361,12 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                           <span className="text-sm text-foreground-secondary">
                             {formatDate(run.timestamps?.createdAt || null)}
                           </span>
-                          {run.usage.executionTimeMs && (
+                          {run.usage?.executionTimeMs && (
                             <span className="text-sm text-foreground-tertiary">
                               {formatDuration(run.usage.executionTimeMs)}
                             </span>
                           )}
-                          {run.usage.totalTokens && (
+                          {run.usage?.totalTokens && (
                             <span className="text-sm text-foreground-tertiary">
                               {run.usage.totalTokens.toLocaleString()} tokens
                             </span>
@@ -413,13 +413,13 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                                 <div>
                                   <span className="text-foreground-tertiary">Duration:</span>{' '}
                                   <span className="text-foreground">
-                                    {formatDuration(run.usage.executionTimeMs)}
+                                    {formatDuration(run.usage?.executionTimeMs || null)}
                                   </span>
                                 </div>
                                 <div>
                                   <span className="text-foreground-tertiary">Tokens:</span>{' '}
                                   <span className="text-foreground">
-                                    {run.usage.totalTokens?.toLocaleString() || '—'}
+                                    {run.usage?.totalTokens?.toLocaleString() || '—'}
                                   </span>
                                 </div>
                                 <div>
