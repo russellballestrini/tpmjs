@@ -3,11 +3,17 @@ name: Tool Request Pipeline
 on:
   issues:
     types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: number
 
 jobs:
   trigger-claude:
-    # Only run when 'tool-request' label is added
-    if: github.event.label.name == 'tool-request'
+    # Only run when 'tool-request' label is added or manual dispatch
+    if: github.event.label.name == 'tool-request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -17,11 +23,14 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // Get issue number from event or input
+            const issueNumber = context.issue?.number || ${{ inputs.issue_number || 0 }};
+
             // Add 'claude-working' label to indicate processing has started
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: issueNumber,
               labels: ['claude-working']
             });
 
@@ -29,6 +38,16 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            // Get issue number and details
+            const issueNumber = context.issue?.number || ${{ inputs.issue_number || 0 }};
+
+            // Fetch issue details for manual dispatch
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+
             const body = `@claude Please implement this tool request.
 
 **Instructions:**
@@ -39,16 +58,16 @@ jobs:
 5. This issue will auto-close 24h after successful publish
 
 **Issue Context:**
-- Issue #${context.issue.number}
-- Author: @${context.payload.issue.user.login}
-- Created: ${context.payload.issue.created_at}
+- Issue #${issueNumber}
+- Author: @${issue.user.login}
+- Created: ${issue.created_at}
 
 Begin implementation.`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: issueNumber,
               body: body
             });
 
