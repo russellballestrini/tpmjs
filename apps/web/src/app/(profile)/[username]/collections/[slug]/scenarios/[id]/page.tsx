@@ -16,7 +16,7 @@ interface ScenarioRun {
     model: string | null;
     verdict: string | null;
     reason: string | null;
-  };
+  } | null;
   assertions: { passed: string[]; failed: string[] } | null;
   usage: {
     inputTokens: number | null;
@@ -383,7 +383,7 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                         <div className="px-4 pb-4 border-t border-border/50">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                             {/* Evaluator */}
-                            {run.evaluator.verdict && (
+                            {run.evaluator?.verdict && (
                               <div className="p-3 bg-surface-secondary rounded-lg">
                                 <h4 className="text-xs font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
                                   LLM Evaluation
