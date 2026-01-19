@@ -66,9 +66,20 @@ const NAV_SECTIONS = [
   {
     title: 'Resources',
     items: [
-      { id: 'faq', label: 'FAQ' },
-      { id: 'troubleshooting', label: 'Troubleshooting' },
-      { id: 'changelog', label: 'Changelog' },
+      { id: 'faq', label: 'FAQ', description: 'Common questions' },
+      { id: 'troubleshooting', label: 'Troubleshooting', description: 'Common issues' },
+      { id: 'changelog', label: 'Changelog', description: 'Latest updates' },
+      { id: 'style-guide', label: 'Style Guide', description: 'UI components' },
+    ],
+  },
+  {
+    title: 'Developers',
+    items: [
+      {
+        id: 'developers-guide',
+        label: 'Developers Guide',
+        description: 'Scenarios, testing & quality',
+      },
     ],
   },
 ];

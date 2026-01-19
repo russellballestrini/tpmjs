@@ -1,11 +1,10 @@
-project:
-  name: "tpmjs-official-tools"
-  domain: "tpmjs.tools"
+name: "tpmjs-official-tools"
+root: "."
 
-targets:
-  kind: "block"
-  discover:
-    root: "."
+# AI Configuration
+ai:
+  provider: "openai"
+  model: "gpt-4o-mini"
 
 # =============================================================================
 # PHILOSOPHY - Core principles that guide all tool development
@@ -420,6 +419,29 @@ domain:
     exe_command_result:
       fields: [stdout, stderr, exitCode]
       description: "Result of executing a command on an exe.dev VM"
+
+    # -------------------------------------------------------------------------
+    # E2B Cloud Sandbox entities
+    # -------------------------------------------------------------------------
+    e2b_sandbox:
+      fields: [sandboxId, templateId, status, startedAt, clientId, metadata]
+      description: "E2B cloud sandbox instance for AI code execution"
+
+    e2b_sandbox_list:
+      fields: [sandboxes, count]
+      description: "Collection of E2B sandboxes"
+
+    e2b_exec_result:
+      fields: [stdout, stderr, exitCode, results, error, duration]
+      description: "Result of code execution in E2B sandbox"
+
+    e2b_file_info:
+      fields: [name, path, type, size]
+      description: "File or directory information in E2B sandbox"
+
+    e2b_metrics:
+      fields: [cpuPct, memUsedMB, networkIngressMB, networkEgressMB]
+      description: "E2B sandbox resource metrics"
 
     # -------------------------------------------------------------------------
     # HLLM entities
@@ -7604,28 +7626,602 @@ blocks:
         description: "Brief summary of the conversation"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
+  # ---------------------------------------------------------------------------
+  # R) E2B Cloud Sandbox - AI Code Execution Platform (22 tools)
+  # ---------------------------------------------------------------------------
+  # Environment Variables Required:
+  #   E2B_API_KEY - API key from https://e2b.dev/dashboard
+  #
+  # SDK Packages:
+  #   JavaScript/TypeScript: @e2b/code-interpreter, e2b
+  #   Python: e2b-code-interpreter, e2b
+  #   CLI: @e2b/cli (npm) or e2b (brew)
+  # ---------------------------------------------------------------------------
+
+  e2b.createSandbox:
+    type: utility
+    description: "Creates a new E2B cloud sandbox from a template. Sandboxes are isolated Linux environments for AI code execution with configurable resources and timeout."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: |
+          Must use E2B SDK to create sandbox:
+          - Import Sandbox from @e2b/code-interpreter or e2b
+          - Use Sandbox.create() with template and options
+          - Support custom metadata, timeout, and environment variables
+      - id: auth_handling
+        description: "Must use E2B_API_KEY environment variable for authentication"
+      - id: resource_config
+        description: "Support configuring CPU cores, memory, and timeout"
+    inputs:
+      - name: template
+        type: string
+        optional: true
+        description: "Template ID to use (default: base, code-interpreter-v1 for Python/JS)"
+      - name: timeoutMs
+        type: number
+        optional: true
+        description: "Sandbox timeout in milliseconds (default: 300000 = 5 minutes)"
+      - name: metadata
+        type: object
+        optional: true
+        description: "Custom metadata key-value pairs to attach to sandbox"
+      - name: envVars
+        type: object
+        optional: true
+        description: "Environment variables to set in the sandbox"
+      - name: cpuCount
+        type: number
+        optional: true
+        description: "Number of CPU cores (1-8)"
+      - name: memoryMB
+        type: number
+        optional: true
+        description: "Memory in MB (128-8192)"
+    outputs:
+      - name: sandboxId
+        type: string
+        description: "Unique identifier for the sandbox"
+      - name: templateId
+        type: string
+        description: "Template the sandbox was created from"
+      - name: clientId
+        type: string
+        description: "Client ID for WebSocket connections"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.getSandbox:
+    type: utility
+    description: "Connect to and verify an existing E2B sandbox is running. Returns sandbox ID and connection status."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use Sandbox.connect() to verify sandbox exists and is accessible"
+      - id: error_handling
+        description: "Must throw descriptive error when sandbox ID is empty or connection fails"
+      - id: input_validation
+        description: "Must validate sandboxId is non-empty before connecting"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox to retrieve"
+    outputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the connected sandbox"
+      - name: templateId
+        type: string
+        description: "Template ID if available, defaults to 'base'"
+      - name: status
+        type: string
+        description: "Connection status (running)"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.listSandboxes:
+    type: utility
+    description: "Lists all running E2B sandboxes in your account with their status and metadata."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use Sandbox.list() to get all running sandboxes"
+      - id: filtering
+        description: "Support filtering by metadata, template, or status"
+    inputs:
+      - name: templateId
+        type: string
+        optional: true
+        description: "Filter sandboxes by template ID"
+      - name: metadata
+        type: object
+        optional: true
+        description: "Filter sandboxes by metadata key-value pairs"
+    outputs:
+      - name: sandboxes
+        type: e2b_sandbox[]
+        description: "Array of running sandboxes"
+      - name: count
+        type: number
+        description: "Total number of sandboxes"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.killSandbox:
+    type: utility
+    description: "Terminates a running E2B sandbox immediately. All data and processes are destroyed."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must call sandbox.kill() or Sandbox.kill(sandboxId)"
+      - id: cleanup
+        description: "Ensure proper cleanup and return confirmation"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox to terminate"
+    outputs:
+      - name: killed
+        type: boolean
+        description: "Whether the sandbox was successfully terminated"
+      - name: sandboxId
+        type: string
+        description: "ID of the terminated sandbox"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.setTimeout:
+    type: utility
+    description: "Sets or extends the timeout for an E2B sandbox. The sandbox will be automatically killed when the timeout expires."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must call sandbox.setTimeout() with new timeout value"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: timeoutMs
+        type: number
+        description: "New timeout in milliseconds from now"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the timeout was updated"
+      - name: expiresAt
+        type: string
+        description: "ISO timestamp when sandbox will expire"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.runCode:
+    type: utility
+    description: "Executes code in an E2B sandbox. Supports Python, JavaScript, TypeScript, R, Java, and Bash with streaming output and result capture."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: |
+          Must use sandbox.runCode() for code execution:
+          - Support multiple languages via Code Interpreter template
+          - Handle stdout, stderr, and results (charts, dataframes)
+          - Support streaming output with onStdout/onStderr callbacks
+      - id: result_handling
+        description: "Must capture and return execution results including display data, errors, and output"
+      - id: timeout_handling
+        description: "Support configurable execution timeout"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox to execute in"
+      - name: code
+        type: string
+        description: "Code to execute"
+      - name: language
+        type: string
+        optional: true
+        description: "Language: python, javascript, typescript, r, java, bash (default: python)"
+      - name: timeoutMs
+        type: number
+        optional: true
+        description: "Execution timeout in milliseconds"
+      - name: envVars
+        type: object
+        optional: true
+        description: "Environment variables for this execution"
+    outputs:
+      - name: stdout
+        type: string
+        description: "Standard output from execution"
+      - name: stderr
+        type: string
+        description: "Standard error from execution"
+      - name: results
+        type: array
+        description: "Execution results (data, charts, dataframes as base64)"
+      - name: error
+        type: object
+        optional: true
+        description: "Error details if execution failed"
+      - name: duration
+        type: number
+        description: "Execution duration in milliseconds"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.runCommand:
+    type: utility
+    description: "Executes a shell command in an E2B sandbox with full shell access. Supports background processes and working directory."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: |
+          Must use sandbox.commands.run() for shell commands:
+          - Support cwd (working directory) option
+          - Support background execution
+          - Handle stdin if provided
+      - id: process_handling
+        description: "Return process ID for background commands"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: command
+        type: string
+        description: "Shell command to execute"
+      - name: cwd
+        type: string
+        optional: true
+        description: "Working directory for the command"
+      - name: background
+        type: boolean
+        optional: true
+        description: "Run command in background (default: false)"
+      - name: timeoutMs
+        type: number
+        optional: true
+        description: "Command timeout in milliseconds"
+    outputs:
+      - name: stdout
+        type: string
+        description: "Standard output"
+      - name: stderr
+        type: string
+        description: "Standard error"
+      - name: exitCode
+        type: number
+        description: "Exit code (0 for success)"
+      - name: processId
+        type: string
+        optional: true
+        description: "Process ID if running in background"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.writeFile:
+    type: utility
+    description: "Writes content to a file in the E2B sandbox filesystem. Creates directories as needed."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.write() to write file content"
+      - id: encoding_handling
+        description: "Support both text (string) and binary (base64) content"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Absolute path in sandbox (e.g., /home/user/file.txt)"
+      - name: content
+        type: string
+        description: "File content (string for text, base64 for binary)"
+      - name: encoding
+        type: string
+        optional: true
+        description: "Content encoding: utf-8 (default) or base64"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the file was written"
+      - name: path
+        type: string
+        description: "Path of the written file"
+      - name: size
+        type: number
+        description: "Size of the written file in bytes"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.readFile:
+    type: utility
+    description: "Reads content from a file in the E2B sandbox filesystem."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.read() to read file content"
+      - id: encoding_handling
+        description: "Support returning content as text or base64 for binary files"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Absolute path to file in sandbox"
+      - name: encoding
+        type: string
+        optional: true
+        description: "Return encoding: utf-8 (default) or base64"
+    outputs:
+      - name: content
+        type: string
+        description: "File content (string or base64)"
+      - name: path
+        type: string
+        description: "Path of the read file"
+      - name: size
+        type: number
+        description: "File size in bytes"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.listFiles:
+    type: utility
+    description: "Lists files and directories at a path in the E2B sandbox."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.list() to list directory contents"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Absolute path to list (e.g., /home/user)"
+    outputs:
+      - name: entries
+        type: e2b_file_info[]
+        description: "Array of files and directories"
+      - name: count
+        type: number
+        description: "Total number of entries"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.uploadFile:
+    type: utility
+    description: "Uploads a file to the E2B sandbox from base64 content or a URL."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.write() with proper content handling"
+      - id: url_handling
+        description: "Support fetching from URL and uploading to sandbox"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Destination path in sandbox"
+      - name: content
+        type: string
+        optional: true
+        description: "Base64 encoded file content"
+      - name: url
+        type: string
+        optional: true
+        description: "URL to fetch file from (alternative to content)"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the upload succeeded"
+      - name: path
+        type: string
+        description: "Path where file was uploaded"
+      - name: size
+        type: number
+        description: "Size of uploaded file in bytes"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.downloadFile:
+    type: utility
+    description: "Downloads a file from the E2B sandbox as base64 content."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.read() and return base64 encoded content"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Path to file in sandbox"
+    outputs:
+      - name: content
+        type: string
+        description: "Base64 encoded file content"
+      - name: filename
+        type: string
+        description: "Name of the downloaded file"
+      - name: size
+        type: number
+        description: "File size in bytes"
+      - name: mimeType
+        type: string
+        description: "Detected MIME type of the file"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.makeDirectory:
+    type: utility
+    description: "Creates a directory in the E2B sandbox filesystem. Creates parent directories as needed."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.makeDir() to create directory"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Absolute path of directory to create"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the directory was created"
+      - name: path
+        type: string
+        description: "Path of the created directory"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.watchDirectory:
+    type: utility
+    description: "Watches a directory in the E2B sandbox for file changes. Returns the initial state and supports registering for change events."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.files.watch() for filesystem watching"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: path
+        type: string
+        description: "Directory path to watch"
+    outputs:
+      - name: entries
+        type: e2b_file_info[]
+        description: "Current contents of the directory"
+      - name: watcherId
+        type: string
+        description: "Watcher ID for stopping the watch"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.pauseSandbox:
+    type: utility
+    description: "Disconnect from an E2B sandbox while keeping it running. The sandbox continues running in the cloud and can be reconnected using resumeSandbox."
+    path: "e2b"
+    domain_rules:
+      - id: cache_management
+        description: "Must remove sandbox from local cache to release connection"
+      - id: state_preservation
+        description: "Sandbox state is preserved in the cloud while disconnected"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox to disconnect from"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the disconnect succeeded"
+      - name: sandboxId
+        type: string
+        description: "ID of the disconnected sandbox (use with resumeSandbox to reconnect)"
+      - name: status
+        type: string
+        description: "Connection status (disconnected)"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.resumeSandbox:
+    type: utility
+    description: "Reconnect to a running E2B sandbox that was previously disconnected using pauseSandbox. Optionally set a new timeout."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use Sandbox.connect() to reconnect to sandbox"
+      - id: error_handling
+        description: "Must throw descriptive error if sandbox no longer exists or connection fails"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox to reconnect to"
+      - name: timeoutMs
+        type: number
+        optional: true
+        description: "New timeout for the sandbox in milliseconds"
+    outputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the reconnected sandbox"
+      - name: status
+        type: string
+        description: "Status of the sandbox after resume"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.setEnvVars:
+    type: utility
+    description: "Sets environment variables in an E2B sandbox. These are available to all subsequent code executions."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must set environment variables during sandbox creation or via API"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: envVars
+        type: object
+        description: "Key-value pairs of environment variables to set"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the environment variables were set"
+      - name: count
+        type: number
+        description: "Number of environment variables set"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.getMetrics:
+    type: utility
+    description: "Retrieves resource usage metrics for an E2B sandbox including CPU, memory, and network usage."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.getMetrics() to retrieve usage statistics"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+    outputs:
+      - name: cpuPct
+        type: number
+        description: "CPU usage percentage"
+      - name: memUsedMB
+        type: number
+        description: "Memory used in MB"
+      - name: networkIngressMB
+        type: number
+        description: "Network ingress in MB"
+      - name: networkEgressMB
+        type: number
+        description: "Network egress in MB"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  e2b.installPackages:
+    type: utility
+    description: "Installs Python packages in an E2B Code Interpreter sandbox using pip."
+    path: "e2b"
+    domain_rules:
+      - id: sdk_integration
+        description: "Must use sandbox.runCode() with pip install or sandbox.notebook.installPackages()"
+    inputs:
+      - name: sandboxId
+        type: string
+        description: "ID of the sandbox"
+      - name: packages
+        type: array
+        description: "Array of package names to install (e.g., ['numpy', 'pandas==2.0.0'])"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether all packages were installed"
+      - name: installed
+        type: array
+        description: "List of successfully installed packages"
+      - name: errors
+        type: array
+        optional: true
+        description: "List of packages that failed to install"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
 # =============================================================================
 # VALIDATORS - Which validators to run against each block
 # =============================================================================
 validators:
-  schema:
-    - id: io_schema
-      run: "schema.io.v1"
-
-  shape:
-    - id: export_shape
-      run: "shape.exports.v1"
-
-  domain:
-    - id: domain_alignment
-      run: "domain.validation.v1"
-
-pipeline:
-  name: "default"
-  steps:
-    - id: schema
-      run: "schema.io.v1"
-    - id: shape
-      run: "shape.exports.v1"
-    - id: domain
-      run: "domain.validation.v1"
+  - schema
+  - shape.ts
+  - domain

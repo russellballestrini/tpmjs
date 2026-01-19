@@ -1,0 +1,140 @@
+{
+  "name": "@tpmjs/tools-e2b",
+  "version": "0.1.0",
+  "description": "E2B cloud sandbox tools for AI code execution. Create sandboxes, run code in multiple languages, manage files, and control sandbox lifecycle.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "e2b",
+    "sandbox",
+    "code-interpreter",
+    "ai",
+    "code-execution",
+    "cloud"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ai": "6.0.23",
+    "@e2b/code-interpreter": "^1.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/e2b"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "sandbox",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "env": [
+      {
+        "name": "E2B_API_KEY",
+        "description": "API key for E2B authentication. Get yours at https://e2b.dev/dashboard",
+        "required": true
+      }
+    ],
+    "tools": [
+      {
+        "name": "createSandbox",
+        "description": "Create a new E2B cloud sandbox from a template with configurable resources and timeout."
+      },
+      {
+        "name": "getSandbox",
+        "description": "Get details of an existing E2B sandbox by ID."
+      },
+      {
+        "name": "listSandboxes",
+        "description": "List all running E2B sandboxes in your account."
+      },
+      {
+        "name": "killSandbox",
+        "description": "Terminate a running E2B sandbox immediately."
+      },
+      {
+        "name": "setTimeout",
+        "description": "Set or extend the timeout for an E2B sandbox."
+      },
+      {
+        "name": "runCode",
+        "description": "Execute code in an E2B sandbox. Supports Python, JavaScript, TypeScript, R, Java, and Bash."
+      },
+      {
+        "name": "runCommand",
+        "description": "Execute a shell command in an E2B sandbox."
+      },
+      {
+        "name": "writeFile",
+        "description": "Write content to a file in the E2B sandbox filesystem."
+      },
+      {
+        "name": "readFile",
+        "description": "Read content from a file in the E2B sandbox filesystem."
+      },
+      {
+        "name": "listFiles",
+        "description": "List files and directories at a path in the E2B sandbox."
+      },
+      {
+        "name": "uploadFile",
+        "description": "Upload a file to the E2B sandbox from base64 content or URL."
+      },
+      {
+        "name": "downloadFile",
+        "description": "Download a file from the E2B sandbox as base64 content."
+      },
+      {
+        "name": "makeDirectory",
+        "description": "Create a directory in the E2B sandbox filesystem."
+      },
+      {
+        "name": "watchDirectory",
+        "description": "Watch a directory in the E2B sandbox for file changes."
+      },
+      {
+        "name": "pauseSandbox",
+        "description": "Pause a running E2B sandbox to preserve state."
+      },
+      {
+        "name": "resumeSandbox",
+        "description": "Resume a previously paused E2B sandbox."
+      },
+      {
+        "name": "setEnvVars",
+        "description": "Set environment variables in an E2B sandbox."
+      },
+      {
+        "name": "getMetrics",
+        "description": "Get resource usage metrics for an E2B sandbox."
+      },
+      {
+        "name": "installPackages",
+        "description": "Install Python packages in an E2B Code Interpreter sandbox."
+      }
+    ]
+  }
+}
