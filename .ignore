@@ -1,0 +1,31 @@
+# Ignore patterns for OpenCode
+# These directories are excluded from search to reduce noise and improve relevance
+
+# Build outputs and caches
+**/dist/**
+**/.next/**
+**/.turbo/**
+**/coverage/**
+**/.cache/**
+**/node_modules/**
+
+# Generated files
+**/.DS_Store/**
+**/*.log
+**/tmp/**
+
+# Lock files (unless explicitly requested)
+**/pnpm-lock.yaml
+**/package-lock.json
+**/yarn.lock
+
+# Environment files
+**/.env*
+**/.envrc
+
+# IDE files
+**/.vscode/**
+**/.idea/**
+
+# OS files
+**/Thumbs.db
