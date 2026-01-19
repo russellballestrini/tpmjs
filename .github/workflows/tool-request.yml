@@ -23,10 +23,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Get issue number from event or input
             const issueNumber = context.issue?.number || ${{ inputs.issue_number || 0 }};
-
-            // Add 'claude-working' label to indicate processing has started
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -38,37 +35,36 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Get issue number and details
             const issueNumber = context.issue?.number || ${{ inputs.issue_number || 0 }};
-
-            // Fetch issue details for manual dispatch
             const { data: issue } = await github.rest.issues.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber
             });
 
-            const body = `@claude Please implement this tool request.
-
-**Instructions:**
-1. Read the pipeline specification at \`.claude/pipelines/tool-request.md\`
-2. Follow all steps: analyze, design, implement, validate, test, publish
-3. Update labels as you progress (remove \`claude-working\`, add \`published\` or \`validation-failed\`)
-4. Post full changelog when complete
-5. This issue will auto-close 24h after successful publish
-
-**Issue Context:**
-- Issue #${issueNumber}
-- Author: @${issue.user.login}
-- Created: ${issue.created_at}
-
-Begin implementation.`;
+            const lines = [
+              '@claude Please implement this tool request.',
+              '',
+              '## Instructions',
+              '1. Read the pipeline specification at `.claude/pipelines/tool-request.md`',
+              '2. Follow all steps: analyze, design, implement, validate, test, publish',
+              '3. Update labels as you progress (remove `claude-working`, add `published` or `validation-failed`)',
+              '4. Post full changelog when complete',
+              '5. This issue will auto-close 24h after successful publish',
+              '',
+              '## Issue Context',
+              `- Issue #${issueNumber}`,
+              `- Author: @${issue.user.login}`,
+              `- Created: ${issue.created_at}`,
+              '',
+              'Begin implementation.'
+            ];
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: body
+              body: lines.join('\n')
             });
 
   # Auto-close published issues after 24 hours
@@ -82,12 +78,11 @@ Begin implementation.`;
         uses: actions/github-script@v7
         with:
           script: |
-            // Add a comment about auto-close
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '**Note:** This issue will auto-close in 24 hours. Reply if you have feedback or issues with the published tool.'
+              body: 'This issue will auto-close in 24 hours. Reply if you have feedback or issues with the published tool.'
             });
 
   # Separate workflow handles the actual auto-close via scheduled job
