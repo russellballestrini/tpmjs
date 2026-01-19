@@ -92,3 +92,5 @@ jobs:
           additional_permissions: |
             actions: read
           prompt: ${{ steps.get-prompt.outputs.prompt }}
+          # Allow gh CLI for issue management, npm for publishing
+          claude_args: '--allowedTools "Bash(gh:*)" "Bash(npm:*)" "Bash(pnpm:*)" "Bash(git:*)"'
