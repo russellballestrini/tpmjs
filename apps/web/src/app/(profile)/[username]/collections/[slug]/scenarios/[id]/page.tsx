@@ -28,7 +28,7 @@ interface ScenarioRun {
   timestamps: {
     startedAt: string | null;
     completedAt: string | null;
-    createdAt: string;
+    createdAt: string | null;
   };
   output?: string;
   errorLog?: string;
@@ -131,7 +131,8 @@ function formatDuration(ms: number | null): string {
   return `${(ms / 1000).toFixed(1)}s`;
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: string | null): string {
+  if (!dateString) return '—';
   return new Date(dateString).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -358,7 +359,7 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                         <div className="flex items-center gap-4">
                           <StatusBadge status={run.status} />
                           <span className="text-sm text-foreground-secondary">
-                            {formatDate(run.timestamps.createdAt)}
+                            {formatDate(run.timestamps?.createdAt || null)}
                           </span>
                           {run.usage.executionTimeMs && (
                             <span className="text-sm text-foreground-tertiary">
@@ -395,7 +396,7 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                                     </Badge>
                                   )}
                                 </div>
-                                {run.evaluator.reason && (
+                                {run.evaluator?.reason && (
                                   <p className="text-sm text-foreground-secondary">
                                     {run.evaluator.reason}
                                   </p>
