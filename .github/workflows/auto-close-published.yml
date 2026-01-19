@@ -1,0 +1,66 @@
+name: Auto-Close Published Issues
+
+on:
+  schedule:
+    # Run every hour to check for issues to close
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-close:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Close published issues older than 24h
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'published',
+              state: 'open',
+              per_page: 100
+            });
+
+            const now = new Date();
+            const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+            for (const issue of issues) {
+              // Find when 'published' label was added
+              const { data: events } = await github.rest.issues.listEvents({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                per_page: 100
+              });
+
+              const publishedEvent = events
+                .filter(e => e.event === 'labeled' && e.label?.name === 'published')
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+              if (publishedEvent) {
+                const labeledAt = new Date(publishedEvent.created_at);
+
+                if (labeledAt < twentyFourHoursAgo) {
+                  console.log(`Closing issue #${issue.number} - published ${labeledAt.toISOString()}`);
+
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: 'Auto-closing after 24 hours. The tool has been published successfully. Reopen if you encounter any issues.'
+                  });
+
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    state: 'closed',
+                    state_reason: 'completed'
+                  });
+                }
+              }
+            }
