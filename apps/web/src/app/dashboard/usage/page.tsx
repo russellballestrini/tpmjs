@@ -244,8 +244,10 @@ export default function UsagePage(): React.ReactElement {
                     new Date(data.timeSeries[0].periodStart).toLocaleDateString()}
                 </span>
                 <span>
-                  {data.timeSeries.at(-1)?.periodStart &&
-                    new Date(data.timeSeries.at(-1)?.periodStart).toLocaleDateString()}
+                  {(() => {
+                    const lastPeriodStart = data.timeSeries.at(-1)?.periodStart;
+                    return lastPeriodStart ? new Date(lastPeriodStart).toLocaleDateString() : null;
+                  })()}
                 </span>
               </div>
             </div>

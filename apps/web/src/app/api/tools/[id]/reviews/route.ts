@@ -267,20 +267,20 @@ export async function POST(
       },
     });
 
-    let review: {
-      id: string;
-      title: string | null;
-      content: string;
-      rating: number;
-      helpfulCount: number;
-      createdAt: Date;
-      updatedAt: Date;
-      user: { id: string; name: string | null; image: string | null; username: string | null };
-    } | null = null;
-    await prisma.$transaction(async (tx) => {
+    const review = await prisma.$transaction(async (tx) => {
+      let updatedReview: {
+        id: string;
+        title: string | null;
+        content: string;
+        rating: number;
+        helpfulCount: number;
+        createdAt: Date;
+        updatedAt: Date;
+        user: { id: string; name: string | null; image: string | null; username: string | null };
+      };
       if (existingReview) {
         // Update existing review
-        review = await tx.toolReview.update({
+        updatedReview = await tx.toolReview.update({
           where: { id: existingReview.id },
           data: {
             title: title?.trim() || null,
@@ -300,7 +300,7 @@ export async function POST(
         });
       } else {
         // Create new review
-        review = await tx.toolReview.create({
+        updatedReview = await tx.toolReview.create({
           data: {
             userId: session.user.id,
             toolId: id,
@@ -359,23 +359,25 @@ export async function POST(
           ratingCount: aggregates._count.rating,
         },
       });
+
+      return updatedReview;
     });
 
     return NextResponse.json({
       success: true,
       data: {
-        id: review?.id,
-        title: review?.title,
-        content: review?.content,
-        rating: review?.rating,
-        helpfulCount: review?.helpfulCount,
-        createdAt: review?.createdAt.toISOString(),
-        updatedAt: review?.updatedAt.toISOString(),
+        id: review.id,
+        title: review.title,
+        content: review.content,
+        rating: review.rating,
+        helpfulCount: review.helpfulCount,
+        createdAt: review.createdAt.toISOString(),
+        updatedAt: review.updatedAt.toISOString(),
         user: {
-          id: review?.user.id,
-          name: review?.user.name,
-          image: review?.user.image,
-          username: review?.user.username,
+          id: review.user.id,
+          name: review.user.name,
+          image: review.user.image,
+          username: review.user.username,
         },
       },
       meta: { version: API_VERSION, timestamp: new Date().toISOString(), requestId },
