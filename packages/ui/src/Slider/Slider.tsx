@@ -2,8 +2,8 @@ import { cn } from '@tpmjs/utils/cn';
 import { forwardRef, useMemo } from 'react';
 import type { SliderProps } from './types';
 import {
-  sliderMarkVariants,
   sliderMarksVariants,
+  sliderMarkVariants,
   sliderValueVariants,
   sliderVariants,
 } from './variants';

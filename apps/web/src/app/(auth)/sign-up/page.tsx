@@ -1,10 +1,10 @@
 'use client';
 
+import { suggestUsername } from '@tpmjs/types/user';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Input } from '@tpmjs/ui/Input/Input';
 import { Label } from '@tpmjs/ui/Label/Label';
-import { suggestUsername } from '@tpmjs/types/user';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { signUp } from '~/lib/auth-client';
@@ -222,9 +222,7 @@ export default function SignUpPage() {
               {!checkingUsername &&
                 usernameCheck &&
                 !usernameCheck.available &&
-                username.length >= 3 && (
-                  <Icon icon="x" size="sm" className="text-error" />
-                )}
+                username.length >= 3 && <Icon icon="x" size="sm" className="text-error" />}
             </div>
           </div>
           {/* Username availability message */}

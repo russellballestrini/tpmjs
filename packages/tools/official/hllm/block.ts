@@ -3,64 +3,65 @@
  * This file provides metadata for the blocks validator
  */
 import {
-  // Topology
-  executeTopology,
-  // Sessions
-  listSessions,
-  createSession,
-  getSession,
-  updateSession,
-  deleteSession,
   // Messages
   addMessage,
   clearMessages,
-  // Prompts
-  listPrompts,
+  createApiKey,
   createPrompt,
-  getPrompt,
-  updatePrompt,
-  deletePrompt,
-  incrementPromptUsage,
-  // User
-  getUserProfile,
-  updateUserProfile,
-  getUserStats,
-  // Env Vars
-  listEnvVars,
-  setEnvVar,
+  createSession,
+  deleteApiKey,
   deleteEnvVar,
-  // Files
-  uploadFile,
-  getFile,
   deleteFile,
-  // Models
-  listModels,
-  // Logs
-  getExecutionLogs,
-  // Metrics
-  getAgentMetrics,
-  // Tools
-  listTools,
+  deletePrompt,
+  deleteSession,
   describeTool,
   executeTool,
-  // Prompt Generation
-  generatePrompt,
-  improvePrompt,
+  // Topology
+  executeTopology,
   // Export/Import
   exportData,
-  importData,
+  // Prompt Generation
+  generatePrompt,
+  // Metrics
+  getAgentMetrics,
+  // Logs
+  getExecutionLogs,
+  getFile,
+  getPrompt,
+  getSession,
+  getStats,
+  // User
+  getUserProfile,
+  getUserStats,
   // Public
   healthCheck,
-  getStats,
+  importData,
+  improvePrompt,
+  incrementPromptUsage,
   // API Keys
   listApiKeys,
-  createApiKey,
-  deleteApiKey,
+  // Env Vars
+  listEnvVars,
+  // Models
+  listModels,
+  // Prompts
+  listPrompts,
+  // Sessions
+  listSessions,
+  // Tools
+  listTools,
+  setEnvVar,
+  updatePrompt,
+  updateSession,
+  updateUserProfile,
+  // Files
+  uploadFile,
 } from './src/index.js';
 
 export const block = {
   name: 'hllm',
-  description: 'HLLM API client tools for AI agents. Manage topologies, sessions, prompts, files, and more.',
+  description:
+    'HLLM API client tools for AI agents. Manage topologies, sessions, prompts, files, and more.',
   tools: {
     // Topology
     executeTopology,

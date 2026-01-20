@@ -113,9 +113,7 @@ function AnimatedTerminal(): React.ReactElement {
         {currentLine < lines.length && (
           <div className={`${getLineColor(lines[currentLine]?.type || 'input')} flex`}>
             <span>{displayedText}</span>
-            {isTyping && (
-              <span className="ml-0.5 w-2 h-5 bg-primary animate-pulse" />
-            )}
+            {isTyping && <span className="ml-0.5 w-2 h-5 bg-primary animate-pulse" />}
           </div>
         )}
       </div>
@@ -135,7 +133,13 @@ interface FeatureCardProps {
   delay?: number;
 }
 
-function FeatureCard({ icon, title, description, stats, delay = 0 }: FeatureCardProps): React.ReactElement {
+function FeatureCard({
+  icon,
+  title,
+  description,
+  stats,
+  delay = 0,
+}: FeatureCardProps): React.ReactElement {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -201,9 +205,7 @@ function FeatureCard({ icon, title, description, stats, delay = 0 }: FeatureCard
       </div>
 
       {/* Content */}
-      <h3 className="font-mono text-lg font-semibold mb-2 text-foreground lowercase">
-        {title}
-      </h3>
+      <h3 className="font-mono text-lg font-semibold mb-2 text-foreground lowercase">{title}</h3>
       <p className="font-sans text-sm text-foreground-secondary leading-relaxed mb-4">
         {description}
       </p>
@@ -233,7 +235,12 @@ interface AnimatedCounterProps {
   prefix?: string;
 }
 
-function AnimatedCounter({ end, duration = 2000, suffix = '', prefix = '' }: AnimatedCounterProps): React.ReactElement {
+function AnimatedCounter({
+  end,
+  duration = 2000,
+  suffix = '',
+  prefix = '',
+}: AnimatedCounterProps): React.ReactElement {
   const [count, setCount] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
@@ -266,7 +273,7 @@ function AnimatedCounter({ end, duration = 2000, suffix = '', prefix = '' }: Ani
       const progress = Math.min((timestamp - startTime) / duration, 1);
 
       // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const easeOutQuart = 1 - (1 - progress) ** 4;
       setCount(Math.floor(easeOutQuart * end));
 
       if (progress < 1) {
@@ -280,7 +287,9 @@ function AnimatedCounter({ end, duration = 2000, suffix = '', prefix = '' }: Ani
 
   return (
     <span ref={ref} className="tabular-nums">
-      {prefix}{count.toLocaleString()}{suffix}
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
     </span>
   );
 }
@@ -321,9 +330,10 @@ function FlowDiagram(): React.ReactElement {
               className={`
                 w-16 h-16 flex items-center justify-center border-2 mb-3
                 transition-all duration-500
-                ${activeStep === i
-                  ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(166,89,45,0.3)]'
-                  : 'border-dashed border-border bg-surface'
+                ${
+                  activeStep === i
+                    ? 'border-primary bg-primary/10 shadow-[0_0_20px_rgba(166,89,45,0.3)]'
+                    : 'border-dashed border-border bg-surface'
                 }
               `}
             >
@@ -333,12 +343,12 @@ function FlowDiagram(): React.ReactElement {
                 className={`transition-colors duration-500 ${activeStep === i ? 'text-primary' : 'text-foreground-tertiary'}`}
               />
             </div>
-            <span className={`font-mono text-sm font-medium transition-colors duration-500 ${activeStep === i ? 'text-primary' : 'text-foreground'}`}>
+            <span
+              className={`font-mono text-sm font-medium transition-colors duration-500 ${activeStep === i ? 'text-primary' : 'text-foreground'}`}
+            >
               {step.label}
             </span>
-            <span className="font-mono text-xs text-foreground-tertiary mt-1">
-              {step.desc}
-            </span>
+            <span className="font-mono text-xs text-foreground-tertiary mt-1">{step.desc}</span>
 
             {/* Pulse ring when active */}
             {activeStep === i && (
@@ -454,8 +464,8 @@ export function FeaturesSection(): React.ReactElement {
             powerful features
           </h2>
           <p className="text-lg text-foreground-secondary max-w-2xl mx-auto font-sans">
-            From discovery to execution, TPMJS provides the complete infrastructure
-            for AI tool development.
+            From discovery to execution, TPMJS provides the complete infrastructure for AI tool
+            development.
           </p>
         </div>
 
@@ -490,8 +500,8 @@ export function FeaturesSection(): React.ReactElement {
                 live execution
               </legend>
               <p className="font-sans text-sm text-foreground-secondary mb-6">
-                Execute any tool directly from your terminal or AI agent. Secure sandboxed
-                execution with real-time streaming output.
+                Execute any tool directly from your terminal or AI agent. Secure sandboxed execution
+                with real-time streaming output.
               </p>
               <AnimatedTerminal />
             </fieldset>
@@ -504,8 +514,8 @@ export function FeaturesSection(): React.ReactElement {
                 tool registry
               </legend>
               <p className="font-sans text-sm text-foreground-secondary mb-6">
-                Browse 170+ tools across multiple categories. Each tool is validated,
-                documented, and ready to use.
+                Browse 170+ tools across multiple categories. Each tool is validated, documented,
+                and ready to use.
               </p>
               <InteractiveToolGrid />
               <div className="mt-6 flex justify-center">
@@ -534,8 +544,8 @@ export function FeaturesSection(): React.ReactElement {
             tools → tpmjs → agents
           </legend>
           <p className="font-sans text-sm text-foreground-secondary mb-6 text-center max-w-2xl mx-auto">
-            TPMJS acts as the central hub connecting npm packages to AI agents.
-            Watch data flow in real-time as tools serve agent requests.
+            TPMJS acts as the central hub connecting npm packages to AI agents. Watch data flow in
+            real-time as tools serve agent requests.
           </p>
           <ToolConnectionViz />
         </fieldset>

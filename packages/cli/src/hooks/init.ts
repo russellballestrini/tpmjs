@@ -1,6 +1,6 @@
 import type { Hook } from '@oclif/core';
 
-const hook: Hook<'init'> = async function () {
+const hook: Hook<'init'> = async () => {
   // Initialization hook - runs before any command
   // Can be used for:
   // - Checking for updates

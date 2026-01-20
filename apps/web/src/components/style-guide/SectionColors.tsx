@@ -16,8 +16,8 @@ export function SectionColors(): React.ReactElement {
   return (
     <FieldsetSection title="2. color system" id="colors">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        A warm earthy palette with copper accent. Colors are designed for clarity,
-        hierarchy, and accessibility.
+        A warm earthy palette with copper accent. Colors are designed for clarity, hierarchy, and
+        accessibility.
       </p>
 
       {/* Color Palette Display */}
@@ -33,31 +33,77 @@ export function SectionColors(): React.ReactElement {
       <SubSection title="borders">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <ColorCard name="border" color="bg-border" hex="#CEC9C3" desc="default borders" />
-          <ColorCard name="border-strong" color="bg-border-strong" hex="#857F77" desc="emphasized borders" />
-          <ColorCard name="border-subtle" color="bg-border-subtle" hex="#E3E0DC" desc="subtle borders" />
+          <ColorCard
+            name="border-strong"
+            color="bg-border-strong"
+            hex="#857F77"
+            desc="emphasized borders"
+          />
+          <ColorCard
+            name="border-subtle"
+            color="bg-border-subtle"
+            hex="#E3E0DC"
+            desc="subtle borders"
+          />
         </div>
       </SubSection>
 
       <SubSection title="text">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <ColorCard name="text" color="bg-foreground" hex="#1A1715" desc="primary text" textLight />
-          <ColorCard name="text-secondary" color="bg-foreground-secondary" hex="#5C564F" desc="secondary text" textLight />
-          <ColorCard name="text-tertiary" color="bg-foreground-tertiary" hex="#817B74" desc="tertiary text" textLight />
-          <ColorCard name="text-muted" color="bg-foreground-muted" hex="#9A958F" desc="muted text" textLight />
+          <ColorCard
+            name="text"
+            color="bg-foreground"
+            hex="#1A1715"
+            desc="primary text"
+            textLight
+          />
+          <ColorCard
+            name="text-secondary"
+            color="bg-foreground-secondary"
+            hex="#5C564F"
+            desc="secondary text"
+            textLight
+          />
+          <ColorCard
+            name="text-tertiary"
+            color="bg-foreground-tertiary"
+            hex="#817B74"
+            desc="tertiary text"
+            textLight
+          />
+          <ColorCard
+            name="text-muted"
+            color="bg-foreground-muted"
+            hex="#9A958F"
+            desc="muted text"
+            textLight
+          />
         </div>
       </SubSection>
 
       <SubSection title="accent (copper)">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <ColorCard name="accent" color="bg-accent" hex="#A6592D" desc="brand accent" textLight />
-          <ColorCard name="accent-strong" color="bg-accent-strong" hex="#8F4722" desc="hover accent" textLight />
+          <ColorCard
+            name="accent-strong"
+            color="bg-accent-strong"
+            hex="#8F4722"
+            desc="hover accent"
+            textLight
+          />
           <ColorCard name="accent-muted" color="bg-accent-muted" hex="#EDE5DF" desc="soft tint" />
         </div>
       </SubSection>
 
       <SubSection title="status">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <ColorCard name="success" color="bg-success" hex="#327D52" desc="success states" textLight />
+          <ColorCard
+            name="success"
+            color="bg-success"
+            hex="#327D52"
+            desc="success states"
+            textLight
+          />
           <ColorCard name="warning" color="bg-warning" hex="#D9A020" desc="warning states" />
           <ColorCard name="error" color="bg-error" hex="#C44545" desc="error states" textLight />
           <ColorCard name="info" color="bg-info" hex="#3380CC" desc="info states" textLight />
@@ -66,8 +112,18 @@ export function SectionColors(): React.ReactElement {
 
       <SubSection title="status (light backgrounds)">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <ColorCard name="success-light" color="bg-success-light" hex="#E5F3EC" desc="success bg" />
-          <ColorCard name="warning-light" color="bg-warning-light" hex="#F8F2E0" desc="warning bg" />
+          <ColorCard
+            name="success-light"
+            color="bg-success-light"
+            hex="#E5F3EC"
+            desc="success bg"
+          />
+          <ColorCard
+            name="warning-light"
+            color="bg-warning-light"
+            hex="#F8F2E0"
+            desc="warning bg"
+          />
           <ColorCard name="error-light" color="bg-error-light" hex="#F9EDED" desc="error bg" />
           <ColorCard name="info-light" color="bg-info-light" hex="#EDF4FB" desc="info bg" />
         </div>
@@ -79,9 +135,15 @@ export function SectionColors(): React.ReactElement {
           <div className="bg-surface p-6 border border-dashed border-border">
             <h4 className="font-mono text-sm font-medium mb-4">when to use copper vs neutral</h4>
             <ul className="space-y-2 text-sm text-foreground-secondary font-sans">
-              <li>• <strong>Copper:</strong> Primary actions, active states, links, key metrics</li>
-              <li>• <strong>Neutral:</strong> Secondary actions, borders, backgrounds, body text</li>
-              <li>• <strong>Rule:</strong> Copper should be max ~10% of visible screen area</li>
+              <li>
+                • <strong>Copper:</strong> Primary actions, active states, links, key metrics
+              </li>
+              <li>
+                • <strong>Neutral:</strong> Secondary actions, borders, backgrounds, body text
+              </li>
+              <li>
+                • <strong>Rule:</strong> Copper should be max ~10% of visible screen area
+              </li>
             </ul>
           </div>
           <div className="bg-surface p-6 border border-dashed border-border">
@@ -148,26 +210,58 @@ export function SectionColors(): React.ReactElement {
               <TableRow>
                 <TableCell className="font-mono">foreground / background</TableCell>
                 <TableCell className="font-mono">12.5:1</TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-mono">accent / background</TableCell>
                 <TableCell className="font-mono">5.2:1</TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-mono">foreground-secondary / background</TableCell>
                 <TableCell className="font-mono">5.8:1</TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-mono">foreground-tertiary / background</TableCell>
                 <TableCell className="font-mono">3.9:1</TableCell>
-                <TableCell><Badge variant="warning" size="sm">large only</Badge></TableCell>
-                <TableCell><Badge variant="success" size="sm">pass</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="warning" size="sm">
+                    large only
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="success" size="sm">
+                    pass
+                  </Badge>
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

@@ -52,28 +52,16 @@ const sizeConfig = {
  * ```
  */
 export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
-  (
-    { className, title, description, actions, size = 'md', ...props },
-    ref
-  ) => {
+  ({ className, title, description, actions, size = 'md', ...props }, ref) => {
     const config = sizeConfig[size];
 
     return (
       <div ref={ref} className={cn(config.container, className)} {...props}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
-            <h1 className={cn('font-bold text-foreground', config.title)}>
-              {title}
-            </h1>
+            <h1 className={cn('font-bold text-foreground', config.title)}>{title}</h1>
             {description && (
-              <p
-                className={cn(
-                  'text-foreground-secondary',
-                  config.description
-                )}
-              >
-                {description}
-              </p>
+              <p className={cn('text-foreground-secondary', config.description)}>{description}</p>
             )}
           </div>
           {actions && <div className="flex items-center gap-2">{actions}</div>}

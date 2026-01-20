@@ -4,12 +4,7 @@ import { createVariants } from '../system/variants';
  * InstallSnippet container variant definitions
  */
 export const installSnippetVariants = createVariants({
-  base: [
-    'w-full',
-    'border border-border',
-    'rounded-none',
-    'overflow-hidden',
-  ].join(' '),
+  base: ['w-full', 'border border-border', 'rounded-none', 'overflow-hidden'].join(' '),
 
   variants: {
     variant: {
@@ -28,12 +23,7 @@ export const installSnippetVariants = createVariants({
  * InstallSnippet tabs variant definitions
  */
 export const installSnippetTabsVariants = createVariants({
-  base: [
-    'flex items-center',
-    'border-b border-border',
-    'px-1',
-    'gap-0',
-  ].join(' '),
+  base: ['flex items-center', 'border-b border-border', 'px-1', 'gap-0'].join(' '),
 
   variants: {
     variant: {
@@ -68,8 +58,8 @@ export const installSnippetTabVariants = createVariants({
       dark: 'text-background/60 hover:text-background',
     },
     active: {
-      'true': '',
-      'false': '',
+      true: '',
+      false: '',
     },
   },
 
@@ -79,9 +69,18 @@ export const installSnippetTabVariants = createVariants({
   },
 
   compoundVariants: [
-    { conditions: { variant: 'default', active: 'true' }, className: 'text-foreground border-primary' },
-    { conditions: { variant: 'minimal', active: 'true' }, className: 'text-foreground border-primary' },
-    { conditions: { variant: 'dark', active: 'true' }, className: 'text-background border-background' },
+    {
+      conditions: { variant: 'default', active: 'true' },
+      className: 'text-foreground border-primary',
+    },
+    {
+      conditions: { variant: 'minimal', active: 'true' },
+      className: 'text-foreground border-primary',
+    },
+    {
+      conditions: { variant: 'dark', active: 'true' },
+      className: 'text-background border-background',
+    },
   ],
 });
 
@@ -130,8 +129,8 @@ export const installSnippetCopyButtonVariants = createVariants({
       dark: 'text-background/60 hover:text-background hover:bg-background/10',
     },
     copied: {
-      'true': '',
-      'false': '',
+      true: '',
+      false: '',
     },
   },
 

@@ -1,36 +1,35 @@
 // Library exports for programmatic use
-export { TpmClient, getClient, ApiError } from './lib/api-client.js';
+
 export type {
-  TpmClientOptions,
+  Agent,
+  ApiKey,
   ApiResponse,
-  PaginationOptions,
+  Collection,
+  CreateAgentInput,
+  CreateCollectionInput,
   PaginatedResponse,
+  PaginationOptions,
+  Stats,
   Tool,
   ToolSearchOptions,
-  Agent,
-  CreateAgentInput,
+  TpmClientOptions,
   UpdateAgentInput,
-  Collection,
-  CreateCollectionInput,
   UpdateCollectionInput,
   User,
-  ApiKey,
-  Stats,
 } from './lib/api-client.js';
-
+export { ApiError, getClient, TpmClient } from './lib/api-client.js';
+export type { TpmConfig, TpmCredentials } from './lib/config.js';
 export {
-  getConfig,
-  setConfig,
-  getConfigValue,
-  setConfigValue,
-  loadCredentials,
-  saveCredentials,
   deleteCredentials,
-  hasCredentials,
   getApiKey,
   getApiUrl,
+  getConfig,
+  getConfigValue,
+  hasCredentials,
+  loadCredentials,
+  saveCredentials,
+  setConfig,
+  setConfigValue,
 } from './lib/config.js';
-export type { TpmConfig, TpmCredentials } from './lib/config.js';
-
-export { OutputFormatter, createOutput } from './lib/output.js';
 export type { OutputOptions } from './lib/output.js';
+export { createOutput, OutputFormatter } from './lib/output.js';

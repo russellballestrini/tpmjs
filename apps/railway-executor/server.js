@@ -19,7 +19,7 @@ const moduleCache = new Map();
 /**
  * Health check endpoint
  */
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -192,7 +192,7 @@ app.post('/execute-tool', async (req, res) => {
 /**
  * Clear module cache (for debugging)
  */
-app.post('/cache/clear', (req, res) => {
+app.post('/cache/clear', (_req, res) => {
   const size = moduleCache.size;
   moduleCache.clear();
   console.log(`🗑️  Cleared cache (${size} entries)`);
@@ -206,7 +206,7 @@ app.post('/cache/clear', (req, res) => {
 /**
  * Get cache statistics
  */
-app.get('/cache/stats', (req, res) => {
+app.get('/cache/stats', (_req, res) => {
   const entries = Array.from(moduleCache.keys());
 
   res.json({

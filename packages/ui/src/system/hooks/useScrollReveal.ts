@@ -72,7 +72,7 @@ export function useScrollReveal<T extends HTMLElement>(
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry && entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           if (delay > 0) {
             setTimeout(() => {
               setIsVisible(true);

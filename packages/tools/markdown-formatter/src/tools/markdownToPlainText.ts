@@ -52,13 +52,13 @@ export const markdownToPlainText = tool({
     plainText = plainText.replace(/```[\s\S]*?```/g, '');
 
     // Remove horizontal rules (---, ***)
-    plainText = plainText.replace(/^[\*\-_]{3,}$/gm, '');
+    plainText = plainText.replace(/^[*\-_]{3,}$/gm, '');
 
     // Remove blockquotes (>)
     plainText = plainText.replace(/^>\s*/gm, '');
 
     // Remove list markers (-, *, +, 1.)
-    plainText = plainText.replace(/^[\s]*[-\*\+]\s+/gm, '');
+    plainText = plainText.replace(/^[\s]*[-*+]\s+/gm, '');
     plainText = plainText.replace(/^[\s]*\d+\.\s+/gm, '');
 
     // Handle line breaks

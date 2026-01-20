@@ -4,10 +4,7 @@ import { createVariants } from '../system/variants';
  * Pagination container variant definitions
  */
 export const paginationVariants = createVariants({
-  base: [
-    'flex items-center gap-1',
-    'font-mono',
-  ].join(' '),
+  base: ['flex items-center gap-1', 'font-mono'].join(' '),
 
   variants: {
     size: {
@@ -48,12 +45,12 @@ export const paginationItemVariants = createVariants({
       lg: 'h-11 min-w-11 px-4 text-base',
     },
     active: {
-      'true': 'bg-primary text-primary-foreground border-primary',
-      'false': 'text-foreground-muted hover:text-foreground hover:bg-accent/10 hover:border-border',
+      true: 'bg-primary text-primary-foreground border-primary',
+      false: 'text-foreground-muted hover:text-foreground hover:bg-accent/10 hover:border-border',
     },
     disabled: {
-      'true': 'opacity-50 cursor-not-allowed pointer-events-none',
-      'false': '',
+      true: 'opacity-50 cursor-not-allowed pointer-events-none',
+      false: '',
     },
   },
 
@@ -93,8 +90,8 @@ export const paginationNavButtonVariants = createVariants({
       lg: 'h-11 px-4 text-base',
     },
     disabled: {
-      'true': 'opacity-50 cursor-not-allowed pointer-events-none',
-      'false': '',
+      true: 'opacity-50 cursor-not-allowed pointer-events-none',
+      false: '',
     },
   },
 
@@ -108,11 +105,9 @@ export const paginationNavButtonVariants = createVariants({
  * Pagination ellipsis variant definitions
  */
 export const paginationEllipsisVariants = createVariants({
-  base: [
-    'inline-flex items-center justify-center',
-    'text-foreground-muted',
-    'select-none',
-  ].join(' '),
+  base: ['inline-flex items-center justify-center', 'text-foreground-muted', 'select-none'].join(
+    ' '
+  ),
 
   variants: {
     size: {
@@ -131,11 +126,7 @@ export const paginationEllipsisVariants = createVariants({
  * Pagination info variant definitions (for showing "Page X of Y")
  */
 export const paginationInfoVariants = createVariants({
-  base: [
-    'text-foreground-muted',
-    'font-mono',
-    'mx-2',
-  ].join(' '),
+  base: ['text-foreground-muted', 'font-mono', 'mx-2'].join(' '),
 
   variants: {
     size: {

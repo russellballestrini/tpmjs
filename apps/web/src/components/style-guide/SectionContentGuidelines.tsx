@@ -10,15 +10,35 @@ import {
   TableHeader,
   TableRow,
 } from '@tpmjs/ui/Table/Table';
-import { FieldsetSection, SubSection, DoDontCard } from './shared';
+import { DoDontCard, FieldsetSection, SubSection } from './shared';
 
 const glossaryTerms = [
-  { term: 'Tool', definition: 'A reusable MCP server or utility that can be installed via npm', avoid: 'Package, Module, Plugin' },
-  { term: 'Agent', definition: 'An AI-powered assistant that uses tools to complete tasks', avoid: 'Bot, Assistant, AI' },
+  {
+    term: 'Tool',
+    definition: 'A reusable MCP server or utility that can be installed via npm',
+    avoid: 'Package, Module, Plugin',
+  },
+  {
+    term: 'Agent',
+    definition: 'An AI-powered assistant that uses tools to complete tasks',
+    avoid: 'Bot, Assistant, AI',
+  },
   { term: 'Collection', definition: 'A curated group of related tools', avoid: 'Bundle, Set, Kit' },
-  { term: 'Publish', definition: 'Release a new version to the registry', avoid: 'Deploy, Ship, Push' },
-  { term: 'Install', definition: 'Add a tool to your project dependencies', avoid: 'Download, Get, Add' },
-  { term: 'Execute', definition: 'Run a tool with specific parameters', avoid: 'Invoke, Call, Trigger' },
+  {
+    term: 'Publish',
+    definition: 'Release a new version to the registry',
+    avoid: 'Deploy, Ship, Push',
+  },
+  {
+    term: 'Install',
+    definition: 'Add a tool to your project dependencies',
+    avoid: 'Download, Get, Add',
+  },
+  {
+    term: 'Execute',
+    definition: 'Run a tool with specific parameters',
+    avoid: 'Invoke, Call, Trigger',
+  },
 ];
 
 const verbConsistency = [
@@ -51,8 +71,8 @@ export function SectionContentGuidelines(): React.ReactElement {
   return (
     <FieldsetSection title="20. content & writing" id="content-guidelines">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Consistent language and terminology across the platform.
-        These guidelines ensure clarity for users and maintainability for developers.
+        Consistent language and terminology across the platform. These guidelines ensure clarity for
+        users and maintainability for developers.
       </p>
 
       <SubSection title="glossary">
@@ -72,9 +92,13 @@ export function SectionContentGuidelines(): React.ReactElement {
               {glossaryTerms.map((item) => (
                 <TableRow key={item.term}>
                   <TableCell className="font-mono text-sm font-medium">{item.term}</TableCell>
-                  <TableCell className="text-sm text-foreground-secondary">{item.definition}</TableCell>
+                  <TableCell className="text-sm text-foreground-secondary">
+                    {item.definition}
+                  </TableCell>
                   <TableCell>
-                    <span className="text-xs text-foreground-tertiary line-through">{item.avoid}</span>
+                    <span className="text-xs text-foreground-tertiary line-through">
+                      {item.avoid}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
@@ -101,10 +125,14 @@ export function SectionContentGuidelines(): React.ReactElement {
                 <TableRow key={item.action}>
                   <TableCell className="text-sm text-foreground-secondary">{item.action}</TableCell>
                   <TableCell>
-                    <Badge variant="default" size="sm">{item.use}</Badge>
+                    <Badge variant="default" size="sm">
+                      {item.use}
+                    </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-foreground-tertiary line-through">{item.avoid}</span>
+                    <span className="text-xs text-foreground-tertiary line-through">
+                      {item.avoid}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
@@ -211,11 +239,15 @@ export function SectionContentGuidelines(): React.ReactElement {
             <div className="space-y-3">
               <div className="p-3 bg-error-light border-l-2 border-error text-sm">
                 <p className="font-medium">Invalid email format</p>
-                <p className="text-foreground-secondary text-xs mt-1">Please enter a valid email address like user@example.com</p>
+                <p className="text-foreground-secondary text-xs mt-1">
+                  Please enter a valid email address like user@example.com
+                </p>
               </div>
               <div className="p-3 bg-error-light border-l-2 border-error text-sm">
                 <p className="font-medium">Tool name already exists</p>
-                <p className="text-foreground-secondary text-xs mt-1">Choose a different name or update the existing tool</p>
+                <p className="text-foreground-secondary text-xs mt-1">
+                  Choose a different name or update the existing tool
+                </p>
               </div>
             </div>
           </DoDontCard>
@@ -242,14 +274,18 @@ export function SectionIconSystem(): React.ReactElement {
   return (
     <FieldsetSection title="21. icon system" id="icon-system">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Icons from Lucide React, used consistently across components.
-        All icons use 2px stroke weight and are available in multiple sizes.
+        Icons from Lucide React, used consistently across components. All icons use 2px stroke
+        weight and are available in multiple sizes.
       </p>
 
       <SubSection title="icon library">
         <p className="font-sans text-sm text-foreground-secondary mb-4">
-          Source: <a href="https://lucide.dev" className="text-accent hover:underline">Lucide React</a>.
-          Icons should be imported from <code className="text-xs bg-surface-2 px-1">@tpmjs/ui/Icon/Icon</code>.
+          Source:{' '}
+          <a href="https://lucide.dev" className="text-accent hover:underline">
+            Lucide React
+          </a>
+          . Icons should be imported from{' '}
+          <code className="text-xs bg-surface-2 px-1">@tpmjs/ui/Icon/Icon</code>.
         </p>
         <div className="bg-surface p-4 border border-dashed border-border">
           <h4 className="font-mono text-sm font-medium mb-4">common icons</h4>
@@ -316,7 +352,9 @@ export function SectionIconSystem(): React.ReactElement {
                   </TableCell>
                   <TableCell className="text-sm text-foreground-secondary">{item.usage}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" size="sm">{item.size}</Badge>
+                    <Badge variant="outline" size="sm">
+                      {item.size}
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
@@ -383,15 +421,20 @@ export function SectionIconSystem(): React.ReactElement {
           <ol className="space-y-3 text-sm text-foreground-secondary font-sans">
             <li className="flex gap-3">
               <span className="font-mono text-accent">1.</span>
-              Check if a suitable icon exists in <a href="https://lucide.dev/icons" className="text-accent hover:underline">Lucide</a>
+              Check if a suitable icon exists in{' '}
+              <a href="https://lucide.dev/icons" className="text-accent hover:underline">
+                Lucide
+              </a>
             </li>
             <li className="flex gap-3">
               <span className="font-mono text-accent">2.</span>
-              Add the icon import to <code className="text-xs bg-surface-2 px-1">packages/ui/src/Icon/icons.ts</code>
+              Add the icon import to{' '}
+              <code className="text-xs bg-surface-2 px-1">packages/ui/src/Icon/icons.ts</code>
             </li>
             <li className="flex gap-3">
               <span className="font-mono text-accent">3.</span>
-              Add the icon name to the <code className="text-xs bg-surface-2 px-1">IconName</code> type
+              Add the icon name to the <code className="text-xs bg-surface-2 px-1">IconName</code>{' '}
+              type
             </li>
             <li className="flex gap-3">
               <span className="font-mono text-accent">4.</span>
@@ -399,9 +442,11 @@ export function SectionIconSystem(): React.ReactElement {
             </li>
           </ol>
           <div className="mt-4 p-3 bg-surface-2">
-            <p className="font-mono text-xs text-foreground-tertiary mb-2">example: adding a new icon</p>
+            <p className="font-mono text-xs text-foreground-tertiary mb-2">
+              example: adding a new icon
+            </p>
             <pre className="text-xs font-mono overflow-x-auto">
-{`// icons.ts
+              {`// icons.ts
 import { Heart } from 'lucide-react';
 
 export const icons = {

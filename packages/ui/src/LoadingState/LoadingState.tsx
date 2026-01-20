@@ -54,21 +54,13 @@ export const LoadingState = forwardRef<HTMLDivElement, LoadingStateProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          'flex items-center justify-center',
-          config.container,
-          config.gap,
-          className
-        )}
+        className={cn('flex items-center justify-center', config.container, config.gap, className)}
         {...props}
       >
         <Spinner size={config.spinnerSize} />
         {message && (
           <span
-            className={cn(
-              'text-foreground-secondary font-mono tracking-wide',
-              config.messageClass
-            )}
+            className={cn('text-foreground-secondary font-mono tracking-wide', config.messageClass)}
           >
             {message}
           </span>

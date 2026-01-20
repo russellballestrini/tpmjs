@@ -76,14 +76,14 @@ function chunkBySentences(
       if (overlap > 0) {
         // Calculate how many sentences to include for overlap
         let overlapText = '';
-        let overlapSentences = 0;
+        let _overlapSentences = 0;
 
         for (let j = i - 1; j >= 0 && overlapText.length < overlap; j--) {
           const overlapSentence = sentences[j];
           if (!overlapSentence) continue;
           if (overlapText.length + overlapSentence.length <= overlap) {
             overlapText = `${overlapSentence} ${overlapText}`;
-            overlapSentences++;
+            _overlapSentences++;
           } else {
             break;
           }
@@ -221,7 +221,7 @@ export const textChunkTool = tool({
       if (chunks.length === 0) {
         chunks = chunkBySize(text, maxChunkSize, overlap);
       }
-    } catch (error) {
+    } catch (_error) {
       // Fall back to simple size-based chunking if sentence detection fails
       chunks = chunkBySize(text, maxChunkSize, overlap);
     }

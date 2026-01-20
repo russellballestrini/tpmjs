@@ -56,7 +56,7 @@ export default class ScenarioTest extends Command {
         }
       ).data;
 
-      scenarioName = scenario.name || scenario.prompt.slice(0, 50) + '...';
+      scenarioName = scenario.name || `${scenario.prompt.slice(0, 50)}...`;
       infoSpinner.stop();
 
       output.text(output.bold(`Scenario: ${scenarioName}`));
@@ -131,7 +131,7 @@ export default class ScenarioTest extends Command {
         } else {
           const truncatedReason =
             runData.evaluator.reason.length > 80
-              ? runData.evaluator.reason.slice(0, 80) + '...'
+              ? `${runData.evaluator.reason.slice(0, 80)}...`
               : runData.evaluator.reason;
           output.text(`  Reason:    ${truncatedReason}`);
         }

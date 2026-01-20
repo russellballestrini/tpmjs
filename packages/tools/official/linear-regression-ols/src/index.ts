@@ -52,7 +52,7 @@ function transpose(matrix: number[][]): number[][] {
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
-      result[j]![i] = matrix[i]![j] ?? 0;
+      result[j]![i] = matrix[i]?.[j] ?? 0;
     }
   }
   return result;
@@ -74,7 +74,7 @@ function matrixMultiply(a: number[][], b: number[][]): number[][] {
     for (let j = 0; j < bCols; j++) {
       let sum = 0;
       for (let k = 0; k < aCols; k++) {
-        sum += (a[i]![k] ?? 0) * (b[k]![j] ?? 0);
+        sum += (a[i]?.[k] ?? 0) * (b[k]?.[j] ?? 0);
       }
       result[i]![j] = sum;
     }
@@ -100,27 +100,27 @@ function invertMatrix(matrix: number[][]): number[][] {
   for (let i = 0; i < n; i++) {
     let maxRow = i;
     for (let k = i + 1; k < n; k++) {
-      if (Math.abs(augmented[k]![i] ?? 0) > Math.abs(augmented[maxRow]![i] ?? 0)) {
+      if (Math.abs(augmented[k]?.[i] ?? 0) > Math.abs(augmented[maxRow]?.[i] ?? 0)) {
         maxRow = k;
       }
     }
 
     [augmented[i], augmented[maxRow]] = [augmented[maxRow]!, augmented[i]!];
 
-    const pivot = augmented[i]![i];
+    const pivot = augmented[i]?.[i];
     if (Math.abs(pivot ?? 0) < 1e-10) {
       throw new Error('Matrix is singular - possible multicollinearity');
     }
 
     for (let j = 0; j < 2 * n; j++) {
-      augmented[i]![j] = (augmented[i]![j] ?? 0) / (pivot ?? 1);
+      augmented[i]![j] = (augmented[i]?.[j] ?? 0) / (pivot ?? 1);
     }
 
     for (let k = 0; k < n; k++) {
       if (k !== i) {
-        const factor = augmented[k]![i] ?? 0;
+        const factor = augmented[k]?.[i] ?? 0;
         for (let j = 0; j < 2 * n; j++) {
-          augmented[k]![j] = (augmented[k]![j] ?? 0) - factor * (augmented[i]![j] ?? 0);
+          augmented[k]![j] = (augmented[k]?.[j] ?? 0) - factor * (augmented[i]?.[j] ?? 0);
         }
       }
     }
@@ -191,7 +191,7 @@ function performLinearRegression(X: number[][], y: number[]): RegressionResult {
   let XTXInv: number[][];
   try {
     XTXInv = invertMatrix(XTX);
-  } catch (error) {
+  } catch (_error) {
     warnings.push('Multicollinearity detected: matrix inversion failed');
     throw new Error('Cannot perform regression: multicollinearity issue');
   }
@@ -210,7 +210,7 @@ function performLinearRegression(X: number[][], y: number[]): RegressionResult {
   for (let i = 0; i < n; i++) {
     let predicted = intercept;
     for (let j = 0; j < numFeatures; j++) {
-      predicted += (coefficients[j] ?? 0) * (X[i]![j] ?? 0);
+      predicted += (coefficients[j] ?? 0) * (X[i]?.[j] ?? 0);
     }
     predictions.push(predicted);
     residuals.push((y[i] ?? 0) - predicted);
@@ -313,7 +313,7 @@ export const linearRegressionOLSTool = tool({
     // Validate all elements are numbers
     for (let i = 0; i < X.length; i++) {
       for (let j = 0; j < numFeatures; j++) {
-        const val = X[i]![j];
+        const val = X[i]?.[j];
         if (typeof val !== 'number' || !Number.isFinite(val)) {
           throw new Error(`X must contain only finite numbers (invalid at row ${i}, column ${j})`);
         }

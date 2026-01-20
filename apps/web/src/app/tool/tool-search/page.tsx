@@ -17,8 +17,8 @@ import { AppHeader } from '~/components/AppHeader';
 import { CopyButton } from '~/components/CopyButton';
 import { LikeButton } from '~/components/LikeButton';
 import {
-  PackageManagerSelector,
   getInstallCommand,
+  PackageManagerSelector,
   usePackageManager,
 } from '~/components/PackageManagerSelector';
 import { type Tool, useTools } from '~/hooks/useTools';
@@ -81,7 +81,11 @@ export default function ToolSearchPage(): React.ReactElement {
   const [packageManager, setPackageManager] = usePackageManager();
 
   // Fetch tools from API using SWR
-  const { data: tools = [], isLoading: loading, error: swrError } = useTools({
+  const {
+    data: tools = [],
+    isLoading: loading,
+    error: swrError,
+  } = useTools({
     category: categoryFilter !== 'all' ? categoryFilter : undefined,
     importHealth: healthFilter === 'healthy' ? 'HEALTHY' : undefined,
     executionHealth: healthFilter === 'healthy' ? 'HEALTHY' : undefined,
@@ -143,10 +147,7 @@ export default function ToolSearchPage(): React.ReactElement {
       return (
         <>
           <td className="px-4 py-3">
-            <Link
-              href={`/tool/${tool.package.npmPackageName}/${tool.name}`}
-              className="block"
-            >
+            <Link href={`/tool/${tool.package.npmPackageName}/${tool.name}`} className="block">
               <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {displayName}
                 {isBroken && (
@@ -310,7 +311,9 @@ export default function ToolSearchPage(): React.ReactElement {
                     style={{ tableLayout: 'fixed' }}
                   />
                 ),
-                TableHead: (props) => <thead {...props} className="bg-surface-secondary sticky top-0 z-10" />,
+                TableHead: (props) => (
+                  <thead {...props} className="bg-surface-secondary sticky top-0 z-10" />
+                ),
                 TableBody: (props) => <tbody {...props} />,
                 TableRow: (props) => (
                   <tr

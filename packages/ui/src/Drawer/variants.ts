@@ -29,11 +29,7 @@ export const drawerBackdropVariants = createVariants({
  * Drawer container variant definitions
  */
 export const drawerContainerVariants = createVariants({
-  base: [
-    'fixed inset-0',
-    'z-[var(--z-drawer)]',
-    'overflow-hidden',
-  ].join(' '),
+  base: ['fixed inset-0', 'z-[var(--z-drawer)]', 'overflow-hidden'].join(' '),
 
   variants: {},
 
@@ -141,11 +137,7 @@ export const drawerHeaderVariants = createVariants({
  * Drawer body variant definitions
  */
 export const drawerBodyVariants = createVariants({
-  base: [
-    'flex-1',
-    'px-6 py-4',
-    'overflow-y-auto',
-  ].join(' '),
+  base: ['flex-1', 'px-6 py-4', 'overflow-y-auto'].join(' '),
 
   variants: {},
 
@@ -173,11 +165,7 @@ export const drawerFooterVariants = createVariants({
  * Drawer title variant definitions
  */
 export const drawerTitleVariants = createVariants({
-  base: [
-    'font-mono font-semibold text-lg',
-    'text-foreground',
-    'lowercase',
-  ].join(' '),
+  base: ['font-mono font-semibold text-lg', 'text-foreground', 'lowercase'].join(' '),
 
   variants: {},
 

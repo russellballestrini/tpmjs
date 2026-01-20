@@ -11,12 +11,14 @@ interface SectionDataVizProps {
   onCounterChange: (value: number) => void;
 }
 
-export function SectionDataViz({ counterValue, onCounterChange }: SectionDataVizProps): React.ReactElement {
+export function SectionDataViz({
+  counterValue,
+  onCounterChange,
+}: SectionDataVizProps): React.ReactElement {
   return (
     <FieldsetSection title="9. data visualization" id="data-viz">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Guidelines for charts, metrics, and data displays. Semantic colors only—
-        no rainbow charts.
+        Guidelines for charts, metrics, and data displays. Semantic colors only— no rainbow charts.
       </p>
 
       <SubSection title="data color palette">
@@ -52,34 +54,10 @@ export function SectionDataViz({ counterValue, onCounterChange }: SectionDataViz
           Tool quality scores use a consistent visual language across the platform.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <StatCard
-            label="excellent"
-            value={95}
-            suffix="%"
-            showBar
-            barProgress={95}
-          />
-          <StatCard
-            label="good"
-            value={75}
-            suffix="%"
-            showBar
-            barProgress={75}
-          />
-          <StatCard
-            label="fair"
-            value={50}
-            suffix="%"
-            showBar
-            barProgress={50}
-          />
-          <StatCard
-            label="poor"
-            value={25}
-            suffix="%"
-            showBar
-            barProgress={25}
-          />
+          <StatCard label="excellent" value={95} suffix="%" showBar barProgress={95} />
+          <StatCard label="good" value={75} suffix="%" showBar barProgress={75} />
+          <StatCard label="fair" value={50} suffix="%" showBar barProgress={50} />
+          <StatCard label="poor" value={25} suffix="%" showBar barProgress={25} />
         </div>
       </SubSection>
 
@@ -94,7 +72,9 @@ export function SectionDataViz({ counterValue, onCounterChange }: SectionDataViz
             <ProgressBar value={100} variant="success" />
           </div>
           <div>
-            <p className="font-mono text-sm text-foreground-secondary mb-2">warning (approaching limit)</p>
+            <p className="font-mono text-sm text-foreground-secondary mb-2">
+              warning (approaching limit)
+            </p>
             <ProgressBar value={85} variant="warning" />
           </div>
           <div>
@@ -132,9 +112,23 @@ export function SectionDataViz({ counterValue, onCounterChange }: SectionDataViz
           </div>
         </div>
         <div className="flex gap-2 mt-6 justify-center">
-          <Button size="sm" onClick={() => onCounterChange(counterValue + 1000)}>+1000</Button>
-          <Button size="sm" variant="outline" onClick={() => onCounterChange(Math.max(0, counterValue - 1000))}>-1000</Button>
-          <Button size="sm" variant="secondary" onClick={() => onCounterChange(Math.floor(Math.random() * 100000))}>random</Button>
+          <Button size="sm" onClick={() => onCounterChange(counterValue + 1000)}>
+            +1000
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onCounterChange(Math.max(0, counterValue - 1000))}
+          >
+            -1000
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => onCounterChange(Math.floor(Math.random() * 100000))}
+          >
+            random
+          </Button>
         </div>
       </SubSection>
     </FieldsetSection>

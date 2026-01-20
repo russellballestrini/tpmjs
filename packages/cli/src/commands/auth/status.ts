@@ -1,6 +1,6 @@
 import { Command, Flags } from '@oclif/core';
-import { hasCredentials, getApiKey, getApiUrl } from '../../lib/config.js';
 import { TpmClient } from '../../lib/api-client.js';
+import { getApiKey, getApiUrl, hasCredentials } from '../../lib/config.js';
 import { createOutput } from '../../lib/output.js';
 
 export default class Status extends Command {
@@ -80,7 +80,7 @@ export default class Status extends Command {
           authSource,
           apiUrl,
           user: response.data,
-          keyPrefix: apiKey.substring(0, 12) + '...',
+          keyPrefix: `${apiKey.substring(0, 12)}...`,
         });
       } else {
         output.newLine();
@@ -92,8 +92,11 @@ export default class Status extends Command {
           output.keyValue('Name', response.data.name);
         }
         output.keyValue('API URL', apiUrl);
-        output.keyValue('Auth Source', authSource === 'env' ? 'Environment variable' : 'Config file');
-        output.keyValue('Key Prefix', apiKey.substring(0, 12) + '...');
+        output.keyValue(
+          'Auth Source',
+          authSource === 'env' ? 'Environment variable' : 'Config file'
+        );
+        output.keyValue('Key Prefix', `${apiKey.substring(0, 12)}...`);
       }
     } catch (error) {
       spinner.fail('Failed to verify authentication');

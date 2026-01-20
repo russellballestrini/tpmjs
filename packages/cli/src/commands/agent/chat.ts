@@ -1,8 +1,8 @@
-import { Args, Command, Flags } from '@oclif/core';
 import * as readline from 'node:readline';
+import { Args, Command, Flags } from '@oclif/core';
 import { getClient } from '../../lib/api-client.js';
-import { createOutput } from '../../lib/output.js';
 import { getApiKey, getApiUrl } from '../../lib/config.js';
+import { createOutput } from '../../lib/output.js';
 
 export default class AgentChat extends Command {
   static description = 'Chat with an agent';
@@ -202,11 +202,11 @@ export default class AgentChat extends Command {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({})) as { message?: string };
+      const errorData = (await response.json().catch(() => ({}))) as { message?: string };
       throw new Error(errorData.message || `HTTP ${response.status}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       content: string;
       conversationId: string;
       toolCalls?: { name: string; result: unknown }[];

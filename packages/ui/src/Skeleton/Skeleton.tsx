@@ -123,18 +123,7 @@ Skeleton.displayName = 'Skeleton';
  * ```
  */
 export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
-  (
-    {
-      lines = 3,
-      gap = '0.5rem',
-      width,
-      animation = 'pulse',
-      className,
-      style,
-      ...props
-    },
-    ref
-  ) => {
+  ({ lines = 3, gap = '0.5rem', width, animation = 'pulse', className, style, ...props }, ref) => {
     const gapValue = normalizeDimension(gap);
     const widths = Array.isArray(width) ? width : undefined;
 
@@ -213,24 +202,9 @@ SkeletonAvatar.displayName = 'SkeletonAvatar';
  * ```
  */
 export const SkeletonCard = forwardRef<HTMLDivElement, SkeletonCardProps>(
-  (
-    {
-      showImage = true,
-      lines = 3,
-      animation = 'pulse',
-      className,
-      ...props
-    },
-    ref
-  ) => (
-    <div
-      ref={ref}
-      className={cn(skeletonCardVariants({}), className)}
-      {...props}
-    >
-      {showImage && (
-        <div className={skeletonCardImageVariants({ animation })} />
-      )}
+  ({ showImage = true, lines = 3, animation = 'pulse', className, ...props }, ref) => (
+    <div ref={ref} className={cn(skeletonCardVariants({}), className)} {...props}>
+      {showImage && <div className={skeletonCardImageVariants({ animation })} />}
       <div className="space-y-2">
         {/* Title skeleton */}
         <div
@@ -276,20 +250,13 @@ export interface SkeletonTableProps extends React.HTMLAttributes<HTMLDivElement>
 
 export const SkeletonTable = forwardRef<HTMLDivElement, SkeletonTableProps>(
   ({ rows = 5, columns = 4, animation = 'pulse', className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('w-full', className)}
-      {...props}
-    >
+    <div ref={ref} className={cn('w-full', className)} {...props}>
       {/* Header */}
       <div className="flex gap-4 py-3 border-b border-border">
         {Array.from({ length: columns }).map((_, colIndex) => (
           <div
             key={`header-${colIndex}`}
-            className={cn(
-              skeletonVariants({ variant: 'text', animation }),
-              'flex-1'
-            )}
+            className={cn(skeletonVariants({ variant: 'text', animation }), 'flex-1')}
             style={{ height: '1rem' }}
           />
         ))}
@@ -303,10 +270,7 @@ export const SkeletonTable = forwardRef<HTMLDivElement, SkeletonTableProps>(
           {Array.from({ length: columns }).map((_, colIndex) => (
             <div
               key={`cell-${rowIndex}-${colIndex}`}
-              className={cn(
-                skeletonVariants({ variant: 'text', animation }),
-                'flex-1'
-              )}
+              className={cn(skeletonVariants({ variant: 'text', animation }), 'flex-1')}
               style={{ height: '1rem' }}
             />
           ))}

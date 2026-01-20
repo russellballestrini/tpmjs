@@ -3,7 +3,7 @@
  * Checks tool import and execution health via Railway executor
  */
 
-import { type HealthStatus, type Package, type Prisma, type Tool, prisma } from '@tpmjs/db';
+import { type HealthStatus, type Package, type Prisma, prisma, type Tool } from '@tpmjs/db';
 import { env } from '~/env';
 
 const RAILWAY_EXECUTOR_URL = env.RAILWAY_EXECUTOR_URL;

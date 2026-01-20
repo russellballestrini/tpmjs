@@ -104,7 +104,7 @@ function pivotData(
     }
 
     // Accumulate values for aggregation
-    rowData.get(colValue)!.push(cellValue);
+    rowData.get(colValue)?.push(cellValue);
   }
 
   // Build pivoted array

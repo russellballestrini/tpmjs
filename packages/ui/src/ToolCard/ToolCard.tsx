@@ -113,30 +113,23 @@ export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
       return formatRelativeTime(updatedAt);
     }, [updatedAt]);
 
-    const cardClassName = cn(toolCardVariants({ variant, clickable: isClickable ? 'true' : 'false' }), className);
+    const cardClassName = cn(
+      toolCardVariants({ variant, clickable: isClickable ? 'true' : 'false' }),
+      className
+    );
 
     const cardContent = (
       <>
         {/* Header */}
         <div className={toolCardHeaderVariants({ variant })}>
           {/* Icon */}
-          {icon && (
-            <div className={toolCardIconVariants({ variant })}>
-              {icon}
-            </div>
-          )}
+          {icon && <div className={toolCardIconVariants({ variant })}>{icon}</div>}
 
           {/* Title area */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center flex-wrap gap-2">
-              <h3 className={toolCardTitleVariants({ variant })}>
-                {displayTitle}
-              </h3>
-              {version && (
-                <span className={toolCardVersionVariants({})}>
-                  v{version}
-                </span>
-              )}
+              <h3 className={toolCardTitleVariants({ variant })}>{displayTitle}</h3>
+              {version && <span className={toolCardVersionVariants({})}>v{version}</span>}
             </div>
 
             {/* Badges */}
@@ -147,15 +140,9 @@ export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
                   official
                 </span>
               )}
-              {tier && (
-                <span className={toolCardTierBadgeVariants({ tier })}>
-                  {tier}
-                </span>
-              )}
+              {tier && <span className={toolCardTierBadgeVariants({ tier })}>{tier}</span>}
               {category && (
-                <span className="font-mono text-[10px] text-foreground-muted">
-                  {category}
-                </span>
+                <span className="font-mono text-[10px] text-foreground-muted">{category}</span>
               )}
             </div>
           </div>
@@ -166,19 +153,13 @@ export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
               <div className="font-mono text-lg font-semibold text-primary">
                 {Math.round(qualityScore)}
               </div>
-              <div className="font-mono text-[10px] text-foreground-muted uppercase">
-                score
-              </div>
+              <div className="font-mono text-[10px] text-foreground-muted uppercase">score</div>
             </div>
           )}
         </div>
 
         {/* Description */}
-        {description && (
-          <p className={toolCardDescriptionVariants({ variant })}>
-            {description}
-          </p>
-        )}
+        {description && <p className={toolCardDescriptionVariants({ variant })}>{description}</p>}
 
         {/* Meta info */}
         <div className={toolCardMetaVariants({ variant })}>
@@ -213,19 +194,13 @@ export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
           {/* Quality score for compact variant */}
           {qualityScore !== undefined && variant === 'compact' && (
             <div className={cn(toolCardMetaItemVariants({}), 'ml-auto')}>
-              <span className="text-primary font-semibold">
-                {Math.round(qualityScore)}
-              </span>
+              <span className="text-primary font-semibold">{Math.round(qualityScore)}</span>
             </div>
           )}
         </div>
 
         {/* Action slot */}
-        {action && (
-          <div className={toolCardActionVariants({ variant })}>
-            {action}
-          </div>
-        )}
+        {action && <div className={toolCardActionVariants({ variant })}>{action}</div>}
       </>
     );
 
@@ -243,11 +218,7 @@ export const ToolCard = forwardRef<HTMLDivElement, ToolCardProps>(
     }
 
     return (
-      <div
-        ref={ref}
-        className={cardClassName}
-        {...props}
-      >
+      <div ref={ref} className={cardClassName} {...props}>
         {cardContent}
       </div>
     );

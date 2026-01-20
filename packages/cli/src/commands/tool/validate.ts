@@ -1,6 +1,6 @@
-import { Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { Command, Flags } from '@oclif/core';
 import { getClient } from '../../lib/api-client.js';
 import { createOutput } from '../../lib/output.js';
 
@@ -47,7 +47,10 @@ export default class ToolValidate extends Command {
       const content = fs.readFileSync(packagePath, 'utf-8');
       packageJson = JSON.parse(content);
     } catch (error) {
-      output.error('Failed to parse package.json', error instanceof Error ? error.message : undefined);
+      output.error(
+        'Failed to parse package.json',
+        error instanceof Error ? error.message : undefined
+      );
       return;
     }
 
@@ -104,7 +107,10 @@ export default class ToolValidate extends Command {
         output.success('Configuration is valid');
         output.newLine();
         output.keyValue('Tier', response.data.tier || 'minimal');
-        output.keyValue('Has tpmjs keyword', hasTpmjsKeyword ? 'Yes' : 'No (add for auto-discovery)');
+        output.keyValue(
+          'Has tpmjs keyword',
+          hasTpmjsKeyword ? 'Yes' : 'No (add for auto-discovery)'
+        );
 
         if (!hasTpmjsKeyword) {
           output.newLine();

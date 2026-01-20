@@ -56,11 +56,11 @@ function calculateDateRange(duration: string): { startDate: Date; endDate: Date;
 
   if (durationLower.includes('week')) {
     const weekMatch = durationLower.match(/(\d+)\s*week/);
-    weeks = weekMatch?.[1] ? Number.parseInt(weekMatch[1]) : 1;
+    weeks = weekMatch?.[1] ? Number.parseInt(weekMatch[1], 10) : 1;
     endDate.setDate(endDate.getDate() + weeks * 7);
   } else if (durationLower.includes('month')) {
     const monthMatch = durationLower.match(/(\d+)\s*month/);
-    const months = monthMatch?.[1] ? Number.parseInt(monthMatch[1]) : 1;
+    const months = monthMatch?.[1] ? Number.parseInt(monthMatch[1], 10) : 1;
     endDate.setMonth(endDate.getMonth() + months);
     weeks = Math.ceil((endDate.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
   } else if (durationLower.includes('quarter')) {

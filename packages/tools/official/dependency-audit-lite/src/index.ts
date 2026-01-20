@@ -139,21 +139,21 @@ function detectDuplicates(pkg: PackageJson): DependencyIssue[] {
     if (!packageVersions.has(name)) {
       packageVersions.set(name, []);
     }
-    packageVersions.get(name)!.push({ version, type: 'dependencies' });
+    packageVersions.get(name)?.push({ version, type: 'dependencies' });
   }
 
   for (const [name, version] of Object.entries(devDeps)) {
     if (!packageVersions.has(name)) {
       packageVersions.set(name, []);
     }
-    packageVersions.get(name)!.push({ version, type: 'devDependencies' });
+    packageVersions.get(name)?.push({ version, type: 'devDependencies' });
   }
 
   for (const [name, version] of Object.entries(peerDeps)) {
     if (!packageVersions.has(name)) {
       packageVersions.set(name, []);
     }
-    packageVersions.get(name)!.push({ version, type: 'peerDependencies' });
+    packageVersions.get(name)?.push({ version, type: 'peerDependencies' });
   }
 
   // Find duplicates with different versions

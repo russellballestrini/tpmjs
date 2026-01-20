@@ -27,8 +27,8 @@ export const enrichCommand = new Command('enrich')
 
       const processor = new BatchProcessor({
         dbPath: options.db,
-        batchSize: Number.parseInt(options.batch),
-        concurrency: Number.parseInt(options.concurrency),
+        batchSize: Number.parseInt(options.batch, 10),
+        concurrency: Number.parseInt(options.concurrency, 10),
         costLimitUsd: Number.parseFloat(options.costLimit),
         model: options.model,
         onProgress: (processed, total, cost) => {

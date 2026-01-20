@@ -167,15 +167,21 @@ function A11yTable({ components, title }: { components: A11yRequirement[]; title
                 </TableCell>
                 <TableCell>
                   {comp.focusTrap ? (
-                    <Badge variant="success" size="sm">yes</Badge>
+                    <Badge variant="success" size="sm">
+                      yes
+                    </Badge>
                   ) : (
-                    <Badge variant="outline" size="sm">no</Badge>
+                    <Badge variant="outline" size="sm">
+                      no
+                    </Badge>
                   )}
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
                     {comp.keyboard.map((k, i) => (
-                      <div key={i} className="text-xs text-foreground-secondary">{k}</div>
+                      <div key={i} className="text-xs text-foreground-secondary">
+                        {k}
+                      </div>
                     ))}
                   </div>
                 </TableCell>
@@ -195,13 +201,14 @@ export function SectionA11yChecklists(): React.ReactElement {
   return (
     <FieldsetSection title="19. accessibility checklists" id="a11y-checklists">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Component-level accessibility requirements and implementation guides.
-        All components follow WCAG 2.1 AA standards.
+        Component-level accessibility requirements and implementation guides. All components follow
+        WCAG 2.1 AA standards.
       </p>
 
       <SubSection title="aria patterns & keyboard">
         <p className="font-sans text-sm text-foreground-secondary mb-6">
-          Each component has specific ARIA patterns and keyboard interactions that must be implemented.
+          Each component has specific ARIA patterns and keyboard interactions that must be
+          implemented.
         </p>
 
         <A11yTable components={overlayComponents} title="overlay components" />
@@ -240,7 +247,7 @@ export function SectionA11yChecklists(): React.ReactElement {
         <div className="mt-6 bg-surface p-4 border border-dashed border-border">
           <h4 className="font-mono text-sm font-medium mb-3">implementation pattern</h4>
           <pre className="text-xs font-mono text-foreground-secondary overflow-x-auto">
-{`// Focus trap implementation
+            {`// Focus trap implementation
 const dialogRef = useRef<HTMLDivElement>(null);
 const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -300,19 +307,27 @@ const handleClose = () => {
               <TableBody>
                 <TableRow>
                   <TableCell className="font-mono text-sm">Toast shown</TableCell>
-                  <TableCell className="text-sm text-foreground-secondary">"[message content]"</TableCell>
+                  <TableCell className="text-sm text-foreground-secondary">
+                    "[message content]"
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-mono text-sm">Modal opened</TableCell>
-                  <TableCell className="text-sm text-foreground-secondary">"[dialog title], dialog"</TableCell>
+                  <TableCell className="text-sm text-foreground-secondary">
+                    "[dialog title], dialog"
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-mono text-sm">Form error</TableCell>
-                  <TableCell className="text-sm text-foreground-secondary">"Error: [field name], [error message]"</TableCell>
+                  <TableCell className="text-sm text-foreground-secondary">
+                    "Error: [field name], [error message]"
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-mono text-sm">Loading complete</TableCell>
-                  <TableCell className="text-sm text-foreground-secondary">"Loading complete, [N] results"</TableCell>
+                  <TableCell className="text-sm text-foreground-secondary">
+                    "Loading complete, [N] results"
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -322,21 +337,28 @@ const handleClose = () => {
 
       <SubSection title="color contrast requirements">
         <p className="font-sans text-sm text-foreground-secondary mb-4">
-          All text must meet WCAG AA contrast requirements (4.5:1 for normal text, 3:1 for large text).
+          All text must meet WCAG AA contrast requirements (4.5:1 for normal text, 3:1 for large
+          text).
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-background border border-border">
               <span className="text-foreground">foreground on background</span>
-              <Badge variant="success" size="sm">9.2:1</Badge>
+              <Badge variant="success" size="sm">
+                9.2:1
+              </Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-surface border border-border">
               <span className="text-foreground-secondary">secondary on surface</span>
-              <Badge variant="success" size="sm">5.8:1</Badge>
+              <Badge variant="success" size="sm">
+                5.8:1
+              </Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-surface border border-border">
               <span className="text-foreground-tertiary">tertiary on surface</span>
-              <Badge variant="warning" size="sm">4.5:1</Badge>
+              <Badge variant="warning" size="sm">
+                4.5:1
+              </Badge>
             </div>
           </div>
           <div className="bg-surface p-4 border border-dashed border-border">
@@ -353,13 +375,13 @@ const handleClose = () => {
 
       <SubSection title="reduced motion support">
         <p className="font-sans text-sm text-foreground-secondary mb-4">
-          Respect the <code className="px-1 bg-surface-2 text-xs">prefers-reduced-motion</code> media query
-          for users who experience motion sickness or vestibular disorders.
+          Respect the <code className="px-1 bg-surface-2 text-xs">prefers-reduced-motion</code>{' '}
+          media query for users who experience motion sickness or vestibular disorders.
         </p>
         <div className="bg-surface p-4 border border-dashed border-border">
           <h4 className="font-mono text-sm font-medium mb-3">implementation</h4>
           <pre className="text-xs font-mono text-foreground-secondary overflow-x-auto">
-{`// CSS approach
+            {`// CSS approach
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

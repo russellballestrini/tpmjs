@@ -1,10 +1,10 @@
-import { createVariants } from '../system/variants';
 import {
   formErrorMessage,
   formHelperBase,
   formLabelBase,
   formRequiredIndicator,
 } from '../system/formVariants';
+import { createVariants } from '../system/variants';
 
 /**
  * FormField container variants

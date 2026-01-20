@@ -3,11 +3,7 @@
 import { cn } from '@tpmjs/utils/cn';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Icon } from '../Icon/Icon';
-import type {
-  PaginationEllipsisProps,
-  PaginationItemProps,
-  PaginationProps,
-} from './types';
+import type { PaginationEllipsisProps, PaginationItemProps, PaginationProps } from './types';
 import {
   paginationEllipsisVariants,
   paginationInfoVariants,
@@ -33,14 +29,8 @@ function generatePaginationRange(
   }
 
   // Calculate sibling range
-  const siblingStart = Math.max(
-    boundaries + 1,
-    page - siblings
-  );
-  const siblingEnd = Math.min(
-    totalPages - boundaries,
-    page + siblings
-  );
+  const siblingStart = Math.max(boundaries + 1, page - siblings);
+  const siblingEnd = Math.min(totalPages - boundaries, page + siblings);
 
   // Add ellipsis if there's a gap after boundaries
   if (siblingStart > boundaries + 1) {
@@ -133,7 +123,6 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
       return (
         <nav
           ref={ref}
-          role="navigation"
           aria-label="Pagination"
           className={cn(paginationVariants({ size }), className)}
           {...props}
@@ -142,7 +131,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isFirstPage}
             onClick={() => handlePageChange(page - 1)}
-            className={paginationNavButtonVariants({ size, disabled: (disabled || isFirstPage) ? 'true' : 'false' })}
+            className={paginationNavButtonVariants({
+              size,
+              disabled: disabled || isFirstPage ? 'true' : 'false',
+            })}
             aria-label="Go to previous page"
           >
             <Icon icon="chevronLeft" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -157,7 +149,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isLastPage}
             onClick={() => handlePageChange(page + 1)}
-            className={paginationNavButtonVariants({ size, disabled: (disabled || isLastPage) ? 'true' : 'false' })}
+            className={paginationNavButtonVariants({
+              size,
+              disabled: disabled || isLastPage ? 'true' : 'false',
+            })}
             aria-label="Go to next page"
           >
             {nextLabel}
@@ -172,7 +167,6 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
       return (
         <nav
           ref={ref}
-          role="navigation"
           aria-label="Pagination"
           className={cn(paginationVariants({ size }), className)}
           {...props}
@@ -181,7 +175,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isFirstPage}
             onClick={() => handlePageChange(page - 1)}
-            className={paginationItemVariants({ size, disabled: (disabled || isFirstPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isFirstPage ? 'true' : 'false',
+            })}
             aria-label="Go to previous page"
           >
             <Icon icon="chevronLeft" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -195,7 +192,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isLastPage}
             onClick={() => handlePageChange(page + 1)}
-            className={paginationItemVariants({ size, disabled: (disabled || isLastPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isLastPage ? 'true' : 'false',
+            })}
             aria-label="Go to next page"
           >
             <Icon icon="chevronRight" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -208,7 +208,6 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
     return (
       <nav
         ref={ref}
-        role="navigation"
         aria-label="Pagination"
         className={cn(paginationVariants({ size }), className)}
         {...props}
@@ -219,7 +218,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isFirstPage}
             onClick={() => handlePageChange(1)}
-            className={paginationItemVariants({ size, disabled: (disabled || isFirstPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isFirstPage ? 'true' : 'false',
+            })}
             aria-label="Go to first page"
           >
             <Icon icon="chevronsLeft" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -232,7 +234,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isFirstPage}
             onClick={() => handlePageChange(page - 1)}
-            className={paginationItemVariants({ size, disabled: (disabled || isFirstPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isFirstPage ? 'true' : 'false',
+            })}
             aria-label="Go to previous page"
           >
             <Icon icon="chevronLeft" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -242,12 +247,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
         {/* Page numbers */}
         {paginationRange.map((item, index) => {
           if (item === 'ellipsis') {
-            return (
-              <PaginationEllipsis
-                key={`ellipsis-${index}`}
-                size={size}
-              />
-            );
+            return <PaginationEllipsis key={`ellipsis-${index}`} size={size} />;
           }
 
           return (
@@ -275,7 +275,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isLastPage}
             onClick={() => handlePageChange(page + 1)}
-            className={paginationItemVariants({ size, disabled: (disabled || isLastPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isLastPage ? 'true' : 'false',
+            })}
             aria-label="Go to next page"
           >
             <Icon icon="chevronRight" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -288,7 +291,10 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             type="button"
             disabled={disabled || isLastPage}
             onClick={() => handlePageChange(totalPages)}
-            className={paginationItemVariants({ size, disabled: (disabled || isLastPage) ? 'true' : 'false' })}
+            className={paginationItemVariants({
+              size,
+              disabled: disabled || isLastPage ? 'true' : 'false',
+            })}
             aria-label="Go to last page"
           >
             <Icon icon="chevronsRight" size={size === 'sm' ? 'xs' : 'sm'} />
@@ -310,7 +316,14 @@ export const PaginationItem = forwardRef<HTMLButtonElement, PaginationItemProps>
       ref={ref}
       type="button"
       disabled={disabled}
-      className={cn(paginationItemVariants({ size, active: active ? 'true' : 'false', disabled: disabled ? 'true' : 'false' }), className)}
+      className={cn(
+        paginationItemVariants({
+          size,
+          active: active ? 'true' : 'false',
+          disabled: disabled ? 'true' : 'false',
+        }),
+        className
+      )}
       {...props}
     >
       {children}

@@ -118,7 +118,10 @@ function CliAuthContent(): React.ReactElement {
           </Link>
           <p className="text-sm text-foreground-tertiary mt-4">
             Don&apos;t have an account?{' '}
-            <Link href={`/sign-up?redirect=${encodeURIComponent(returnUrl)}`} className="text-primary hover:underline">
+            <Link
+              href={`/sign-up?redirect=${encodeURIComponent(returnUrl)}`}
+              className="text-primary hover:underline"
+            >
               Sign up
             </Link>
           </p>
@@ -147,23 +150,15 @@ function CliAuthContent(): React.ReactElement {
         <div className="bg-surface-secondary border border-border rounded-lg p-4 mb-6">
           <div className="flex items-center gap-3">
             {user.image ? (
-              <img
-                src={user.image}
-                alt=""
-                className="w-10 h-10 rounded-full"
-              />
+              <img src={user.image} alt="" className="w-10 h-10 rounded-full" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Icon icon="user" size="sm" className="text-primary" />
               </div>
             )}
             <div>
-              <p className="font-medium text-foreground">
-                {user.name || 'User'}
-              </p>
-              <p className="text-sm text-foreground-secondary">
-                {user.email}
-              </p>
+              <p className="font-medium text-foreground">{user.name || 'User'}</p>
+              <p className="text-sm text-foreground-secondary">{user.email}</p>
             </div>
           </div>
         </div>
@@ -195,11 +190,7 @@ function CliAuthContent(): React.ReactElement {
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={handleAuthorize}
-            disabled={isAuthorizing}
-            className="w-full"
-          >
+          <Button onClick={handleAuthorize} disabled={isAuthorizing} className="w-full">
             {isAuthorizing ? (
               <>
                 <Icon icon="loader" size="sm" className="mr-2 animate-spin" />
@@ -223,8 +214,8 @@ function CliAuthContent(): React.ReactElement {
         </div>
 
         <p className="text-xs text-foreground-tertiary text-center mt-6">
-          An API key will be created and sent to the CLI.
-          You can revoke it anytime from your dashboard.
+          An API key will be created and sent to the CLI. You can revoke it anytime from your
+          dashboard.
         </p>
       </div>
     </div>

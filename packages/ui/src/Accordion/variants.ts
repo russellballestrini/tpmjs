@@ -4,9 +4,7 @@ import { createVariants } from '../system/variants';
  * Accordion container variant definitions
  */
 export const accordionVariants = createVariants({
-  base: [
-    'w-full',
-  ].join(' '),
+  base: ['w-full'].join(' '),
 
   variants: {
     variant: {
@@ -25,9 +23,7 @@ export const accordionVariants = createVariants({
  * Accordion item variant definitions
  */
 export const accordionItemVariants = createVariants({
-  base: [
-    'w-full',
-  ].join(' '),
+  base: ['w-full'].join(' '),
 
   variants: {
     variant: {
@@ -67,8 +63,8 @@ export const accordionTriggerVariants = createVariants({
 
   variants: {
     disabled: {
-      'true': 'opacity-50 cursor-not-allowed hover:bg-transparent',
-      'false': '',
+      true: 'opacity-50 cursor-not-allowed hover:bg-transparent',
+      false: '',
     },
   },
 
@@ -81,16 +77,12 @@ export const accordionTriggerVariants = createVariants({
  * Accordion trigger icon variant definitions
  */
 export const accordionTriggerIconVariants = createVariants({
-  base: [
-    'flex-shrink-0',
-    'text-foreground-muted',
-    'transition-transform duration-200',
-  ].join(' '),
+  base: ['flex-shrink-0', 'text-foreground-muted', 'transition-transform duration-200'].join(' '),
 
   variants: {
     expanded: {
-      'true': 'rotate-180',
-      'false': 'rotate-0',
+      true: 'rotate-180',
+      false: 'rotate-0',
     },
   },
 
@@ -103,15 +95,12 @@ export const accordionTriggerIconVariants = createVariants({
  * Accordion content variant definitions
  */
 export const accordionContentVariants = createVariants({
-  base: [
-    'overflow-hidden',
-    'transition-all duration-200 ease-in-out',
-  ].join(' '),
+  base: ['overflow-hidden', 'transition-all duration-200 ease-in-out'].join(' '),
 
   variants: {
     expanded: {
-      'true': 'max-h-[1000px] opacity-100',
-      'false': 'max-h-0 opacity-0',
+      true: 'max-h-[1000px] opacity-100',
+      false: 'max-h-0 opacity-0',
     },
   },
 
@@ -124,11 +113,7 @@ export const accordionContentVariants = createVariants({
  * Accordion content inner variant definitions
  */
 export const accordionContentInnerVariants = createVariants({
-  base: [
-    'px-4 pb-4',
-    'font-mono text-sm',
-    'text-foreground-muted',
-  ].join(' '),
+  base: ['px-4 pb-4', 'font-mono text-sm', 'text-foreground-muted'].join(' '),
 
   variants: {},
 

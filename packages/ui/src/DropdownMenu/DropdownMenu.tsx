@@ -186,8 +186,8 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
       if (!isOpen || !triggerRef.current || !contentRef.current) return;
 
       const updatePosition = () => {
-        const triggerRect = triggerRef.current!.getBoundingClientRect();
-        const contentRect = contentRef.current!.getBoundingClientRect();
+        const triggerRect = triggerRef.current?.getBoundingClientRect();
+        const contentRect = contentRef.current?.getBoundingClientRect();
         const newPosition = calculatePosition(triggerRect, contentRect, placement, offset);
         setPosition(newPosition);
       };
@@ -209,10 +209,7 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
 
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as Node;
-        if (
-          triggerRef.current?.contains(target) ||
-          contentRef.current?.contains(target)
-        ) {
+        if (triggerRef.current?.contains(target) || contentRef.current?.contains(target)) {
           return;
         }
         closeMenu();
@@ -236,15 +233,11 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
             break;
           case 'ArrowDown':
             event.preventDefault();
-            setActiveIndex((prev) =>
-              prev < itemCountRef.current - 1 ? prev + 1 : 0
-            );
+            setActiveIndex((prev) => (prev < itemCountRef.current - 1 ? prev + 1 : 0));
             break;
           case 'ArrowUp':
             event.preventDefault();
-            setActiveIndex((prev) =>
-              prev > 0 ? prev - 1 : itemCountRef.current - 1
-            );
+            setActiveIndex((prev) => (prev > 0 ? prev - 1 : itemCountRef.current - 1));
             break;
           case 'Home':
             event.preventDefault();
@@ -391,16 +384,16 @@ export const DropdownMenuItem = forwardRef<HTMLButtonElement, DropdownMenuItemPr
         {...props}
       >
         {icon && (
-          <span className={dropdownMenuItemIconVariants({ destructive: destructive ? 'true' : 'false' })}>
+          <span
+            className={dropdownMenuItemIconVariants({
+              destructive: destructive ? 'true' : 'false',
+            })}
+          >
             {icon}
           </span>
         )}
         <span className="flex-1">{children}</span>
-        {shortcut && (
-          <span className={dropdownMenuItemShortcutVariants({})}>
-            {shortcut}
-          </span>
-        )}
+        {shortcut && <span className={dropdownMenuItemShortcutVariants({})}>{shortcut}</span>}
       </button>
     );
   }
@@ -429,11 +422,7 @@ DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';
  */
 export const DropdownMenuLabel = forwardRef<HTMLDivElement, DropdownMenuLabelProps>(
   ({ children, className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(dropdownMenuLabelVariants({}), className)}
-      {...props}
-    >
+    <div ref={ref} className={cn(dropdownMenuLabelVariants({}), className)} {...props}>
       {children}
     </div>
   )

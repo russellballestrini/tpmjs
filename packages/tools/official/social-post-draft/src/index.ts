@@ -161,12 +161,12 @@ function formatPostContent(
         break;
       case 'casual':
         if (!content.includes('!') && !content.includes('?')) {
-          content = content + '!';
+          content = `${content}!`;
         }
         break;
       case 'friendly':
         if (!content.match(/[!?😊😃🎉]/u)) {
-          content = content + ' 😊';
+          content = `${content} 😊`;
         }
         break;
     }
@@ -177,7 +177,7 @@ function formatPostContent(
     case 'twitter':
       // Twitter prefers concise, punchy content
       if (content.length > 240) {
-        content = content.substring(0, 237) + '...';
+        content = `${content.substring(0, 237)}...`;
       }
       break;
     case 'linkedin':
@@ -185,7 +185,7 @@ function formatPostContent(
       if (!content.includes('\n\n') && content.length > 150) {
         const firstSentence = content.match(/^[^.!?]+[.!?]/)?.[0];
         if (firstSentence) {
-          content = firstSentence + '\n\n' + content.substring(firstSentence.length);
+          content = `${firstSentence}\n\n${content.substring(firstSentence.length)}`;
         }
       }
       break;
@@ -300,12 +300,12 @@ export const socialPostDraftTool = tool({
 
     // Add CTA if not already in content
     if (cta && !formattedContent.toLowerCase().includes(cta.toLowerCase())) {
-      finalPost += '\n\n' + cta;
+      finalPost += `\n\n${cta}`;
     }
 
     // Add hashtags at the end
     if (hashtags.length > 0) {
-      finalPost += '\n\n' + hashtags.join(' ');
+      finalPost += `\n\n${hashtags.join(' ')}`;
     }
 
     const characterCount = finalPost.length;

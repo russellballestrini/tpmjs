@@ -68,7 +68,7 @@ async function main() {
 
     // Show summary of health status
     console.log('📊 Health Status Summary:');
-    const healthSummary = await prisma.tool.groupBy({
+    const _healthSummary = await prisma.tool.groupBy({
       by: ['importHealth', 'executionHealth'],
       _count: true,
     });

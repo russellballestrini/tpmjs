@@ -82,11 +82,17 @@ export function SectionTheming(): React.ReactElement {
         <div className="bg-surface p-6 border border-dashed border-border">
           <h4 className="font-mono text-sm font-medium mb-4">for sdk users embedding tpmjs ui</h4>
           <ul className="space-y-2 text-sm text-foreground-secondary font-sans">
-            <li>• Import the CSS variables from <code className="font-mono bg-surface-2 px-1">@tpmjs/ui/styles</code></li>
+            <li>
+              • Import the CSS variables from{' '}
+              <code className="font-mono bg-surface-2 px-1">@tpmjs/ui/styles</code>
+            </li>
             <li>• Override semantic tokens in your own CSS to match your brand</li>
             <li>• Do not override core tokens (raw values)</li>
             <li>• Test both light and dark modes if supporting theme switching</li>
-            <li>• Use <code className="font-mono bg-surface-2 px-1">data-density</code> attribute for density control</li>
+            <li>
+              • Use <code className="font-mono bg-surface-2 px-1">data-density</code> attribute for
+              density control
+            </li>
           </ul>
         </div>
       </SubSection>

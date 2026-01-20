@@ -5,44 +5,40 @@
 
 // Changes feed
 export {
-  fetchChanges,
   type Change,
   type ChangesFeedResponse,
   type FetchChangesOptions,
   type FetchChangesResult,
+  fetchChanges,
 } from './changes';
-
-// Keyword search
-export {
-  searchByKeyword,
-  searchAllByKeyword,
-  type SearchPackage,
-  type SearchResult,
-  type SearchResponse,
-  type SearchByKeywordOptions,
-} from './search';
-
-// Package metadata
-export {
-  fetchPackageMetadata,
-  fetchLatestPackageVersion,
-  fetchLatestPackageWithMetadata,
-  fetchPackageTpmjsField,
-  type PackageVersion,
-  type PackageMetadata,
-  type PackageVersionWithReadme,
-} from './package';
-
-// Download statistics
-export { fetchDownloadStats, fetchBulkDownloadStats, type DownloadsResponse } from './stats';
-
 // GitHub statistics
 export {
   fetchGitHubStars,
   fetchGitHubStarsFromRepository,
-  parseGitHubUrl,
   type GitHubRepoResponse,
+  parseGitHubUrl,
 } from './github';
 
+// Package metadata
+export {
+  fetchLatestPackageVersion,
+  fetchLatestPackageWithMetadata,
+  fetchPackageMetadata,
+  fetchPackageTpmjsField,
+  type PackageMetadata,
+  type PackageVersion,
+  type PackageVersionWithReadme,
+} from './package';
 // Rate limiting
-export { delay, RateLimiter, npmRateLimiter, retryWithBackoff } from './rate-limiter';
+export { delay, npmRateLimiter, RateLimiter, retryWithBackoff } from './rate-limiter';
+// Keyword search
+export {
+  type SearchByKeywordOptions,
+  type SearchPackage,
+  type SearchResponse,
+  type SearchResult,
+  searchAllByKeyword,
+  searchByKeyword,
+} from './search';
+// Download statistics
+export { type DownloadsResponse, fetchBulkDownloadStats, fetchDownloadStats } from './stats';

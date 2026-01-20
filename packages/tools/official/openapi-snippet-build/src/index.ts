@@ -128,7 +128,7 @@ function generateOpenAPIYaml(endpoints: EndpointDefinition[]): string {
     if (!pathGroups.has(endpoint.path)) {
       pathGroups.set(endpoint.path, []);
     }
-    pathGroups.get(endpoint.path)!.push(endpoint);
+    pathGroups.get(endpoint.path)?.push(endpoint);
   }
 
   // Domain rule: openapi_format - Generate path and method entries

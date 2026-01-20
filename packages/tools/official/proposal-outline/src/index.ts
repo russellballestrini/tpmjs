@@ -146,7 +146,7 @@ function generateProposedSolution(opp: OpportunityData): ProposalSection {
   return {
     title: 'Proposed Solution',
     content: [
-      'Comprehensive solution designed specifically for ' + opp.customerName,
+      `Comprehensive solution designed specifically for ${opp.customerName}`,
       'Addresses all stated requirements and pain points',
     ],
     subsections,

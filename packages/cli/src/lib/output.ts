@@ -107,13 +107,13 @@ export class OutputFormatter {
   // Key-value pair
   keyValue(key: string, value: string | number | boolean | undefined): void {
     if (this.options.json) return;
-    console.log(`${pc.dim(key + ':')} ${value ?? pc.dim('(not set)')}`);
+    console.log(`${pc.dim(`${key}:`)} ${value ?? pc.dim('(not set)')}`);
   }
 
   // List item
   listItem(text: string, indent = 0): void {
     if (this.options.json) return;
-    const prefix = '  '.repeat(indent) + '•';
+    const prefix = `${'  '.repeat(indent)}•`;
     console.log(`${prefix} ${text}`);
   }
 
@@ -148,7 +148,7 @@ export class OutputFormatter {
       this.json({ code: text, language });
       return;
     }
-    console.log(pc.dim('```' + (language ?? '')));
+    console.log(pc.dim(`\`\`\`${language ?? ''}`));
     console.log(text);
     console.log(pc.dim('```'));
   }

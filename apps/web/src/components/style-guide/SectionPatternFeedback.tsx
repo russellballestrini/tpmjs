@@ -11,15 +11,17 @@ export function SectionPatternFeedback(): React.ReactElement {
   return (
     <FieldsetSection title="16. feedback patterns" id="feedback-patterns">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Feedback patterns communicate status, progress, and system responses.
-        Choose the right pattern based on context and urgency.
+        Feedback patterns communicate status, progress, and system responses. Choose the right
+        pattern based on context and urgency.
       </p>
 
       <SubSection title="feedback decision tree">
         <div className="bg-surface p-6 border border-dashed border-border mb-6">
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <Badge variant="info" className="mt-1">Q1</Badge>
+              <Badge variant="info" className="mt-1">
+                Q1
+              </Badge>
               <div>
                 <p className="font-mono text-sm mb-2">Is this a page-level system message?</p>
                 <p className="font-sans text-xs text-foreground-secondary">
@@ -28,7 +30,9 @@ export function SectionPatternFeedback(): React.ReactElement {
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <Badge variant="info" className="mt-1">Q2</Badge>
+              <Badge variant="info" className="mt-1">
+                Q2
+              </Badge>
               <div>
                 <p className="font-mono text-sm mb-2">Is it a response to a user action?</p>
                 <p className="font-sans text-xs text-foreground-secondary">
@@ -37,7 +41,9 @@ export function SectionPatternFeedback(): React.ReactElement {
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <Badge variant="info" className="mt-1">Q3</Badge>
+              <Badge variant="info" className="mt-1">
+                Q3
+              </Badge>
               <div>
                 <p className="font-mono text-sm mb-2">Is it contextual to a specific element?</p>
                 <p className="font-sans text-xs text-foreground-secondary">
@@ -142,7 +148,9 @@ export function SectionPatternFeedback(): React.ReactElement {
               <p className="font-sans text-xs text-foreground-secondary">
                 This version has known vulnerabilities. Update immediately.
               </p>
-              <Button size="sm" variant="destructive" className="mt-3">update now</Button>
+              <Button size="sm" variant="destructive" className="mt-3">
+                update now
+              </Button>
             </div>
           </div>
         </div>
@@ -174,7 +182,9 @@ export function SectionPatternFeedback(): React.ReactElement {
                 Service degradation detected. Some API calls may fail. We are investigating.
               </span>
             </div>
-            <a href="#" className="font-mono text-sm underline hover:no-underline">status page</a>
+            <a href="#" className="font-mono text-sm underline hover:no-underline">
+              status page
+            </a>
           </div>
 
           {/* Announcement banner */}
@@ -185,7 +195,9 @@ export function SectionPatternFeedback(): React.ReactElement {
                 New: AI-powered code review is now available for all tools!
               </span>
             </div>
-            <Button variant="secondary" size="sm">learn more</Button>
+            <Button variant="secondary" size="sm">
+              learn more
+            </Button>
           </div>
         </div>
       </SubSection>
@@ -238,11 +250,14 @@ export function SectionPatternFeedback(): React.ReactElement {
             <div className="flex-1">
               <p className="font-mono text-sm font-medium mb-1">failed to load tools</p>
               <p className="font-sans text-xs text-foreground-secondary mb-4">
-                We couldn't connect to the server. This could be a network issue or the service may be temporarily unavailable.
+                We couldn't connect to the server. This could be a network issue or the service may
+                be temporarily unavailable.
               </p>
               <div className="flex gap-2">
                 <Button size="sm">retry</Button>
-                <Button size="sm" variant="ghost">view details</Button>
+                <Button size="sm" variant="ghost">
+                  view details
+                </Button>
               </div>
             </div>
           </div>

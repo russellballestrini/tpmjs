@@ -87,9 +87,7 @@ function handleApiError(status: number, errorText: string): never {
     case 400:
       throw new Error(`Bad request: ${errorText}`);
     case 401:
-      throw new Error(
-        'Authentication failed: Invalid API key. Ensure HLLM_API_KEY is correct.'
-      );
+      throw new Error('Authentication failed: Invalid API key. Ensure HLLM_API_KEY is correct.');
     case 403:
       throw new Error(`Access forbidden: ${errorText}`);
     case 404:
@@ -390,11 +388,7 @@ export const updateSession = tool({
   }),
   async execute(input: UpdateSessionInput): Promise<Session> {
     const { sessionId, ...body } = input;
-    return apiRequest<Session>(
-      'PATCH',
-      `/chat/sessions/${encodeURIComponent(sessionId)}`,
-      body
-    );
+    return apiRequest<Session>('PATCH', `/chat/sessions/${encodeURIComponent(sessionId)}`, body);
   },
 });
 
@@ -629,11 +623,7 @@ export const getPrompt = tool({
     additionalProperties: false,
   }),
   async execute(input: { promptId: string }): Promise<Prompt> {
-    return apiRequest<Prompt>(
-      'GET',
-      `/prompts/${encodeURIComponent(input.promptId)}`,
-      undefined
-    );
+    return apiRequest<Prompt>('GET', `/prompts/${encodeURIComponent(input.promptId)}`, undefined);
   },
 });
 
@@ -685,11 +675,7 @@ export const updatePrompt = tool({
   }),
   async execute(input: UpdatePromptInput): Promise<Prompt> {
     const { promptId, ...body } = input;
-    return apiRequest<Prompt>(
-      'PATCH',
-      `/prompts/${encodeURIComponent(promptId)}`,
-      body
-    );
+    return apiRequest<Prompt>('PATCH', `/prompts/${encodeURIComponent(promptId)}`, body);
   },
 });
 
@@ -991,11 +977,7 @@ export const getFile = tool({
     additionalProperties: false,
   }),
   async execute(input: { fileId: string }): Promise<FileInfo> {
-    return apiRequest<FileInfo>(
-      'GET',
-      `/files/${encodeURIComponent(input.fileId)}`,
-      undefined
-    );
+    return apiRequest<FileInfo>('GET', `/files/${encodeURIComponent(input.fileId)}`, undefined);
   },
 });
 
@@ -1134,11 +1116,14 @@ export interface AgentMetrics {
     input: number;
     output: number;
   };
-  topologyBreakdown: Record<string, {
-    count: number;
-    avgLatency: number;
-    successRate: number;
-  }>;
+  topologyBreakdown: Record<
+    string,
+    {
+      count: number;
+      avgLatency: number;
+      successRate: number;
+    }
+  >;
   periodStart: string;
   periodEnd: string;
 }
@@ -1224,11 +1209,7 @@ export const describeTool = tool({
     additionalProperties: false,
   }),
   async execute(input: { toolId: string }): Promise<ToolInfo> {
-    return apiRequest<ToolInfo>(
-      'POST',
-      '/tpmjs/describe',
-      { toolId: input.toolId }
-    );
+    return apiRequest<ToolInfo>('POST', '/tpmjs/describe', { toolId: input.toolId });
   },
 });
 
@@ -1265,11 +1246,10 @@ export const executeTool = tool({
     additionalProperties: false,
   }),
   async execute(input: ExecuteToolInput): Promise<ExecuteToolResult> {
-    return apiRequest<ExecuteToolResult>(
-      'POST',
-      '/tpmjs/execute',
-      { toolId: input.toolId, parameters: input.parameters }
-    );
+    return apiRequest<ExecuteToolResult>('POST', '/tpmjs/execute', {
+      toolId: input.toolId,
+      parameters: input.parameters,
+    });
   },
 });
 

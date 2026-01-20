@@ -1,5 +1,6 @@
 // tsup.config.ts
 import { defineConfig } from 'tsup';
+
 var tsup_config_default = defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],

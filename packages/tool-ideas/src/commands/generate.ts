@@ -14,9 +14,9 @@ export const generateCommand = new Command('generate')
     const spinner = ora('Generating tool skeletons...').start();
 
     try {
-      const count = Number.parseInt(options.count);
+      const count = Number.parseInt(options.count, 10);
       const threshold = Number.parseFloat(options.threshold);
-      const seed = Number.parseInt(options.seed);
+      const seed = Number.parseInt(options.seed, 10);
 
       spinner.text = `Generating up to ${count} skeletons (threshold: ${threshold})...`;
 

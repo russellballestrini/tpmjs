@@ -454,7 +454,9 @@ export default function TermsPage(): React.ReactElement {
                 <Button size="lg">Contact Us</Button>
               </a>
               <Link href="/">
-                <Button variant="outline" size="lg">Back to Home</Button>
+                <Button variant="outline" size="lg">
+                  Back to Home
+                </Button>
               </Link>
             </div>
           </div>

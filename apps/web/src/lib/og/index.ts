@@ -5,8 +5,8 @@
  * cached in Vercel Blob storage for 30 days.
  */
 
-export * from './types';
+export { buildCacheKey, cacheImage, getCachedImage } from './cache';
 export { extractPageContent, normalizePath } from './content-extractor';
-export { buildOGPrompt } from './prompt-builder';
 export { generateOGImage } from './image-generator';
-export { getCachedImage, cacheImage, buildCacheKey } from './cache';
+export { buildOGPrompt } from './prompt-builder';
+export * from './types';

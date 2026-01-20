@@ -99,7 +99,11 @@ export function ToolDetailsModal({ tool, open, onClose }: ToolDetailsModalProps)
 
               {/* Optional parameters */}
               {optionalParams.length > 0 && (
-                <div className={requiredParams.length > 0 ? 'pt-4 border-t border-dashed border-border/50' : ''}>
+                <div
+                  className={
+                    requiredParams.length > 0 ? 'pt-4 border-t border-dashed border-border/50' : ''
+                  }
+                >
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-2 h-2 rounded-full bg-foreground-tertiary" />
                     <span className="font-mono text-xs text-foreground-secondary uppercase tracking-wide">

@@ -119,7 +119,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
  * Determines the category for a FAQ based on question and answer content
  */
 function categorize(question: string, answer: string): string {
-  const text = (question + ' ' + answer).toLowerCase();
+  const text = `${question} ${answer}`.toLowerCase();
 
   // Check each category's keywords
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {

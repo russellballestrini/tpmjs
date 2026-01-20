@@ -101,7 +101,7 @@ function extractVendorInfo(text: string): VendorInfo {
   }
 
   // Extract phone number
-  const phoneMatch = text.match(/(?:phone|tel|p):?\s*([0-9\-\(\)\s]{10,})/i);
+  const phoneMatch = text.match(/(?:phone|tel|p):?\s*([0-9\-()\s]{10,})/i);
   const phone = phoneMatch?.[1]?.trim();
 
   // Extract email
@@ -109,7 +109,7 @@ function extractVendorInfo(text: string): VendorInfo {
   const email = emailMatch?.[1];
 
   // Extract tax ID
-  const taxIdMatch = text.match(/(?:tax\s*id|ein|vat):?\s*([0-9\-]+)/i);
+  const taxIdMatch = text.match(/(?:tax\s*id|ein|vat):?\s*([0-9-]+)/i);
   const taxId = taxIdMatch?.[1];
 
   // Extract address (simplified)
@@ -133,12 +133,12 @@ function extractMetadata(text: string): {
   invoiceDate?: string;
 } {
   // Extract invoice number
-  const invoiceNumMatch = text.match(/(?:invoice|inv)\s*(?:#|no|number):?\s*([A-Z0-9\-]+)/i);
+  const invoiceNumMatch = text.match(/(?:invoice|inv)\s*(?:#|no|number):?\s*([A-Z0-9-]+)/i);
   const invoiceNumber = invoiceNumMatch?.[1];
 
   // Extract invoice date
   const dateMatch = text.match(
-    /(?:date|dated|invoice\s+date):?\s*([0-9]{1,2}[\/\-][0-9]{1,2}[\/\-][0-9]{2,4}|[A-Z][a-z]+\s+[0-9]{1,2},?\s+[0-9]{4})/i
+    /(?:date|dated|invoice\s+date):?\s*([0-9]{1,2}[/-][0-9]{1,2}[/-][0-9]{2,4}|[A-Z][a-z]+\s+[0-9]{1,2},?\s+[0-9]{4})/i
   );
   const invoiceDate = dateMatch?.[1];
 
@@ -267,12 +267,12 @@ function extractTotals(text: string): {
  */
 function extractPaymentTerms(text: string): PaymentTerms | undefined {
   const dueDateMatch = text.match(
-    /(?:due\s*date|payment\s*due):?\s*([0-9]{1,2}[\/\-][0-9]{1,2}[\/\-][0-9]{2,4}|[A-Z][a-z]+\s+[0-9]{1,2},?\s+[0-9]{4})/i
+    /(?:due\s*date|payment\s*due):?\s*([0-9]{1,2}[/-][0-9]{1,2}[/-][0-9]{2,4}|[A-Z][a-z]+\s+[0-9]{1,2},?\s+[0-9]{4})/i
   );
   const dueDate = dueDateMatch?.[1];
 
   const netDaysMatch = text.match(/(?:net|due\s+in)\s+(\d+)\s*(?:days?)/i);
-  const netDays = netDaysMatch?.[1] ? Number.parseInt(netDaysMatch[1]) : undefined;
+  const netDays = netDaysMatch?.[1] ? Number.parseInt(netDaysMatch[1], 10) : undefined;
 
   if (!dueDate && !netDays) {
     return undefined;

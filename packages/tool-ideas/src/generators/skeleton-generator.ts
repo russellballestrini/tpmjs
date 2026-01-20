@@ -4,13 +4,13 @@ import { getDatabase } from '../db/client.js';
 import {
   type Category,
   type Context,
-  type NewToolSkeleton,
-  type ToolObject,
-  type Verb,
   categories,
   contexts,
+  type NewToolSkeleton,
   objects,
+  type ToolObject,
   toolSkeletons,
+  type Verb,
   verbs,
 } from '../db/schema.js';
 import { calculateCompatibilityScore, loadCompatibilityRules } from './compatibility.js';
@@ -212,7 +212,7 @@ export async function generateSkeletons(options: {
     try {
       db.insert(toolSkeletons).values(values).onConflictDoNothing().run();
       inserted += batch.length;
-    } catch (e) {
+    } catch (_e) {
       // Some might be duplicates
       for (const v of values) {
         try {

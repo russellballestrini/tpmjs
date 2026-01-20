@@ -168,33 +168,31 @@ export default function AgentsPage(): React.ReactElement {
           <TableBody>
             {isLoading ? (
               // Loading skeleton
-              <>
-                {[0, 1, 2].map((idx) => (
-                  <TableRow key={`agent-skeleton-${idx}`}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-surface-secondary animate-pulse" />
-                        <div className="space-y-1.5">
-                          <div className="h-4 w-32 bg-surface-secondary rounded animate-pulse" />
-                          <div className="h-3 w-48 bg-surface-secondary rounded animate-pulse" />
-                        </div>
+              [0, 1, 2].map((idx) => (
+                <TableRow key={`agent-skeleton-${idx}`}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-surface-secondary animate-pulse" />
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-32 bg-surface-secondary rounded animate-pulse" />
+                        <div className="h-3 w-48 bg-surface-secondary rounded animate-pulse" />
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-5 w-20 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 w-12 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 w-24 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-8 w-24 bg-surface-secondary rounded animate-pulse ml-auto" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-5 w-20 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-12 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-24 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-8 w-24 bg-surface-secondary rounded animate-pulse ml-auto" />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : agents.length === 0 ? (
               <TableEmpty
                 colSpan={5}

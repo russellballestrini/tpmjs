@@ -1,8 +1,8 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { Slide } from './Slide';
 import { SlideNavigation } from './SlideNavigation';
 import { SlideProgress } from './SlideProgress';

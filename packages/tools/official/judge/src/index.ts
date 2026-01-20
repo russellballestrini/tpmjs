@@ -35,7 +35,7 @@ export type EvaluationMetric = (typeof EVALUATION_METRICS)[number];
  * Metric descriptions for context
  */
 export const METRIC_DESCRIPTIONS: Record<EvaluationMetric, string> = {
-  taskCompletion: 'Did the AI make meaningful progress toward completing the user\'s request?',
+  taskCompletion: "Did the AI make meaningful progress toward completing the user's request?",
   accuracy: 'Are the responses factually correct and free of hallucinations or errors?',
   relevance: 'Are responses directly addressing what the user asked for?',
   clarity: 'Are responses clear, well-structured, and easy to understand?',
@@ -51,16 +51,16 @@ export const METRIC_DESCRIPTIONS: Record<EvaluationMetric, string> = {
  * Metric weights for overall score calculation
  */
 export const METRIC_WEIGHTS: Record<EvaluationMetric, number> = {
-  taskCompletion: 2.0,      // Most important - did we do what was asked?
+  taskCompletion: 2.0, // Most important - did we do what was asked?
   userIntentAlignment: 1.5, // Critical - understanding the user
-  completeness: 1.5,        // Important - full coverage
-  accuracy: 1.5,            // Important - correctness
-  progress: 1.2,            // Catches loops
-  actionability: 1.0,       // Usability
-  relevance: 1.0,           // On-topic
-  errorHandling: 1.0,       // Resilience
-  clarity: 0.8,             // Nice to have
-  efficiency: 0.5,          // Least critical
+  completeness: 1.5, // Important - full coverage
+  accuracy: 1.5, // Important - correctness
+  progress: 1.2, // Catches loops
+  actionability: 1.0, // Usability
+  relevance: 1.0, // On-topic
+  errorHandling: 1.0, // Resilience
+  clarity: 0.8, // Nice to have
+  efficiency: 0.5, // Least critical
 };
 
 /**
@@ -127,7 +127,7 @@ interface JudgeInput {
  */
 function detectLoops(messages: Message[]): { detected: boolean; details: string[] } {
   const details: string[] = [];
-  const assistantMessages = messages.filter(m => m.role === 'assistant');
+  const assistantMessages = messages.filter((m) => m.role === 'assistant');
 
   if (assistantMessages.length < 2) {
     return { detected: false, details: [] };
@@ -168,7 +168,7 @@ function detectLoops(messages: Message[]): { detected: boolean; details: string[
 
   // Check for oscillation patterns
   if (assistantMessages.length >= 4) {
-    const last4 = assistantMessages.slice(-4).map(m => m.content.slice(0, 100));
+    const last4 = assistantMessages.slice(-4).map((m) => m.content.slice(0, 100));
     if (last4[0] === last4[2] && last4[1] === last4[3]) {
       details.push('Detected oscillation pattern in last 4 responses');
     }
@@ -186,10 +186,10 @@ function detectLoops(messages: Message[]): { detected: boolean; details: string[
 function extractUserRequest(messages: Message[], provided?: string): string {
   if (provided) return provided;
 
-  const userMessages = messages.filter(m => m.role === 'user');
+  const userMessages = messages.filter((m) => m.role === 'user');
   if (userMessages.length === 0) return 'Unknown request';
 
-  return userMessages[0]!.content;
+  return userMessages[0]?.content;
 }
 
 /**
@@ -216,7 +216,11 @@ function analyzeToolUsage(messages: Message[]): {
     if (msg.toolResults) {
       for (const result of msg.toolResults) {
         const resultStr = JSON.stringify(result.result).toLowerCase();
-        if (resultStr.includes('error') || resultStr.includes('failed') || resultStr.includes('exception')) {
+        if (
+          resultStr.includes('error') ||
+          resultStr.includes('failed') ||
+          resultStr.includes('exception')
+        ) {
           failedCalls++;
         } else {
           successfulCalls++;
@@ -249,16 +253,26 @@ function evaluateMetric(
   let score = 5;
   let reason = '';
 
-  const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
-  const assistantCount = messages.filter(m => m.role === 'assistant').length;
-  const userCount = messages.filter(m => m.role === 'user').length;
+  const lastAssistant = [...messages].reverse().find((m) => m.role === 'assistant');
+  const assistantCount = messages.filter((m) => m.role === 'assistant').length;
+  const userCount = messages.filter((m) => m.role === 'user').length;
 
   switch (metric) {
     case 'taskCompletion': {
       // Check if there's evidence of task completion
       const lastContent = lastAssistant?.content.toLowerCase() || '';
-      const completionIndicators = ['done', 'completed', 'finished', 'created', 'updated', 'fixed', 'resolved', 'here is', 'here\'s'];
-      const hasCompletion = completionIndicators.some(ind => lastContent.includes(ind));
+      const completionIndicators = [
+        'done',
+        'completed',
+        'finished',
+        'created',
+        'updated',
+        'fixed',
+        'resolved',
+        'here is',
+        "here's",
+      ];
+      const hasCompletion = completionIndicators.some((ind) => lastContent.includes(ind));
 
       if (hasCompletion && toolStats.successfulCalls > 0) {
         score = 8;
@@ -285,7 +299,9 @@ function evaluateMetric(
         score = 3;
         reason = 'More failed tool calls than successful ones indicates potential accuracy issues';
         mustDos.push('Investigate and fix the failing tool calls');
-        observations.push(`${toolStats.failedCalls} failed vs ${toolStats.successfulCalls} successful calls`);
+        observations.push(
+          `${toolStats.failedCalls} failed vs ${toolStats.successfulCalls} successful calls`
+        );
       } else if (toolStats.successfulCalls > 0) {
         score = 7;
         reason = 'Successful tool calls suggest accurate execution';
@@ -300,10 +316,17 @@ function evaluateMetric(
 
     case 'relevance': {
       // Simple heuristic: check if user request terms appear in responses
-      const requestTerms = userRequest.toLowerCase().split(/\s+/).filter(t => t.length > 3);
-      const responseText = messages.filter(m => m.role === 'assistant').map(m => m.content.toLowerCase()).join(' ');
-      const matchedTerms = requestTerms.filter(t => responseText.includes(t));
-      const relevanceRatio = requestTerms.length > 0 ? matchedTerms.length / requestTerms.length : 0.5;
+      const requestTerms = userRequest
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((t) => t.length > 3);
+      const responseText = messages
+        .filter((m) => m.role === 'assistant')
+        .map((m) => m.content.toLowerCase())
+        .join(' ');
+      const matchedTerms = requestTerms.filter((t) => responseText.includes(t));
+      const relevanceRatio =
+        requestTerms.length > 0 ? matchedTerms.length / requestTerms.length : 0.5;
 
       score = Math.round(relevanceRatio * 10);
       if (score >= 7) {
@@ -320,7 +343,8 @@ function evaluateMetric(
     }
 
     case 'clarity': {
-      const totalWords = messages.filter(m => m.role === 'assistant')
+      const totalWords = messages
+        .filter((m) => m.role === 'assistant')
         .reduce((sum, m) => sum + m.content.split(/\s+/).length, 0);
       const avgWordsPerResponse = assistantCount > 0 ? totalWords / assistantCount : 0;
 
@@ -360,11 +384,14 @@ function evaluateMetric(
 
     case 'userIntentAlignment': {
       // Check if the conversation seems to understand the request
-      const hasQuestions = messages.some(m => m.role === 'assistant' && m.content.includes('?'));
-      const hasConfirmation = messages.some(m => m.role === 'assistant' &&
-        (m.content.toLowerCase().includes('i understand') ||
-         m.content.toLowerCase().includes('let me') ||
-         m.content.toLowerCase().includes('i\'ll')));
+      const hasQuestions = messages.some((m) => m.role === 'assistant' && m.content.includes('?'));
+      const hasConfirmation = messages.some(
+        (m) =>
+          m.role === 'assistant' &&
+          (m.content.toLowerCase().includes('i understand') ||
+            m.content.toLowerCase().includes('let me') ||
+            m.content.toLowerCase().includes("i'll"))
+      );
 
       if (hasConfirmation && !hasQuestions) {
         score = 8;
@@ -387,9 +414,14 @@ function evaluateMetric(
 
     case 'actionability': {
       const lastContent = lastAssistant?.content || '';
-      const hasCode = lastContent.includes('```') || lastContent.includes('function') || lastContent.includes('const ');
+      const hasCode =
+        lastContent.includes('```') ||
+        lastContent.includes('function') ||
+        lastContent.includes('const ');
       const hasSteps = /\d+\.\s/.test(lastContent) || lastContent.includes('- ');
-      const hasFiles = toolStats.toolsUsed.some(t => t.toLowerCase().includes('write') || t.toLowerCase().includes('create'));
+      const hasFiles = toolStats.toolsUsed.some(
+        (t) => t.toLowerCase().includes('write') || t.toLowerCase().includes('create')
+      );
 
       if (hasFiles) {
         score = 9;
@@ -446,18 +478,29 @@ function evaluateMetric(
         score = 5;
         reason = 'Error handling status unclear';
       }
-      observations.push(`${toolStats.failedCalls} failed, ${toolStats.successfulCalls} successful calls`);
+      observations.push(
+        `${toolStats.failedCalls} failed, ${toolStats.successfulCalls} successful calls`
+      );
       break;
     }
 
     case 'completeness': {
       // Check for common incompleteness indicators
       const lastContent = lastAssistant?.content.toLowerCase() || '';
-      const incompleteIndicators = ['todo', 'later', 'next time', 'will add', 'placeholder', 'not yet', 'tbd', '...'];
-      const hasIncomplete = incompleteIndicators.some(ind => lastContent.includes(ind));
+      const incompleteIndicators = [
+        'todo',
+        'later',
+        'next time',
+        'will add',
+        'placeholder',
+        'not yet',
+        'tbd',
+        '...',
+      ];
+      const hasIncomplete = incompleteIndicators.some((ind) => lastContent.includes(ind));
 
       const completeIndicators = ['all done', 'complete', 'finished', 'everything', 'all set'];
-      const hasComplete = completeIndicators.some(ind => lastContent.includes(ind));
+      const hasComplete = completeIndicators.some((ind) => lastContent.includes(ind));
 
       if (hasComplete && !hasIncomplete) {
         score = 9;
@@ -517,8 +560,8 @@ function determineVerdict(
   const threshold = strictMode ? 7 : 5;
 
   // Critical failures that always result in retry/fail
-  const taskCompletion = metrics.find(m => m.metric === 'taskCompletion')?.score || 0;
-  const progress = metrics.find(m => m.metric === 'progress')?.score || 0;
+  const taskCompletion = metrics.find((m) => m.metric === 'taskCompletion')?.score || 0;
+  const progress = metrics.find((m) => m.metric === 'progress')?.score || 0;
 
   if (loopDetected) {
     return { verdict: 'retry', reason: 'Loop detected - must try a different approach' };
@@ -550,9 +593,12 @@ function determineVerdict(
 /**
  * Generate conversation summary
  */
-function generateSummary(messages: Message[], toolStats: ReturnType<typeof analyzeToolUsage>): string {
-  const userCount = messages.filter(m => m.role === 'user').length;
-  const assistantCount = messages.filter(m => m.role === 'assistant').length;
+function generateSummary(
+  messages: Message[],
+  toolStats: ReturnType<typeof analyzeToolUsage>
+): string {
+  const userCount = messages.filter((m) => m.role === 'user').length;
+  const assistantCount = messages.filter((m) => m.role === 'assistant').length;
 
   return `Conversation with ${userCount} user message(s), ${assistantCount} assistant response(s), and ${toolStats.totalCalls} tool call(s) (${toolStats.successfulCalls} successful, ${toolStats.failedCalls} failed). Tools used: ${toolStats.toolsUsed.join(', ') || 'none'}.`;
 }
@@ -587,7 +633,8 @@ Returns a verdict (pass/retry/fail) with specific must-dos for any issues.`,
     properties: {
       messages: {
         type: 'array',
-        description: 'Array of AI SDK messages to evaluate. Each message should have role and content.',
+        description:
+          'Array of AI SDK messages to evaluate. Each message should have role and content.',
         items: {
           type: 'object',
           properties: {
@@ -665,21 +712,26 @@ Returns a verdict (pass/retry/fail) with specific must-dos for any issues.`,
     const toolStats = analyzeToolUsage(messages);
 
     // Evaluate all metrics
-    const metrics = EVALUATION_METRICS.map(metric =>
+    const metrics = EVALUATION_METRICS.map((metric) =>
       evaluateMetric(metric, messages, userRequest, loopInfo, toolStats)
     );
 
     const overallScore = calculateOverallScore(metrics);
-    const { verdict, reason: verdictReason } = determineVerdict(metrics, overallScore, loopInfo.detected, strictMode);
+    const { verdict, reason: verdictReason } = determineVerdict(
+      metrics,
+      overallScore,
+      loopInfo.detected,
+      strictMode
+    );
 
     // Aggregate must-dos and suggestions
-    const allMustDos = metrics.flatMap(m => m.mustDos);
-    const allSuggestions = metrics.flatMap(m => m.suggestions);
+    const allMustDos = metrics.flatMap((m) => m.mustDos);
+    const allSuggestions = metrics.flatMap((m) => m.suggestions);
 
     // Identify critical issues (metrics with score <= 3)
     const criticalIssues = metrics
-      .filter(m => m.score <= 3)
-      .map(m => `${m.metric}: ${m.reason}`);
+      .filter((m) => m.score <= 3)
+      .map((m) => `${m.metric}: ${m.reason}`);
 
     // Generate next steps based on verdict
     const nextSteps: string[] = [];

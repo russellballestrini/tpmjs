@@ -12,11 +12,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import type { PopoverPlacement, PopoverProps } from './types';
-import {
-  popoverArrowVariants,
-  popoverBodyVariants,
-  popoverContentVariants,
-} from './variants';
+import { popoverArrowVariants, popoverBodyVariants, popoverContentVariants } from './variants';
 
 /**
  * Calculate position based on trigger and placement
@@ -195,8 +191,8 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       if (!isOpen || !triggerRef.current || !contentRef.current) return;
 
       const updatePosition = () => {
-        const triggerRect = triggerRef.current!.getBoundingClientRect();
-        const contentRect = contentRef.current!.getBoundingClientRect();
+        const triggerRect = triggerRef.current?.getBoundingClientRect();
+        const contentRect = contentRef.current?.getBoundingClientRect();
         const newPosition = calculatePosition(triggerRect, contentRect, placement, offset);
         setPosition(newPosition);
       };
@@ -219,10 +215,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as Node;
-        if (
-          triggerRef.current?.contains(target) ||
-          contentRef.current?.contains(target)
-        ) {
+        if (triggerRef.current?.contains(target) || contentRef.current?.contains(target)) {
           return;
         }
         handleClose();
@@ -317,12 +310,8 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
               onMouseLeave={trigger === 'hover' ? handleClose : undefined}
               {...props}
             >
-              {hasArrow && (
-                <div className={popoverArrowVariants({ placement })} />
-              )}
-              <div className={popoverBodyVariants({})}>
-                {content}
-              </div>
+              {hasArrow && <div className={popoverArrowVariants({ placement })} />}
+              <div className={popoverBodyVariants({})}>{content}</div>
             </div>,
             document.body
           )}

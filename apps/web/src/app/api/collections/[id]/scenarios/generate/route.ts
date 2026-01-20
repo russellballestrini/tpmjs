@@ -178,7 +178,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
           name: scenario.name,
           tags: scenario.tags,
         },
-        ...(similarityResult && similarityResult.hasSimilar
+        ...(similarityResult?.hasSimilar
           ? {
               similarity: {
                 hasSimilar: true,

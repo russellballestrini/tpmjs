@@ -1,5 +1,5 @@
-import { Command, Flags } from '@oclif/core';
 import { execSync } from 'node:child_process';
+import { Command, Flags } from '@oclif/core';
 import { createOutput } from '../lib/output.js';
 
 export default class Update extends Command {

@@ -155,16 +155,16 @@
        =========================================== */
 
     /* Type scale */
-    --text-xs: 0.75rem;     /* 12px */
-    --text-sm: 0.875rem;    /* 14px */
-    --text-base: 1rem;      /* 16px */
-    --text-lg: 1.125rem;    /* 18px */
-    --text-xl: 1.25rem;     /* 20px */
-    --text-2xl: 1.5rem;     /* 24px */
-    --text-3xl: 2rem;       /* 32px */
-    --text-4xl: 2.5rem;     /* 40px */
-    --text-5xl: 3rem;       /* 48px */
-    --text-6xl: 4rem;       /* 64px */
+    --text-xs: 0.75rem; /* 12px */
+    --text-sm: 0.875rem; /* 14px */
+    --text-base: 1rem; /* 16px */
+    --text-lg: 1.125rem; /* 18px */
+    --text-xl: 1.25rem; /* 20px */
+    --text-2xl: 1.5rem; /* 24px */
+    --text-3xl: 2rem; /* 32px */
+    --text-4xl: 2.5rem; /* 40px */
+    --text-5xl: 3rem; /* 48px */
+    --text-6xl: 4rem; /* 64px */
 
     /* Max line widths for readability */
     --prose-width: 65ch;
@@ -226,10 +226,14 @@
 
     --shadow-none: none;
     --shadow-xs: 0 1px 2px 0 hsl(var(--foreground) / 0.05);
-    --shadow-sm: 0 1px 3px 0 hsl(var(--foreground) / 0.08), 0 1px 2px -1px hsl(var(--foreground) / 0.08);
-    --shadow-md: 0 4px 6px -1px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.08);
-    --shadow-lg: 0 10px 15px -3px hsl(var(--foreground) / 0.08), 0 4px 6px -4px hsl(var(--foreground) / 0.08);
-    --shadow-xl: 0 20px 25px -5px hsl(var(--foreground) / 0.08), 0 8px 10px -6px hsl(var(--foreground) / 0.08);
+    --shadow-sm:
+      0 1px 3px 0 hsl(var(--foreground) / 0.08), 0 1px 2px -1px hsl(var(--foreground) / 0.08);
+    --shadow-md:
+      0 4px 6px -1px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.08);
+    --shadow-lg:
+      0 10px 15px -3px hsl(var(--foreground) / 0.08), 0 4px 6px -4px hsl(var(--foreground) / 0.08);
+    --shadow-xl:
+      0 20px 25px -5px hsl(var(--foreground) / 0.08), 0 8px 10px -6px hsl(var(--foreground) / 0.08);
     --shadow-2xl: 0 25px 50px -12px hsl(var(--foreground) / 0.15);
     --shadow-inner: inset 0 2px 4px 0 hsl(var(--foreground) / 0.05);
 
@@ -745,9 +749,9 @@
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms;
+      animation-iteration-count: 1;
+      transition-duration: 0.01ms;
     }
   }
 

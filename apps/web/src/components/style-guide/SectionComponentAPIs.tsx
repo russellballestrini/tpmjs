@@ -15,8 +15,7 @@ export function SectionComponentAPIs(): React.ReactElement {
   return (
     <FieldsetSection title="13. component apis" id="api">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Complete API documentation for each component with props, types,
-        and usage examples.
+        Complete API documentation for each component with props, types, and usage examples.
       </p>
 
       <SubSection title="button api">
@@ -33,13 +32,18 @@ export function SectionComponentAPIs(): React.ReactElement {
             <TableBody>
               <TableRow>
                 <TableCell className="font-mono">variant</TableCell>
-                <TableCell className="font-mono text-xs">&apos;default&apos; | &apos;secondary&apos; | &apos;destructive&apos; | &apos;outline&apos; | &apos;ghost&apos; | &apos;link&apos;</TableCell>
+                <TableCell className="font-mono text-xs">
+                  &apos;default&apos; | &apos;secondary&apos; | &apos;destructive&apos; |
+                  &apos;outline&apos; | &apos;ghost&apos; | &apos;link&apos;
+                </TableCell>
                 <TableCell className="font-mono">&apos;default&apos;</TableCell>
                 <TableCell>visual style</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-mono">size</TableCell>
-                <TableCell className="font-mono text-xs">&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;icon&apos;</TableCell>
+                <TableCell className="font-mono text-xs">
+                  &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos; | &apos;icon&apos;
+                </TableCell>
                 <TableCell className="font-mono">&apos;md&apos;</TableCell>
                 <TableCell>button size</TableCell>
               </TableRow>
@@ -94,13 +98,17 @@ export function SectionComponentAPIs(): React.ReactElement {
             <TableBody>
               <TableRow>
                 <TableCell className="font-mono">state</TableCell>
-                <TableCell className="font-mono text-xs">&apos;default&apos; | &apos;error&apos; | &apos;success&apos;</TableCell>
+                <TableCell className="font-mono text-xs">
+                  &apos;default&apos; | &apos;error&apos; | &apos;success&apos;
+                </TableCell>
                 <TableCell className="font-mono">&apos;default&apos;</TableCell>
                 <TableCell>visual state</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-mono">size</TableCell>
-                <TableCell className="font-mono text-xs">&apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;</TableCell>
+                <TableCell className="font-mono text-xs">
+                  &apos;sm&apos; | &apos;md&apos; | &apos;lg&apos;
+                </TableCell>
                 <TableCell className="font-mono">&apos;md&apos;</TableCell>
                 <TableCell>input size</TableCell>
               </TableRow>

@@ -1,13 +1,7 @@
 'use client';
 
 import { cn } from '@tpmjs/utils/cn';
-import {
-  Children,
-  forwardRef,
-  isValidElement,
-  useMemo,
-  useState,
-} from 'react';
+import { Children, forwardRef, isValidElement, useMemo, useState } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
 import type {
   BreadcrumbEllipsisProps,
@@ -38,7 +32,6 @@ function getSeparatorIcon(separator: BreadcrumbSeparator): IconName {
       return 'arrowRight';
     case 'dot':
       return 'circle';
-    case 'slash':
     default:
       return 'slash';
   }
@@ -103,11 +96,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
           </BreadcrumbSeparatorComponent>
         );
       }
-      return (
-        <BreadcrumbSeparatorComponent key={key}>
-          {separator}
-        </BreadcrumbSeparatorComponent>
-      );
+      return <BreadcrumbSeparatorComponent key={key}>{separator}</BreadcrumbSeparatorComponent>;
     };
 
     return (
@@ -129,10 +118,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
             }
 
             return (
-              <li
-                key={index}
-                className={breadcrumbItemVariants({})}
-              >
+              <li key={index} className={breadcrumbItemVariants({})}>
                 {index > 0 && renderSeparator(`sep-${index}`)}
                 {item}
               </li>
@@ -261,17 +247,18 @@ BreadcrumbEllipsis.displayName = 'BreadcrumbEllipsis';
  *
  * Represents the current page in breadcrumbs (non-link, just text)
  */
-export const BreadcrumbPage = forwardRef<HTMLSpanElement, Omit<BreadcrumbItemProps, 'href' | 'current'>>(
-  ({ children, className, ...props }, ref) => (
-    <span
-      ref={ref}
-      aria-current="page"
-      className={cn(breadcrumbLinkVariants({ current: 'true' }), className)}
-      {...props}
-    >
-      {children}
-    </span>
-  )
-);
+export const BreadcrumbPage = forwardRef<
+  HTMLSpanElement,
+  Omit<BreadcrumbItemProps, 'href' | 'current'>
+>(({ children, className, ...props }, ref) => (
+  <span
+    ref={ref}
+    aria-current="page"
+    className={cn(breadcrumbLinkVariants({ current: 'true' }), className)}
+    {...props}
+  >
+    {children}
+  </span>
+));
 
 BreadcrumbPage.displayName = 'BreadcrumbPage';

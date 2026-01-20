@@ -11,8 +11,8 @@ export function SectionPatternSearch(): React.ReactElement {
   return (
     <FieldsetSection title="18. search & filtering" id="search-patterns">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Search and filter patterns help users find content quickly.
-        Design for progressive disclosure and instant feedback.
+        Search and filter patterns help users find content quickly. Design for progressive
+        disclosure and instant feedback.
       </p>
 
       <SubSection title="search box states">
@@ -24,7 +24,11 @@ export function SectionPatternSearch(): React.ReactElement {
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-3">default</p>
             <div className="relative">
-              <Icon icon="search" size="sm" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary" />
+              <Icon
+                icon="search"
+                size="sm"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary"
+              />
               <Input placeholder="search tools..." className="pl-10" />
             </div>
           </div>
@@ -33,7 +37,11 @@ export function SectionPatternSearch(): React.ReactElement {
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-3">active / has value</p>
             <div className="relative">
-              <Icon icon="search" size="sm" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary" />
+              <Icon
+                icon="search"
+                size="sm"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary"
+              />
               <Input defaultValue="parser" className="pl-10 pr-10" />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-tertiary hover:text-foreground">
                 <Icon icon="x" size="sm" />
@@ -45,7 +53,11 @@ export function SectionPatternSearch(): React.ReactElement {
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-3">loading</p>
             <div className="relative">
-              <Icon icon="loader" size="sm" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary animate-spin" />
+              <Icon
+                icon="loader"
+                size="sm"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary animate-spin"
+              />
               <Input defaultValue="validator" className="pl-10" readOnly />
             </div>
           </div>
@@ -54,7 +66,11 @@ export function SectionPatternSearch(): React.ReactElement {
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-3">no results</p>
             <div className="relative">
-              <Icon icon="search" size="sm" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary" />
+              <Icon
+                icon="search"
+                size="sm"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary"
+              />
               <Input defaultValue="xyzabc123" className="pl-10 pr-10" />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-tertiary hover:text-foreground">
                 <Icon icon="x" size="sm" />
@@ -91,9 +107,7 @@ export function SectionPatternSearch(): React.ReactElement {
             </Badge>
             <button className="font-mono text-xs text-accent hover:underline">clear all</button>
           </div>
-          <p className="font-mono text-xs text-foreground-secondary">
-            showing 42 of 128 tools
-          </p>
+          <p className="font-mono text-xs text-foreground-secondary">showing 42 of 128 tools</p>
         </div>
       </SubSection>
 
@@ -107,7 +121,9 @@ export function SectionPatternSearch(): React.ReactElement {
             <h4 className="font-mono text-sm font-medium mb-4">filters</h4>
             <div className="space-y-4">
               <div>
-                <label className="font-mono text-xs text-foreground-secondary block mb-2">category</label>
+                <label className="font-mono text-xs text-foreground-secondary block mb-2">
+                  category
+                </label>
                 <Select
                   placeholder="all categories"
                   options={[
@@ -118,7 +134,9 @@ export function SectionPatternSearch(): React.ReactElement {
                 />
               </div>
               <div>
-                <label className="font-mono text-xs text-foreground-secondary block mb-2">status</label>
+                <label className="font-mono text-xs text-foreground-secondary block mb-2">
+                  status
+                </label>
                 <Select
                   placeholder="all statuses"
                   options={[
@@ -129,11 +147,15 @@ export function SectionPatternSearch(): React.ReactElement {
                 />
               </div>
               <div>
-                <label className="font-mono text-xs text-foreground-secondary block mb-2">min downloads</label>
+                <label className="font-mono text-xs text-foreground-secondary block mb-2">
+                  min downloads
+                </label>
                 <Input type="number" placeholder="0" />
               </div>
               <div className="pt-4 border-t border-dashed border-border">
-                <Button size="sm" className="w-full">apply filters</Button>
+                <Button size="sm" className="w-full">
+                  apply filters
+                </Button>
               </div>
             </div>
           </div>
@@ -143,9 +165,14 @@ export function SectionPatternSearch(): React.ReactElement {
             <p className="font-mono text-xs text-foreground-tertiary mb-4">results area</p>
             <div className="space-y-2">
               {['@tpmjs/parser', '@tpmjs/validator', '@tpmjs/transform'].map((name) => (
-                <div key={name} className="p-3 border border-dashed border-border flex items-center justify-between">
+                <div
+                  key={name}
+                  className="p-3 border border-dashed border-border flex items-center justify-between"
+                >
                   <span className="font-mono text-sm">{name}</span>
-                  <Badge variant="success" size="sm">active</Badge>
+                  <Badge variant="success" size="sm">
+                    active
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -161,7 +188,9 @@ export function SectionPatternSearch(): React.ReactElement {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="font-mono text-sm font-medium">saved views</span>
-              <Badge variant="outline" size="sm">3</Badge>
+              <Badge variant="outline" size="sm">
+                3
+              </Badge>
             </div>
             <Button size="sm" variant="ghost">
               <Icon icon="plus" size="sm" className="mr-2" />
@@ -172,17 +201,23 @@ export function SectionPatternSearch(): React.ReactElement {
             <button className="w-full text-left px-3 py-2 bg-accent/10 font-mono text-sm flex items-center justify-between">
               <span>my active tools</span>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" size="sm">42 results</Badge>
+                <Badge variant="outline" size="sm">
+                  42 results
+                </Badge>
                 <Icon icon="check" size="sm" className="text-accent" />
               </div>
             </button>
             <button className="w-full text-left px-3 py-2 hover:bg-surface-2 font-mono text-sm flex items-center justify-between">
               <span>deprecated packages</span>
-              <Badge variant="outline" size="sm">8 results</Badge>
+              <Badge variant="outline" size="sm">
+                8 results
+              </Badge>
             </button>
             <button className="w-full text-left px-3 py-2 hover:bg-surface-2 font-mono text-sm flex items-center justify-between">
               <span>high-download tools</span>
-              <Badge variant="outline" size="sm">15 results</Badge>
+              <Badge variant="outline" size="sm">
+                15 results
+              </Badge>
             </button>
           </div>
         </div>
@@ -225,8 +260,15 @@ export function SectionPatternSearch(): React.ReactElement {
             {/* Search input */}
             <div className="border-b border-border p-3">
               <div className="relative">
-                <Icon icon="search" size="sm" className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary" />
-                <Input placeholder="search or type a command..." className="pl-10 border-0 focus:ring-0" />
+                <Icon
+                  icon="search"
+                  size="sm"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-tertiary"
+                />
+                <Input
+                  placeholder="search or type a command..."
+                  className="pl-10 border-0 focus:ring-0"
+                />
               </div>
             </div>
 
@@ -234,7 +276,9 @@ export function SectionPatternSearch(): React.ReactElement {
             <div className="max-h-80 overflow-y-auto">
               {/* Recent */}
               <div className="p-2">
-                <p className="font-mono text-[10px] text-foreground-tertiary uppercase tracking-wide px-2 py-1">recent</p>
+                <p className="font-mono text-[10px] text-foreground-tertiary uppercase tracking-wide px-2 py-1">
+                  recent
+                </p>
                 <button className="w-full text-left px-3 py-2 hover:bg-surface-2 flex items-center gap-3">
                   <Icon icon="clock" size="sm" className="text-foreground-tertiary" />
                   <span className="font-mono text-sm">@tpmjs/parser</span>
@@ -243,7 +287,9 @@ export function SectionPatternSearch(): React.ReactElement {
 
               {/* Actions */}
               <div className="p-2 border-t border-border">
-                <p className="font-mono text-[10px] text-foreground-tertiary uppercase tracking-wide px-2 py-1">actions</p>
+                <p className="font-mono text-[10px] text-foreground-tertiary uppercase tracking-wide px-2 py-1">
+                  actions
+                </p>
                 <button className="w-full text-left px-3 py-2 hover:bg-surface-2 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Icon icon="plus" size="sm" className="text-foreground-tertiary" />
@@ -271,16 +317,24 @@ export function SectionPatternSearch(): React.ReactElement {
             {/* Footer */}
             <div className="border-t border-border px-3 py-2 flex items-center justify-between text-[10px] text-foreground-tertiary">
               <div className="flex items-center gap-3">
-                <span><kbd className="bg-surface-2 px-1.5 py-0.5">↑↓</kbd> navigate</span>
-                <span><kbd className="bg-surface-2 px-1.5 py-0.5">↵</kbd> select</span>
-                <span><kbd className="bg-surface-2 px-1.5 py-0.5">esc</kbd> close</span>
+                <span>
+                  <kbd className="bg-surface-2 px-1.5 py-0.5">↑↓</kbd> navigate
+                </span>
+                <span>
+                  <kbd className="bg-surface-2 px-1.5 py-0.5">↵</kbd> select
+                </span>
+                <span>
+                  <kbd className="bg-surface-2 px-1.5 py-0.5">esc</kbd> close
+                </span>
               </div>
             </div>
           </div>
         </div>
         <div className="mt-4 text-center">
           <kbd className="font-mono text-xs bg-surface px-3 py-1.5 border border-border">⌘K</kbd>
-          <span className="font-sans text-xs text-foreground-secondary ml-2">to open command palette</span>
+          <span className="font-sans text-xs text-foreground-secondary ml-2">
+            to open command palette
+          </span>
         </div>
       </SubSection>
     </FieldsetSection>

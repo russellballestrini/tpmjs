@@ -1,6 +1,7 @@
 import { manualTools } from './manual-tools.js';
 import { prisma } from './packages/db/src/index.js';
 import { fetchLatestPackageWithMetadata } from './packages/npm-client/src/package.js';
+
 // Schema extraction is done via HTTP call to Railway executor
 const RAILWAY_EXECUTOR_URL =
   process.env.RAILWAY_SERVICE_URL || 'https://endearing-commitment-production.up.railway.app';
@@ -161,7 +162,7 @@ async function syncManualTools() {
       console.log(`  ✅ Package upserted: ${packageRecord.id}`);
 
       // Get existing tools for this package
-      const existingTools = await prisma.tool.findMany({
+      const _existingTools = await prisma.tool.findMany({
         where: { packageId: packageRecord.id },
       });
 

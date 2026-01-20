@@ -478,8 +478,8 @@ export default function PlatformGuidePage(): React.ReactElement {
                     with a complete audit trail
                   </li>
                   <li>
-                    <strong className="text-foreground">Usage Analytics</strong> - Monitor API calls,
-                    tokens, and costs
+                    <strong className="text-foreground">Usage Analytics</strong> - Monitor API
+                    calls, tokens, and costs
                   </li>
                 </ul>
               </DocSubSection>
@@ -792,7 +792,9 @@ Invalid usernames:
                   </li>
                   <li>
                     <strong>Windows:</strong>{' '}
-                    <code className="text-primary">%APPDATA%\Claude\claude_desktop_config.json</code>
+                    <code className="text-primary">
+                      %APPDATA%\Claude\claude_desktop_config.json
+                    </code>
                   </li>
                 </ul>
               </DocSubSection>
@@ -934,7 +936,8 @@ Invalid usernames:
                       name: 'Temperature',
                       type: 'number',
                       required: false,
-                      description: 'Response randomness (0 = deterministic, 2 = creative). Default: 0.7',
+                      description:
+                        'Response randomness (0 = deterministic, 2 = creative). Default: 0.7',
                     },
                     {
                       name: 'Max Tool Calls',
@@ -996,7 +999,9 @@ Always cite your sources and be transparent about limitations.`}
                 <ul className="list-disc list-inside space-y-2 text-foreground-secondary">
                   <li>Maximum 50 individual tools per agent</li>
                   <li>Maximum 10 collections per agent</li>
-                  <li>Tools from attached collections don&apos;t count against the 50 tool limit</li>
+                  <li>
+                    Tools from attached collections don&apos;t count against the 50 tool limit
+                  </li>
                 </ul>
               </DocSubSection>
             </DocSection>
@@ -1061,7 +1066,11 @@ Always cite your sources and be transparent about limitations.`}
                   {
                     name: 'Anthropic',
                     desc: 'Claude models known for nuanced understanding',
-                    models: ['claude-sonnet-4-20250514', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
+                    models: [
+                      'claude-sonnet-4-20250514',
+                      'claude-3-5-haiku-20241022',
+                      'claude-3-opus-20240229',
+                    ],
                     keyUrl: 'https://console.anthropic.com/settings/keys',
                   },
                   {
@@ -1073,7 +1082,11 @@ Always cite your sources and be transparent about limitations.`}
                   {
                     name: 'Groq',
                     desc: 'Ultra-fast inference for open-source models',
-                    models: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+                    models: [
+                      'llama-3.3-70b-versatile',
+                      'llama-3.1-8b-instant',
+                      'mixtral-8x7b-32768',
+                    ],
                     keyUrl: 'https://console.groq.com/keys',
                   },
                   {
@@ -1083,7 +1096,10 @@ Always cite your sources and be transparent about limitations.`}
                     keyUrl: 'https://console.mistral.ai/api-keys',
                   },
                 ].map((provider) => (
-                  <div key={provider.name} className="p-4 border border-border rounded-lg bg-surface">
+                  <div
+                    key={provider.name}
+                    className="p-4 border border-border rounded-lg bg-surface"
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-semibold text-foreground">{provider.name}</h4>
                       <a
@@ -1272,23 +1288,18 @@ Always cite your sources and be transparent about limitations.`}
 
             <DocSection id="viewing-parent-updates" title="Viewing Parent Updates">
               <p className="text-foreground-secondary mb-6">
-                After forking, you can check what the original parent has changed by visiting
-                its page. This lets you see new tools or collections the parent author has added.
+                After forking, you can check what the original parent has changed by visiting its
+                page. This lets you see new tools or collections the parent author has added.
               </p>
               <DocSubSection title="How to View Parent Changes">
                 <div className="space-y-3 text-foreground-secondary">
+                  <p>1. Go to your forked agent or collection in the dashboard</p>
+                  <p>2. Click the &quot;Forked from&quot; badge to navigate to the parent</p>
                   <p>
-                    1. Go to your forked agent or collection in the dashboard
+                    3. The parent&apos;s page shows its <strong>current</strong> tools and
+                    collections
                   </p>
-                  <p>
-                    2. Click the &quot;Forked from&quot; badge to navigate to the parent
-                  </p>
-                  <p>
-                    3. The parent&apos;s page shows its <strong>current</strong> tools and collections
-                  </p>
-                  <p>
-                    4. Compare with your fork to see what&apos;s different
-                  </p>
+                  <p>4. Compare with your fork to see what&apos;s different</p>
                 </div>
               </DocSubSection>
               <DocSubSection title="What You Can See">
@@ -1324,18 +1335,10 @@ Always cite your sources and be transparent about limitations.`}
                   the parent. To incorporate parent changes:
                 </p>
                 <div className="space-y-3 text-foreground-secondary">
-                  <p>
-                    1. View the parent&apos;s current tools/collections
-                  </p>
-                  <p>
-                    2. Go to your fork&apos;s edit page
-                  </p>
-                  <p>
-                    3. Manually add or remove tools to match (or improve upon) the parent
-                  </p>
-                  <p>
-                    4. Update settings as needed
-                  </p>
+                  <p>1. View the parent&apos;s current tools/collections</p>
+                  <p>2. Go to your fork&apos;s edit page</p>
+                  <p>3. Manually add or remove tools to match (or improve upon) the parent</p>
+                  <p>4. Update settings as needed</p>
                 </div>
                 <div className="mt-4 p-4 border border-border rounded-lg bg-surface-elevated">
                   <p className="text-sm text-foreground-secondary">
@@ -1447,9 +1450,9 @@ curl "https://tpmjs.com/api/public/users/{username}/agents/{uid}"
               </DocSubSection>
               <div className="p-4 border border-warning/30 rounded-lg bg-warning/5 mt-4">
                 <p className="text-sm text-foreground-secondary">
-                  <strong className="text-warning">Important:</strong> Your API key is displayed only
-                  once when created. Store it securely. If you lose it, you&apos;ll need to generate
-                  a new one.
+                  <strong className="text-warning">Important:</strong> Your API key is displayed
+                  only once when created. Store it securely. If you lose it, you&apos;ll need to
+                  generate a new one.
                 </p>
               </div>
             </DocSection>
@@ -1508,7 +1511,10 @@ curl "https://tpmjs.com/api/public/users/{username}/agents/{uid}"
                 <p className="text-foreground-secondary mb-4">
                   Include your API key in the Authorization header:
                 </p>
-                <CodeBlock language="bash" code="Authorization: Bearer tpmjs_sk_your_api_key_here" />
+                <CodeBlock
+                  language="bash"
+                  code="Authorization: Bearer tpmjs_sk_your_api_key_here"
+                />
                 <p className="text-foreground-secondary mt-4">Example request:</p>
                 <CodeBlock
                   language="bash"
@@ -1645,8 +1651,8 @@ X-RateLimit-Reset: 1704067200`}
             <DocSection id="access-model" title="Access Model: Public Access with Your Credentials">
               <p className="text-foreground-secondary mb-6">
                 You can access public agents and collections using your own API key—but you must
-                provide <strong className="text-foreground">all required credentials</strong>{' '}
-                (LLM keys, tool environment variables) in the request. The owner&apos;s stored
+                provide <strong className="text-foreground">all required credentials</strong> (LLM
+                keys, tool environment variables) in the request. The owner&apos;s stored
                 credentials are never shared.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

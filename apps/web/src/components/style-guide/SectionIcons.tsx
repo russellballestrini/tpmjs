@@ -37,13 +37,19 @@ export function SectionIcons(): React.ReactElement {
           <div className="bg-surface p-6 border border-dashed border-border">
             <h4 className="font-mono text-sm font-medium mb-4">icon-only buttons</h4>
             <p className="font-sans text-sm text-foreground-secondary mb-4">
-              Only allowed when the action is universally understood
-              (close, search, menu) AND space is limited.
+              Only allowed when the action is universally understood (close, search, menu) AND space
+              is limited.
             </p>
             <div className="flex gap-2">
-              <Button size="icon" variant="ghost"><Icon icon="x" size="sm" /></Button>
-              <Button size="icon" variant="ghost"><Icon icon="search" size="sm" /></Button>
-              <Button size="icon" variant="ghost"><Icon icon="menu" size="sm" /></Button>
+              <Button size="icon" variant="ghost">
+                <Icon icon="x" size="sm" />
+              </Button>
+              <Button size="icon" variant="ghost">
+                <Icon icon="search" size="sm" />
+              </Button>
+              <Button size="icon" variant="ghost">
+                <Icon icon="menu" size="sm" />
+              </Button>
             </div>
           </div>
           <div className="bg-surface p-6 border border-dashed border-border">
@@ -52,8 +58,12 @@ export function SectionIcons(): React.ReactElement {
               Always include text labels when space permits for clarity.
             </p>
             <div className="flex gap-2">
-              <Button size="sm"><Icon icon="plus" size="sm" className="mr-2" /> add tool</Button>
-              <Button size="sm" variant="outline"><Icon icon="upload" size="sm" className="mr-2" /> upload</Button>
+              <Button size="sm">
+                <Icon icon="plus" size="sm" className="mr-2" /> add tool
+              </Button>
+              <Button size="sm" variant="outline">
+                <Icon icon="upload" size="sm" className="mr-2" /> upload
+              </Button>
             </div>
           </div>
         </div>
@@ -83,16 +93,51 @@ export function SectionIcons(): React.ReactElement {
       <SubSection title="all icons">
         <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-6">
           {[
-            'copy', 'github', 'check', 'x', 'chevronDown', 'chevronRight',
-            'clock', 'link', 'sun', 'moon', 'discord', 'menu',
-            'folder', 'plus', 'trash', 'edit', 'search', 'loader',
-            'upload', 'alertCircle', 'globe', 'terminal', 'puzzle', 'message',
-            'key', 'info', 'send', 'home', 'user', 'heart',
-            'star', 'externalLink', 'arrowLeft', 'box', 'alertTriangle',
+            'copy',
+            'github',
+            'check',
+            'x',
+            'chevronDown',
+            'chevronRight',
+            'clock',
+            'link',
+            'sun',
+            'moon',
+            'discord',
+            'menu',
+            'folder',
+            'plus',
+            'trash',
+            'edit',
+            'search',
+            'loader',
+            'upload',
+            'alertCircle',
+            'globe',
+            'terminal',
+            'puzzle',
+            'message',
+            'key',
+            'info',
+            'send',
+            'home',
+            'user',
+            'heart',
+            'star',
+            'externalLink',
+            'arrowLeft',
+            'box',
+            'alertTriangle',
           ].map((iconName) => (
             <div key={iconName} className="flex flex-col items-center gap-2" title={iconName}>
-              <Icon icon={iconName as Parameters<typeof Icon>[0]['icon']} size="md" className="text-foreground" />
-              <span className="font-mono text-[10px] text-foreground-tertiary truncate max-w-full">{iconName}</span>
+              <Icon
+                icon={iconName as Parameters<typeof Icon>[0]['icon']}
+                size="md"
+                className="text-foreground"
+              />
+              <span className="font-mono text-[10px] text-foreground-tertiary truncate max-w-full">
+                {iconName}
+              </span>
             </div>
           ))}
         </div>

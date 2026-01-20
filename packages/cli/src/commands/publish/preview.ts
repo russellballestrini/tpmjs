@@ -1,6 +1,6 @@
-import { Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { Command, Flags } from '@oclif/core';
 import { createOutput } from '../../lib/output.js';
 
 export default class PublishPreview extends Command {

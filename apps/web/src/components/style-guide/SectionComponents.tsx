@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from '@tpmjs/ui/Accordion/Accordion';
 import { Badge } from '@tpmjs/ui/Badge/Badge';
-import { Breadcrumbs, BreadcrumbItem } from '@tpmjs/ui/Breadcrumbs/Breadcrumbs';
+import { BreadcrumbItem, Breadcrumbs } from '@tpmjs/ui/Breadcrumbs/Breadcrumbs';
 import { Button } from '@tpmjs/ui/Button/Button';
 import {
   Card,
@@ -270,7 +270,13 @@ export function SectionComponents({
       {/* Slider */}
       <SubSection title="slider">
         <div className="max-w-md space-y-4">
-          <Slider value={sliderValue} onChange={(e) => setSliderValue(Number(e.target.value))} min={0} max={100} step={1} />
+          <Slider
+            value={sliderValue}
+            onChange={(e) => setSliderValue(Number(e.target.value))}
+            min={0}
+            max={100}
+            step={1}
+          />
           <p className="font-mono text-xs text-foreground-secondary">Value: {sliderValue}</p>
         </div>
       </SubSection>
@@ -350,11 +356,7 @@ export function SectionComponents({
 
       {/* Pagination */}
       <SubSection title="pagination">
-        <Pagination
-          page={currentPage}
-          totalPages={10}
-          onPageChange={setCurrentPage}
-        />
+        <Pagination page={currentPage} totalPages={10} onPageChange={setCurrentPage} />
       </SubSection>
 
       {/* Dropdown Menu */}
@@ -408,7 +410,9 @@ export function SectionComponents({
           description="This is a modal dialog."
           footer={
             <>
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
               <Button onClick={() => setShowModal(false)}>Confirm</Button>
             </>
           }
@@ -419,12 +423,10 @@ export function SectionComponents({
 
       {/* Drawer */}
       <SubSection title="drawer">
-        <Button variant="outline" onClick={() => setShowDrawer(true)}>Open Drawer</Button>
-        <Drawer
-          open={showDrawer}
-          onClose={() => setShowDrawer(false)}
-          title="Drawer Content"
-        >
+        <Button variant="outline" onClick={() => setShowDrawer(true)}>
+          Open Drawer
+        </Button>
+        <Drawer open={showDrawer} onClose={() => setShowDrawer(false)} title="Drawer Content">
           <p className="text-foreground-secondary">
             This is the drawer content. It slides in from the side.
           </p>

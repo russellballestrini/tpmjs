@@ -1,9 +1,9 @@
 'use client';
 
-import { useSession } from '@/lib/auth-client';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { useCallback, useState } from 'react';
+import { useSession } from '@/lib/auth-client';
 import { useLikeStatus } from '~/hooks/useLikeStatus';
 
 export type LikeEntityType = 'tool' | 'collection' | 'agent';
@@ -36,12 +36,10 @@ export function LikeButton({
   const [isLoading, setIsLoading] = useState(false);
 
   // Use SWR for like status with optimistic updates
-  const { data, toggleLike } = useLikeStatus(
-    entityType,
-    entityId,
-    !!session,
-    { liked: initialLiked, likeCount: initialCount }
-  );
+  const { data, toggleLike } = useLikeStatus(entityType, entityId, !!session, {
+    liked: initialLiked,
+    likeCount: initialCount,
+  });
 
   const liked = data?.liked ?? initialLiked;
   const count = data?.likeCount ?? initialCount;

@@ -8,7 +8,7 @@
  * - Cleanup tracker
  */
 
-import { createApiClient, type ApiClient } from './api-client';
+import { type ApiClient, createApiClient } from './api-client';
 import {
   createApiKeyFetch,
   createCronFetch,
@@ -17,8 +17,8 @@ import {
   type TestAuthContext,
 } from './auth';
 import { TestDataTracker } from './cleanup';
-import { createAgentFactory, type AgentFactory } from './factories/agent.factory';
-import { createCollectionFactory, type CollectionFactory } from './factories/collection.factory';
+import { type AgentFactory, createAgentFactory } from './factories/agent.factory';
+import { type CollectionFactory, createCollectionFactory } from './factories/collection.factory';
 
 export interface IntegrationTestContext {
   /** Base URL for API requests */

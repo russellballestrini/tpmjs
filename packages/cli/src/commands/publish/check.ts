@@ -1,6 +1,6 @@
-import { Args, Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { Args, Command, Flags } from '@oclif/core';
 import { getClient } from '../../lib/api-client.js';
 import { createOutput } from '../../lib/output.js';
 
@@ -67,9 +67,7 @@ export default class PublishCheck extends Command {
       }
 
       // Find exact match
-      const exactMatch = searchResponse.data?.find(
-        (tool) => tool.npmPackageName === packageName
-      );
+      const exactMatch = searchResponse.data?.find((tool) => tool.npmPackageName === packageName);
 
       if (flags.json) {
         output.json({
@@ -88,7 +86,9 @@ export default class PublishCheck extends Command {
         output.text(`Category: ${exactMatch.category}`);
         output.text(`Tier: ${exactMatch.tier}`);
         output.text(`Version: ${exactMatch.npmVersion}`);
-        output.text(`Downloads (last month): ${exactMatch.npmDownloadsLastMonth?.toLocaleString() || 'N/A'}`);
+        output.text(
+          `Downloads (last month): ${exactMatch.npmDownloadsLastMonth?.toLocaleString() || 'N/A'}`
+        );
         output.text(`Quality Score: ${exactMatch.qualityScore?.toFixed(2) || 'N/A'}`);
         output.text('');
         output.text(`View on tpmjs.com:`);

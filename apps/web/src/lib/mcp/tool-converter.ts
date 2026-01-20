@@ -115,7 +115,7 @@ export function parseToolName(mcpName: string): ParsedToolName | null {
   if (!match || !match[1] || !match[2]) return null;
 
   const pkg = match[1];
-  let toolName = match[2];
+  const toolName = match[2];
 
   // Add back 'Tool' suffix if it was removed (try both with and without)
   // The handler will try to find the tool with both variants

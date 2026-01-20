@@ -1,5 +1,5 @@
-import { Args, Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
+import { Args, Command, Flags } from '@oclif/core';
 import { createOutput } from '../../lib/output.js';
 
 type ClientType = 'claude' | 'cursor' | 'windsurf' | 'generic';
@@ -75,9 +75,10 @@ export default class McpConfig extends Command {
       }
 
       // Merge mcpServers
-      const existingServers = typeof existingConfig.mcpServers === 'object' && existingConfig.mcpServers !== null
-        ? existingConfig.mcpServers as Record<string, unknown>
-        : {};
+      const existingServers =
+        typeof existingConfig.mcpServers === 'object' && existingConfig.mcpServers !== null
+          ? (existingConfig.mcpServers as Record<string, unknown>)
+          : {};
       const mergedConfig = {
         ...existingConfig,
         mcpServers: {

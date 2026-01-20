@@ -7,8 +7,8 @@ import type { InstallSnippetProps, PackageManager } from './types';
 import {
   installSnippetCodeVariants,
   installSnippetCopyButtonVariants,
-  installSnippetTabVariants,
   installSnippetTabsVariants,
+  installSnippetTabVariants,
   installSnippetVariants,
 } from './variants';
 
@@ -127,11 +127,7 @@ export const InstallSnippet = forwardRef<HTMLDivElement, InstallSnippetProps>(
     }, [currentCommand]);
 
     return (
-      <div
-        ref={ref}
-        className={cn(installSnippetVariants({ variant }), className)}
-        {...props}
-      >
+      <div ref={ref} className={cn(installSnippetVariants({ variant }), className)} {...props}>
         {/* Tabs */}
         {showTabs && (
           <div className={installSnippetTabsVariants({ variant })}>
@@ -159,7 +155,10 @@ export const InstallSnippet = forwardRef<HTMLDivElement, InstallSnippetProps>(
             <button
               type="button"
               onClick={handleCopy}
-              className={installSnippetCopyButtonVariants({ variant, copied: copied ? 'true' : 'false' })}
+              className={installSnippetCopyButtonVariants({
+                variant,
+                copied: copied ? 'true' : 'false',
+              })}
               aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
             >
               <Icon icon={copied ? 'check' : 'copy'} size="sm" />

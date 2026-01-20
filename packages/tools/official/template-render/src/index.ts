@@ -40,7 +40,7 @@ function extractTemplateVariables(template: string): string[] {
     if (match[1]) {
       const variable = match[1].trim();
       // Remove mustache directives (#, ^, /, etc.)
-      const cleanVariable = variable.replace(/^[#^\/&]/, '').trim();
+      const cleanVariable = variable.replace(/^[#^/&]/, '').trim();
       if (cleanVariable) {
         variables.add(cleanVariable);
       }

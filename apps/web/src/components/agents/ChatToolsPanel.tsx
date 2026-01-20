@@ -61,45 +61,48 @@ export function ChatToolsPanel({
   const [expandedCollections, setExpandedCollections] = useState<Set<string>>(new Set());
   const [collectionTools, setCollectionTools] = useState<Record<string, CollectionToolData>>({});
 
-  const fetchCollectionTools = useCallback(async (collectionId: string) => {
-    const existingData = collectionTools[collectionId];
-    if (existingData?.tools && existingData.tools.length > 0) return;
+  const fetchCollectionTools = useCallback(
+    async (collectionId: string) => {
+      const existingData = collectionTools[collectionId];
+      if (existingData?.tools && existingData.tools.length > 0) return;
 
-    setCollectionTools((prev) => ({
-      ...prev,
-      [collectionId]: { tools: [], loading: true, error: null },
-    }));
-
-    try {
-      const response = await fetch(`/api/collections/${collectionId}/tools`);
-      const data = await response.json();
-
-      if (data.success) {
-        // Transform the response to match ToolInfo structure
-        const transformedTools: ToolInfo[] = (data.data || []).map(
-          (ct: { id: string; toolId: string; tool: ToolInfo['tool'] }) => ({
-            id: ct.id,
-            toolId: ct.toolId,
-            tool: ct.tool,
-          })
-        );
-        setCollectionTools((prev) => ({
-          ...prev,
-          [collectionId]: { tools: transformedTools, loading: false, error: null },
-        }));
-      } else {
-        setCollectionTools((prev) => ({
-          ...prev,
-          [collectionId]: { tools: [], loading: false, error: data.error || 'Failed to load' },
-        }));
-      }
-    } catch {
       setCollectionTools((prev) => ({
         ...prev,
-        [collectionId]: { tools: [], loading: false, error: 'Failed to load tools' },
+        [collectionId]: { tools: [], loading: true, error: null },
       }));
-    }
-  }, [collectionTools]);
+
+      try {
+        const response = await fetch(`/api/collections/${collectionId}/tools`);
+        const data = await response.json();
+
+        if (data.success) {
+          // Transform the response to match ToolInfo structure
+          const transformedTools: ToolInfo[] = (data.data || []).map(
+            (ct: { id: string; toolId: string; tool: ToolInfo['tool'] }) => ({
+              id: ct.id,
+              toolId: ct.toolId,
+              tool: ct.tool,
+            })
+          );
+          setCollectionTools((prev) => ({
+            ...prev,
+            [collectionId]: { tools: transformedTools, loading: false, error: null },
+          }));
+        } else {
+          setCollectionTools((prev) => ({
+            ...prev,
+            [collectionId]: { tools: [], loading: false, error: data.error || 'Failed to load' },
+          }));
+        }
+      } catch {
+        setCollectionTools((prev) => ({
+          ...prev,
+          [collectionId]: { tools: [], loading: false, error: 'Failed to load tools' },
+        }));
+      }
+    },
+    [collectionTools]
+  );
 
   const toggleCollection = (collectionId: string) => {
     setExpandedCollections((prev) => {
@@ -117,10 +120,7 @@ export function ChatToolsPanel({
 
   if (!isOpen) return null;
 
-  const totalToolsFromCollections = collections.reduce(
-    (acc, c) => acc + c.collection.toolCount,
-    0
-  );
+  const totalToolsFromCollections = collections.reduce((acc, c) => acc + c.collection.toolCount, 0);
 
   return (
     <div className="w-72 border-l border-dashed border-border flex flex-col bg-surface">
@@ -213,13 +213,15 @@ export function ChatToolsPanel({
                       <div className="border-t border-dashed border-border/50">
                         {toolData?.loading ? (
                           <div className="p-3 flex items-center justify-center gap-2">
-                            <Icon icon="loader" size="xs" className="animate-spin text-foreground-tertiary" />
+                            <Icon
+                              icon="loader"
+                              size="xs"
+                              className="animate-spin text-foreground-tertiary"
+                            />
                             <span className="text-xs text-foreground-tertiary">loading...</span>
                           </div>
                         ) : toolData?.error ? (
-                          <div className="p-3 text-xs text-error text-center">
-                            {toolData.error}
-                          </div>
+                          <div className="p-3 text-xs text-error text-center">{toolData.error}</div>
                         ) : toolData?.tools.length === 0 ? (
                           <div className="p-3 text-xs text-foreground-tertiary text-center">
                             no tools in collection

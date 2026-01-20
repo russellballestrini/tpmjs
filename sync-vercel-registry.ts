@@ -8,8 +8,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import OpenAI from 'openai';
-import { manualTools } from './manual-tools.js';
 import type { ManualTool } from './manual-tools.js';
+import { manualTools } from './manual-tools.js';
 
 // Vercel registry structure (based on their TypeScript interface)
 interface VercelTool {

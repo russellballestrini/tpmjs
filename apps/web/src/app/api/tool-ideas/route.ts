@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get('category') || '';
   const minQuality = Number.parseFloat(searchParams.get('minQuality') || '0');
   const verb = searchParams.get('verb') || '';
-  const limit = Math.min(Number.parseInt(searchParams.get('limit') || '100'), 10000);
-  const offset = Number.parseInt(searchParams.get('offset') || '0');
+  const limit = Math.min(Number.parseInt(searchParams.get('limit') || '100', 10), 10000);
+  const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
   const data = loadToolIdeas();
   let tools = data.tools;

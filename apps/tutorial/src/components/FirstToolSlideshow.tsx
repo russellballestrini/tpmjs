@@ -1,17 +1,17 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Slide } from './Slide';
-import { SlideNavigation } from './SlideNavigation';
-import { SlideProgress } from './SlideProgress';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { FirstToolNextStepsSlide } from './first-tool-slides/FirstToolNextStepsSlide';
 import { FirstToolWelcomeSlide } from './first-tool-slides/FirstToolWelcomeSlide';
 import { PackageJsonSlide } from './first-tool-slides/PackageJsonSlide';
 import { ProjectSetupSlide } from './first-tool-slides/ProjectSetupSlide';
 import { PublishSlide } from './first-tool-slides/PublishSlide';
 import { WriteToolSlide } from './first-tool-slides/WriteToolSlide';
+import { Slide } from './Slide';
+import { SlideNavigation } from './SlideNavigation';
+import { SlideProgress } from './SlideProgress';
 
 const SLIDES = [
   { id: 'welcome', Component: FirstToolWelcomeSlide },

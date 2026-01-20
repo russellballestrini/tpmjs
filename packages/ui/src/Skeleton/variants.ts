@@ -4,9 +4,7 @@ import { createVariants } from '../system/variants';
  * Skeleton base variant definitions
  */
 export const skeletonVariants = createVariants({
-  base: [
-    'bg-accent/20',
-  ].join(' '),
+  base: ['bg-accent/20'].join(' '),
 
   variants: {
     variant: {
@@ -32,9 +30,7 @@ export const skeletonVariants = createVariants({
  * Skeleton text container variant definitions
  */
 export const skeletonTextContainerVariants = createVariants({
-  base: [
-    'flex flex-col',
-  ].join(' '),
+  base: ['flex flex-col'].join(' '),
 
   variants: {},
 
@@ -45,11 +41,7 @@ export const skeletonTextContainerVariants = createVariants({
  * Skeleton avatar variant definitions
  */
 export const skeletonAvatarVariants = createVariants({
-  base: [
-    'rounded-full',
-    'bg-accent/20',
-    'flex-shrink-0',
-  ].join(' '),
+  base: ['rounded-full', 'bg-accent/20', 'flex-shrink-0'].join(' '),
 
   variants: {
     size: {
@@ -75,12 +67,7 @@ export const skeletonAvatarVariants = createVariants({
  * Skeleton card variant definitions
  */
 export const skeletonCardVariants = createVariants({
-  base: [
-    'border border-border',
-    'rounded-none',
-    'p-4',
-    'space-y-4',
-  ].join(' '),
+  base: ['border border-border', 'rounded-none', 'p-4', 'space-y-4'].join(' '),
 
   variants: {},
 
@@ -91,11 +78,7 @@ export const skeletonCardVariants = createVariants({
  * Skeleton card image variant definitions
  */
 export const skeletonCardImageVariants = createVariants({
-  base: [
-    'w-full h-32',
-    'bg-accent/20',
-    'rounded-none',
-  ].join(' '),
+  base: ['w-full h-32', 'bg-accent/20', 'rounded-none'].join(' '),
 
   variants: {
     animation: {

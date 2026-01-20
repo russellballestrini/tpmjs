@@ -198,7 +198,9 @@ export default function PublicAgentsPage(): React.ReactElement {
           <EmptyState
             icon="terminal"
             title="No agents found"
-            description={search ? 'Try adjusting your search terms' : 'Be the first to share a public agent!'}
+            description={
+              search ? 'Try adjusting your search terms' : 'Be the first to share a public agent!'
+            }
           />
         ) : (
           <>

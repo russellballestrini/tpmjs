@@ -47,43 +47,46 @@ export function AddToolSearch({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Debounced search
-  const search = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      setIsOpen(false);
-      return;
-    }
-
-    setIsSearching(true);
-    setError(null);
-
-    try {
-      // Build URL with excludeIds to avoid returning tools already in collection
-      const params = new URLSearchParams({
-        q: searchQuery,
-        limit: '50', // Higher limit to handle large packages like @tpmjs/tools-unsandbox (59 tools)
-      });
-      // Pass existing tool IDs so server can exclude them
-      if (existingToolIds.length > 0) {
-        params.set('excludeIds', existingToolIds.join(','));
-      }
-      const response = await fetch(`/api/tools/search?${params.toString()}`);
-      const data = await response.json();
-
-      if (data.success && data.results?.tools) {
-        setResults(data.results.tools);
-        setIsOpen(true);
-      } else {
+  const search = useCallback(
+    async (searchQuery: string) => {
+      if (!searchQuery.trim()) {
         setResults([]);
+        setIsOpen(false);
+        return;
       }
-    } catch (err) {
-      console.error('Search failed:', err);
-      setError('Search failed');
-      setResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [existingToolIds]);
+
+      setIsSearching(true);
+      setError(null);
+
+      try {
+        // Build URL with excludeIds to avoid returning tools already in collection
+        const params = new URLSearchParams({
+          q: searchQuery,
+          limit: '50', // Higher limit to handle large packages like @tpmjs/tools-unsandbox (59 tools)
+        });
+        // Pass existing tool IDs so server can exclude them
+        if (existingToolIds.length > 0) {
+          params.set('excludeIds', existingToolIds.join(','));
+        }
+        const response = await fetch(`/api/tools/search?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.success && data.results?.tools) {
+          setResults(data.results.tools);
+          setIsOpen(true);
+        } else {
+          setResults([]);
+        }
+      } catch (err) {
+        console.error('Search failed:', err);
+        setError('Search failed');
+        setResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [existingToolIds]
+  );
 
   // Handle query changes with debounce
   useEffect(() => {

@@ -3,10 +3,10 @@
  * Export all token categories
  */
 
-export * from './colors';
-export * from './typography';
-export * from './spacing';
-export * from './borders';
-export * from './shadows';
 export * from './animations';
+export * from './borders';
+export * from './colors';
 export * from './forms';
+export * from './shadows';
+export * from './spacing';
+export * from './typography';

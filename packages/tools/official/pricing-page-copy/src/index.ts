@@ -207,7 +207,7 @@ function generateValueProposition(
 function formatPrice(price: number | string, billingPeriod?: string): string {
   const priceNum = typeof price === 'string' ? Number.parseFloat(price) : price;
 
-  if (isNaN(priceNum)) {
+  if (Number.isNaN(priceNum)) {
     return String(price);
   }
 

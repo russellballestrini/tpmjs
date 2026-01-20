@@ -38,12 +38,7 @@ export const tooltipContentVariants = createVariants({
  * Tooltip arrow variant definitions
  */
 export const tooltipArrowVariants = createVariants({
-  base: [
-    'absolute',
-    'w-2 h-2',
-    'bg-foreground',
-    'rotate-45',
-  ].join(' '),
+  base: ['absolute', 'w-2 h-2', 'bg-foreground', 'rotate-45'].join(' '),
 
   variants: {
     placement: {

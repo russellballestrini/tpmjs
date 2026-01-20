@@ -1,7 +1,7 @@
 import { prisma } from '@tpmjs/db';
 import { fetchChanges, fetchLatestPackageWithMetadata } from '@tpmjs/npm-client';
-import { validateTpmjsField } from '@tpmjs/types/tpmjs';
 import type { TpmjsToolDefinition } from '@tpmjs/types/tpmjs';
+import { validateTpmjsField } from '@tpmjs/types/tpmjs';
 import { type NextRequest, NextResponse } from 'next/server';
 import { env } from '~/env';
 import { performHealthCheck } from '~/lib/health-check/health-check-service';

@@ -4,7 +4,7 @@
  */
 
 import { openai } from '@ai-sdk/openai';
-import { type ModelMessage, generateText } from 'ai';
+import { generateText, type ModelMessage } from 'ai';
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
   calculateTokenBreakdown,

@@ -63,18 +63,11 @@ const sizeConfig = {
  * ```
  */
 export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
-  (
-    { className, icon, title, description, action, size = 'md', ...props },
-    ref
-  ) => {
+  ({ className, icon, title, description, action, size = 'md', ...props }, ref) => {
     const config = sizeConfig[size];
 
     return (
-      <div
-        ref={ref}
-        className={cn('text-center', config.container, className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('text-center', config.container, className)} {...props}>
         <div
           className={cn(
             'rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4',
@@ -83,21 +76,9 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
         >
           <Icon icon={icon} size={config.iconSize} className="text-primary" />
         </div>
-        <h3
-          className={cn(
-            'font-medium text-foreground mb-2',
-            config.title
-          )}
-        >
-          {title}
-        </h3>
+        <h3 className={cn('font-medium text-foreground mb-2', config.title)}>{title}</h3>
         {description && (
-          <p
-            className={cn(
-              'text-foreground-secondary mb-4 max-w-md mx-auto',
-              config.description
-            )}
-          >
+          <p className={cn('text-foreground-secondary mb-4 max-w-md mx-auto', config.description)}>
             {description}
           </p>
         )}

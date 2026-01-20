@@ -1,5 +1,5 @@
-import { Args, Command, Flags } from '@oclif/core';
 import * as readline from 'node:readline';
+import { Args, Command, Flags } from '@oclif/core';
 import { getClient } from '../../lib/api-client.js';
 import { createOutput } from '../../lib/output.js';
 

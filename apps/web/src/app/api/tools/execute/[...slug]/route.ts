@@ -3,9 +3,9 @@
  * Executes TPMJS tools with AI agents and streams real-time progress
  */
 
-import { checkRateLimit, getClientIP } from '@/lib/rate-limiter';
 import { prisma } from '@tpmjs/db';
 import { type NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, getClientIP } from '@/lib/rate-limiter';
 
 // Use Node.js runtime for SSE streaming
 export const runtime = 'nodejs';

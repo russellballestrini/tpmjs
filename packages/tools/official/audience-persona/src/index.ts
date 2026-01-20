@@ -61,7 +61,7 @@ function extractDemographics(data: Record<string, unknown>): AudiencePersona['de
   // Extract age range
   if (data.age) {
     const age = Number(data.age);
-    if (!isNaN(age)) {
+    if (!Number.isNaN(age)) {
       if (age < 18) demographics.ageRange = 'Under 18';
       else if (age < 25) demographics.ageRange = '18-24';
       else if (age < 35) demographics.ageRange = '25-34';
@@ -237,7 +237,7 @@ function generateMarketingImplications(
   }
 
   // Add age-specific recommendations
-  const ageNum = Number.parseInt(demographics.ageRange.split('-')[0] || '0');
+  const ageNum = Number.parseInt(demographics.ageRange.split('-')[0] || '0', 10);
   if (ageNum < 35) {
     contentRecommendations.push('Use short-form video content (TikTok, Reels)');
   } else if (ageNum >= 35 && ageNum < 55) {

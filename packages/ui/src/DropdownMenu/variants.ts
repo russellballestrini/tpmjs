@@ -55,16 +55,16 @@ export const dropdownMenuItemVariants = createVariants({
 
   variants: {
     disabled: {
-      'true': 'opacity-50 cursor-not-allowed hover:bg-transparent',
-      'false': '',
+      true: 'opacity-50 cursor-not-allowed hover:bg-transparent',
+      false: '',
     },
     destructive: {
-      'true': 'text-error hover:bg-error/10 focus-visible:bg-error/10',
-      'false': '',
+      true: 'text-error hover:bg-error/10 focus-visible:bg-error/10',
+      false: '',
     },
     active: {
-      'true': 'bg-accent/10',
-      'false': '',
+      true: 'bg-accent/10',
+      false: '',
     },
   },
 
@@ -79,16 +79,12 @@ export const dropdownMenuItemVariants = createVariants({
  * Dropdown menu item icon variant definitions
  */
 export const dropdownMenuItemIconVariants = createVariants({
-  base: [
-    'flex-shrink-0',
-    'w-4 h-4',
-    'text-foreground-muted',
-  ].join(' '),
+  base: ['flex-shrink-0', 'w-4 h-4', 'text-foreground-muted'].join(' '),
 
   variants: {
     destructive: {
-      'true': 'text-error',
-      'false': '',
+      true: 'text-error',
+      false: '',
     },
   },
 
@@ -101,12 +97,7 @@ export const dropdownMenuItemIconVariants = createVariants({
  * Dropdown menu item shortcut variant definitions
  */
 export const dropdownMenuItemShortcutVariants = createVariants({
-  base: [
-    'ml-auto',
-    'font-mono text-xs',
-    'text-foreground-muted',
-    'opacity-60',
-  ].join(' '),
+  base: ['ml-auto', 'font-mono text-xs', 'text-foreground-muted', 'opacity-60'].join(' '),
 
   variants: {},
 
@@ -117,11 +108,7 @@ export const dropdownMenuItemShortcutVariants = createVariants({
  * Dropdown menu separator variant definitions
  */
 export const dropdownMenuSeparatorVariants = createVariants({
-  base: [
-    'my-1',
-    'h-px',
-    'bg-border',
-  ].join(' '),
+  base: ['my-1', 'h-px', 'bg-border'].join(' '),
 
   variants: {},
 

@@ -36,12 +36,7 @@ export const popoverContentVariants = createVariants({
  * Popover arrow variant definitions
  */
 export const popoverArrowVariants = createVariants({
-  base: [
-    'absolute',
-    'w-2 h-2',
-    'bg-surface border-border',
-    'rotate-45',
-  ].join(' '),
+  base: ['absolute', 'w-2 h-2', 'bg-surface border-border', 'rotate-45'].join(' '),
 
   variants: {
     placement: {
@@ -69,11 +64,7 @@ export const popoverArrowVariants = createVariants({
  * Popover body variant definitions
  */
 export const popoverBodyVariants = createVariants({
-  base: [
-    'p-3',
-    'font-mono text-sm',
-    'text-foreground',
-  ].join(' '),
+  base: ['p-3', 'font-mono text-sm', 'text-foreground'].join(' '),
 
   variants: {},
 

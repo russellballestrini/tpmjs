@@ -4,12 +4,7 @@ import { cn } from '@tpmjs/utils/cn';
 import { forwardRef, useCallback, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon } from '../Icon/Icon';
-import type {
-  ModalBodyProps,
-  ModalFooterProps,
-  ModalHeaderProps,
-  ModalProps,
-} from './types';
+import type { ModalBodyProps, ModalFooterProps, ModalHeaderProps, ModalProps } from './types';
 import {
   modalBackdropVariants,
   modalBodyVariants,
@@ -133,30 +128,27 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     );
 
     // Handle focus trap within modal
-    const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent) => {
-        if (event.key !== 'Tab') return;
+    const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
 
-        const panel = panelRef.current;
-        if (!panel) return;
+      const panel = panelRef.current;
+      if (!panel) return;
 
-        const focusableElements = panel.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
+      const focusableElements = panel.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
 
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
-        if (event.shiftKey && document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
-        } else if (!event.shiftKey && document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
-        }
-      },
-      []
-    );
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement?.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement?.focus();
+      }
+    }, []);
 
     if (!open) return null;
 
@@ -166,10 +158,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     const modalContent = (
       <>
         {/* Backdrop */}
-        <div
-          className={modalBackdropVariants({ state: 'entered' })}
-          aria-hidden="true"
-        />
+        <div className={modalBackdropVariants({ state: 'entered' })} aria-hidden="true" />
 
         {/* Container */}
         <div
@@ -193,10 +182,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             aria-labelledby={title ? titleId : undefined}
             aria-describedby={description ? descriptionId : undefined}
             tabIndex={-1}
-            className={cn(
-              modalPanelVariants({ size, state: 'entered' }),
-              className
-            )}
+            className={cn(modalPanelVariants({ size, state: 'entered' }), className)}
             {...props}
           >
             {/* Header */}
@@ -228,16 +214,10 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             )}
 
             {/* Body */}
-            <div className={modalBodyVariants({})}>
-              {children}
-            </div>
+            <div className={modalBodyVariants({})}>{children}</div>
 
             {/* Footer */}
-            {footer && (
-              <div className={modalFooterVariants({})}>
-                {footer}
-              </div>
-            )}
+            {footer && <div className={modalFooterVariants({})}>{footer}</div>}
           </div>
         </div>
       </>
@@ -254,11 +234,7 @@ Modal.displayName = 'Modal';
  */
 export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
   ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(modalHeaderVariants({}), className)}
-      {...props}
-    >
+    <div ref={ref} className={cn(modalHeaderVariants({}), className)} {...props}>
       {children}
     </div>
   )
@@ -271,11 +247,7 @@ ModalHeader.displayName = 'ModalHeader';
  */
 export const ModalBody = forwardRef<HTMLDivElement, ModalBodyProps>(
   ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(modalBodyVariants({}), className)}
-      {...props}
-    >
+    <div ref={ref} className={cn(modalBodyVariants({}), className)} {...props}>
       {children}
     </div>
   )
@@ -288,11 +260,7 @@ ModalBody.displayName = 'ModalBody';
  */
 export const ModalFooter = forwardRef<HTMLDivElement, ModalFooterProps>(
   ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(modalFooterVariants({}), className)}
-      {...props}
-    >
+    <div ref={ref} className={cn(modalFooterVariants({}), className)} {...props}>
       {children}
     </div>
   )

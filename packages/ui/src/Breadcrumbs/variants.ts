@@ -4,10 +4,7 @@ import { createVariants } from '../system/variants';
  * Breadcrumbs container variant definitions
  */
 export const breadcrumbsVariants = createVariants({
-  base: [
-    'flex items-center',
-    'font-mono text-sm',
-  ].join(' '),
+  base: ['flex items-center', 'font-mono text-sm'].join(' '),
 
   variants: {},
 
@@ -18,12 +15,7 @@ export const breadcrumbsVariants = createVariants({
  * Breadcrumbs list variant definitions
  */
 export const breadcrumbsListVariants = createVariants({
-  base: [
-    'flex items-center gap-1',
-    'flex-wrap',
-    'list-none',
-    'm-0 p-0',
-  ].join(' '),
+  base: ['flex items-center gap-1', 'flex-wrap', 'list-none', 'm-0 p-0'].join(' '),
 
   variants: {},
 
@@ -34,14 +26,12 @@ export const breadcrumbsListVariants = createVariants({
  * Breadcrumb item variant definitions
  */
 export const breadcrumbItemVariants = createVariants({
-  base: [
-    'flex items-center gap-1',
-  ].join(' '),
+  base: ['flex items-center gap-1'].join(' '),
 
   variants: {
     current: {
-      'true': '',
-      'false': '',
+      true: '',
+      false: '',
     },
   },
 
@@ -65,8 +55,8 @@ export const breadcrumbLinkVariants = createVariants({
 
   variants: {
     current: {
-      'true': 'text-foreground font-medium pointer-events-none',
-      'false': 'cursor-pointer',
+      true: 'text-foreground font-medium pointer-events-none',
+      false: 'cursor-pointer',
     },
   },
 
@@ -79,12 +69,7 @@ export const breadcrumbLinkVariants = createVariants({
  * Breadcrumb separator variant definitions
  */
 export const breadcrumbSeparatorVariants = createVariants({
-  base: [
-    'mx-1',
-    'text-foreground-muted',
-    'select-none',
-    'opacity-60',
-  ].join(' '),
+  base: ['mx-1', 'text-foreground-muted', 'select-none', 'opacity-60'].join(' '),
 
   variants: {},
 
@@ -113,11 +98,7 @@ export const breadcrumbEllipsisVariants = createVariants({
  * Breadcrumb icon variant definitions
  */
 export const breadcrumbIconVariants = createVariants({
-  base: [
-    'flex-shrink-0',
-    'w-4 h-4',
-    'mr-1',
-  ].join(' '),
+  base: ['flex-shrink-0', 'w-4 h-4', 'mr-1'].join(' '),
 
   variants: {},
 

@@ -4,10 +4,7 @@ import { createVariants } from '../system/variants';
  * QualityScore container variant definitions
  */
 export const qualityScoreVariants = createVariants({
-  base: [
-    'inline-flex items-center',
-    'font-mono',
-  ].join(' '),
+  base: ['inline-flex items-center', 'font-mono'].join(' '),
 
   variants: {
     variant: {
@@ -65,10 +62,7 @@ export const qualityScoreCircleVariants = createVariants({
  * QualityScore tier label variant definitions
  */
 export const qualityScoreTierVariants = createVariants({
-  base: [
-    'font-mono font-medium',
-    'uppercase tracking-wider',
-  ].join(' '),
+  base: ['font-mono font-medium', 'uppercase tracking-wider'].join(' '),
 
   variants: {
     size: {
@@ -94,12 +88,7 @@ export const qualityScoreTierVariants = createVariants({
  * QualityScore bar variant definitions
  */
 export const qualityScoreBarVariants = createVariants({
-  base: [
-    'h-1.5',
-    'bg-accent/20',
-    'rounded-none',
-    'overflow-hidden',
-  ].join(' '),
+  base: ['h-1.5', 'bg-accent/20', 'rounded-none', 'overflow-hidden'].join(' '),
 
   variants: {
     size: {
@@ -118,10 +107,7 @@ export const qualityScoreBarVariants = createVariants({
  * QualityScore bar fill variant definitions
  */
 export const qualityScoreBarFillVariants = createVariants({
-  base: [
-    'h-full',
-    'transition-all duration-300',
-  ].join(' '),
+  base: ['h-full', 'transition-all duration-300'].join(' '),
 
   variants: {
     tier: {
@@ -141,11 +127,7 @@ export const qualityScoreBarFillVariants = createVariants({
  * QualityScore breakdown container variant definitions
  */
 export const qualityScoreBreakdownVariants = createVariants({
-  base: [
-    'w-full',
-    'space-y-1.5',
-    'pt-2',
-  ].join(' '),
+  base: ['w-full', 'space-y-1.5', 'pt-2'].join(' '),
 
   variants: {},
 
@@ -156,10 +138,7 @@ export const qualityScoreBreakdownVariants = createVariants({
  * QualityScore breakdown row variant definitions
  */
 export const qualityScoreBreakdownRowVariants = createVariants({
-  base: [
-    'flex items-center gap-2',
-    'text-foreground-muted',
-  ].join(' '),
+  base: ['flex items-center gap-2', 'text-foreground-muted'].join(' '),
 
   variants: {
     size: {

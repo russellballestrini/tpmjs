@@ -17,7 +17,10 @@ export function FieldsetSection({
   className?: string;
 }): React.ReactElement {
   return (
-    <fieldset id={id} className={`border border-dashed border-border p-8 mb-16 scroll-mt-24 ${className}`}>
+    <fieldset
+      id={id}
+      className={`border border-dashed border-border p-8 mb-16 scroll-mt-24 ${className}`}
+    >
       <legend className="font-mono text-sm text-foreground-secondary px-3 lowercase">
         {title}
       </legend>
@@ -62,13 +65,19 @@ export function ColorCard({
 }): React.ReactElement {
   return (
     <div className={`${color} p-4 border border-dashed border-border`}>
-      <div className={`font-mono text-sm font-medium ${textLight ? 'text-white' : 'text-foreground'}`}>
+      <div
+        className={`font-mono text-sm font-medium ${textLight ? 'text-white' : 'text-foreground'}`}
+      >
         {name}
       </div>
-      <div className={`font-mono text-xs ${textLight ? 'text-white/80' : 'text-foreground-secondary'}`}>
+      <div
+        className={`font-mono text-xs ${textLight ? 'text-white/80' : 'text-foreground-secondary'}`}
+      >
         {hex}
       </div>
-      <div className={`font-mono text-xs mt-2 ${textLight ? 'text-white/60' : 'text-foreground-tertiary'}`}>
+      <div
+        className={`font-mono text-xs mt-2 ${textLight ? 'text-white/60' : 'text-foreground-tertiary'}`}
+      >
         {desc}
       </div>
     </div>
@@ -95,9 +104,7 @@ export function DoDontCard({
         <span className="font-mono text-sm font-medium uppercase">{isDo ? 'do' : "don't"}</span>
       </div>
       <p className="font-mono text-xs text-foreground-secondary mb-3">{title}</p>
-      <div className="bg-surface p-3 border border-dashed border-border">
-        {children}
-      </div>
+      <div className="bg-surface p-3 border border-dashed border-border">{children}</div>
     </div>
   );
 }
@@ -118,7 +125,11 @@ export function PrincipleCard({
     <div className="border border-dashed border-border p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-accent/10 flex items-center justify-center">
-          <Icon icon={icon as Parameters<typeof Icon>[0]['icon']} size="md" className="text-accent" />
+          <Icon
+            icon={icon as Parameters<typeof Icon>[0]['icon']}
+            size="md"
+            className="text-accent"
+          />
         </div>
         <h4 className="font-mono text-base font-medium text-foreground">{title}</h4>
       </div>

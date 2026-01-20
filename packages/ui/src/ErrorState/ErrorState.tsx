@@ -55,36 +55,14 @@ const sizeConfig = {
  * ```
  */
 export const ErrorState = forwardRef<HTMLDivElement, ErrorStateProps>(
-  (
-    {
-      className,
-      title = 'Error',
-      message,
-      onRetry,
-      size = 'md',
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, title = 'Error', message, onRetry, size = 'md', ...props }, ref) => {
     const config = sizeConfig[size];
 
     return (
-      <div
-        ref={ref}
-        className={cn('text-center', config.container, className)}
-        {...props}
-      >
-        <Icon
-          icon="alertCircle"
-          size={config.iconSize}
-          className="mx-auto text-error mb-4"
-        />
-        <h2 className={cn('font-medium text-foreground mb-2', config.title)}>
-          {title}
-        </h2>
-        <p className={cn('text-foreground-secondary mb-4', config.message)}>
-          {message}
-        </p>
+      <div ref={ref} className={cn('text-center', config.container, className)} {...props}>
+        <Icon icon="alertCircle" size={config.iconSize} className="mx-auto text-error mb-4" />
+        <h2 className={cn('font-medium text-foreground mb-2', config.title)}>{title}</h2>
+        <p className={cn('text-foreground-secondary mb-4', config.message)}>{message}</p>
         {onRetry && (
           <Button onClick={onRetry} variant="default">
             Try Again

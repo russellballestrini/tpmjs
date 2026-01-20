@@ -322,11 +322,7 @@ export default function NewAgentPage(): React.ReactElement {
           {error && (
             <div className="bg-error/10 border border-error/20 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <Icon
-                  icon="alertCircle"
-                  size="sm"
-                  className="text-error mt-0.5"
-                />
+                <Icon icon="alertCircle" size="sm" className="text-error mt-0.5" />
                 <p className="text-sm text-error">{error}</p>
               </div>
             </div>

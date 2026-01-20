@@ -259,14 +259,12 @@ function analyzeToS(tosText: string): TOSAnalysis {
 
   if (complexWordPercentage > 20) {
     recommendations.push(
-      'Reduce use of complex words (currently ' + complexWordPercentage.toFixed(1) + '% of text)'
+      `Reduce use of complex words (currently ${complexWordPercentage.toFixed(1)}% of text)`
     );
   }
 
   if (problematicSections.length > 0) {
-    recommendations.push(
-      'Address ' + problematicSections.length + ' identified problematic sections'
-    );
+    recommendations.push(`Address ${problematicSections.length} identified problematic sections`);
   }
 
   if (totalWords > 5000) {

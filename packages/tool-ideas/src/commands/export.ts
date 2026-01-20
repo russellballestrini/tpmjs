@@ -37,7 +37,7 @@ export const exportCommand = new Command('export')
     try {
       const db = getDatabase(options.db);
       const minQuality = Number.parseFloat(options.minQuality);
-      const limit = Number.parseInt(options.limit);
+      const limit = Number.parseInt(options.limit, 10);
 
       // Build query conditions
       const conditions = [gte(toolIdeas.qualityScore, minQuality)];

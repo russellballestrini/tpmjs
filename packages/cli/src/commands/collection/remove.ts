@@ -5,9 +5,7 @@ import { createOutput } from '../../lib/output.js';
 export default class CollectionRemove extends Command {
   static description = 'Remove a tool from a collection';
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %> my-collection tool-id-1',
-  ];
+  static examples = ['<%= config.bin %> <%= command.id %> my-collection tool-id-1'];
 
   static flags = {
     json: Flags.boolean({

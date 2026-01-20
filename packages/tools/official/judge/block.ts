@@ -6,7 +6,8 @@ import { judgeConversation } from './src/index.js';
 
 export const block = {
   name: 'judge',
-  description: 'AI conversation quality judge. Evaluates AI SDK messages across 10 metrics with scores, reasoning, suggestions, and actionable improvements.',
+  description:
+    'AI conversation quality judge. Evaluates AI SDK messages across 10 metrics with scores, reasoning, suggestions, and actionable improvements.',
   tools: {
     judgeConversation,
   },

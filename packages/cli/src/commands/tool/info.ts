@@ -61,7 +61,7 @@ export default class ToolInfo extends Command {
 
       output.keyValue('Package', tool.package?.npmPackageName || tool.npmPackageName);
       output.keyValue('Category', tool.package?.category || tool.category);
-      output.keyValue('Official', (tool.package?.isOfficial || tool.isOfficial) ? 'Yes' : 'No');
+      output.keyValue('Official', tool.package?.isOfficial || tool.isOfficial ? 'Yes' : 'No');
       output.newLine();
 
       output.subheading('Description');
@@ -75,13 +75,20 @@ export default class ToolInfo extends Command {
 
       output.subheading('Metrics');
       output.keyValue('Quality Score', tool.qualityScore ? tool.qualityScore.toFixed(2) : 'N/A');
-      output.keyValue('Downloads/Month', formatDownloads(tool.package?.npmDownloadsLastMonth || tool.npmDownloadsLastMonth));
+      output.keyValue(
+        'Downloads/Month',
+        formatDownloads(tool.package?.npmDownloadsLastMonth || tool.npmDownloadsLastMonth)
+      );
       output.keyValue('Likes', tool.likeCount.toString());
       output.newLine();
 
       output.subheading('Links');
-      output.text(`Web: ${output.link('View on TPMJS', `https://tpmjs.com/tool/${args.package}/${args.tool}`)}`);
-      output.text(`npm: ${output.link('View on npm', `https://www.npmjs.com/package/${args.package}`)}`);
+      output.text(
+        `Web: ${output.link('View on TPMJS', `https://tpmjs.com/tool/${args.package}/${args.tool}`)}`
+      );
+      output.text(
+        `npm: ${output.link('View on npm', `https://www.npmjs.com/package/${args.package}`)}`
+      );
     } catch (error) {
       spinner.fail('Failed to fetch tool info');
       output.error(

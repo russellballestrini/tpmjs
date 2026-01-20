@@ -56,13 +56,13 @@ function extractNetDays(text: string): number | null {
 
   // Match "Net XX" or "Net XX days"
   const netMatch = normalizedText.match(/net\s+(\d+)(?:\s+days?)?/i);
-  if (netMatch && netMatch[1]) {
+  if (netMatch?.[1]) {
     return Number.parseInt(netMatch[1], 10);
   }
 
   // Match "XX days" in payment terms context
   const daysMatch = normalizedText.match(/(?:payment\s+)?(?:due\s+)?(?:in\s+)?(\d+)\s+days/i);
-  if (daysMatch && daysMatch[1]) {
+  if (daysMatch?.[1]) {
     return Number.parseInt(daysMatch[1], 10);
   }
 
@@ -84,15 +84,15 @@ function extractNetDays(text: string): number | null {
 function extractDueDate(text: string): string | null {
   // Match common date formats: MM/DD/YYYY, DD/MM/YYYY, YYYY-MM-DD
   const datePatterns = [
-    /due(?:\s+date)?:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /payment\s+due:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /due\s+by:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /due\s+on:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+    /due(?:\s+date)?:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
+    /payment\s+due:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
+    /due\s+by:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
+    /due\s+on:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
   ];
 
   for (const pattern of datePatterns) {
     const match = text.match(pattern);
-    if (match && match[1]) {
+    if (match?.[1]) {
       return match[1];
     }
   }
@@ -101,7 +101,7 @@ function extractDueDate(text: string): string | null {
   const writtenDateMatch = text.match(
     /due\s+(?:date|on|by)?:?\s*(\w+\s+\d{1,2},?\s+\d{4}|\d{1,2}\s+\w+\s+\d{4})/i
   );
-  if (writtenDateMatch && writtenDateMatch[1]) {
+  if (writtenDateMatch?.[1]) {
     return writtenDateMatch[1];
   }
 
@@ -113,14 +113,14 @@ function extractDueDate(text: string): string | null {
  */
 function extractInvoiceDate(text: string): string | null {
   const datePatterns = [
-    /invoice\s+date:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /date:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
-    /dated:?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+    /invoice\s+date:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
+    /date:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
+    /dated:?\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/i,
   ];
 
   for (const pattern of datePatterns) {
     const match = text.match(pattern);
-    if (match && match[1]) {
+    if (match?.[1]) {
       return match[1];
     }
   }
@@ -133,14 +133,14 @@ function extractInvoiceDate(text: string): string | null {
  */
 function extractInvoiceNumber(text: string): string | null {
   const patterns = [
-    /invoice\s+(?:number|#|no\.?):?\s*([A-Z0-9\-]+)/i,
-    /invoice:?\s+([A-Z0-9\-]+)/i,
-    /#\s*([A-Z0-9\-]+)/,
+    /invoice\s+(?:number|#|no\.?):?\s*([A-Z0-9-]+)/i,
+    /invoice:?\s+([A-Z0-9-]+)/i,
+    /#\s*([A-Z0-9-]+)/,
   ];
 
   for (const pattern of patterns) {
     const match = text.match(pattern);
-    if (match && match[1]) {
+    if (match?.[1]) {
       return match[1];
     }
   }
@@ -169,7 +169,7 @@ function extractTotalAmount(text: string): { amount: number | null; currency: st
       if (amountStr) {
         const amount = Number.parseFloat(amountStr.replace(/,/g, ''));
 
-        if (!isNaN(amount)) {
+        if (!Number.isNaN(amount)) {
           return { amount, currency };
         }
       }
@@ -189,7 +189,7 @@ function extractLateFee(text: string): LateFee | null {
   const percentageMatch = normalizedText.match(
     /([\d.]+)%\s*(?:per\s+month|monthly|late\s+fee|interest)/i
   );
-  if (percentageMatch && percentageMatch[1]) {
+  if (percentageMatch?.[1]) {
     return {
       type: 'monthly',
       amount: Number.parseFloat(percentageMatch[1]),
@@ -199,7 +199,7 @@ function extractLateFee(text: string): LateFee | null {
 
   // Match daily percentage: "0.05% per day"
   const dailyMatch = normalizedText.match(/([\d.]+)%\s*(?:per\s+day|daily)/i);
-  if (dailyMatch && dailyMatch[1]) {
+  if (dailyMatch?.[1]) {
     return {
       type: 'daily',
       amount: Number.parseFloat(dailyMatch[1]),
@@ -209,7 +209,7 @@ function extractLateFee(text: string): LateFee | null {
 
   // Match fixed fee: "$25 late fee" or "late fee of $50"
   const fixedMatch = text.match(/(?:late\s+fee|fee)(?:\s+of)?\s*\$?\s*([\d.]+)/i);
-  if (fixedMatch && fixedMatch[1]) {
+  if (fixedMatch?.[1]) {
     return {
       type: 'fixed',
       amount: Number.parseFloat(fixedMatch[1]),
@@ -227,7 +227,7 @@ function extractLateFee(text: string): LateFee | null {
 function extractEarlyPaymentDiscount(text: string): EarlyPaymentDiscount | null {
   // Match "2/10 Net 30" format (2% discount if paid within 10 days)
   const discountMatch = text.match(/(\d+)\/(\d+)\s+(?:net|n)\s+\d+/i);
-  if (discountMatch && discountMatch[1] && discountMatch[2]) {
+  if (discountMatch?.[1] && discountMatch[2]) {
     return {
       discountPercentage: Number.parseInt(discountMatch[1], 10),
       paymentDays: Number.parseInt(discountMatch[2], 10),
@@ -237,7 +237,7 @@ function extractEarlyPaymentDiscount(text: string): EarlyPaymentDiscount | null 
 
   // Match "X% discount if paid within Y days"
   const explicitMatch = text.match(/(\d+)%\s+discount\s+(?:if\s+paid\s+)?within\s+(\d+)\s+days/i);
-  if (explicitMatch && explicitMatch[1] && explicitMatch[2]) {
+  if (explicitMatch?.[1] && explicitMatch[2]) {
     return {
       discountPercentage: Number.parseInt(explicitMatch[1], 10),
       paymentDays: Number.parseInt(explicitMatch[2], 10),

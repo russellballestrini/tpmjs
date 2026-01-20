@@ -112,9 +112,7 @@ export const QualityScore = forwardRef<HTMLDivElement, QualityScoreProps>(
             {showScore && normalizedScore}
           </div>
           {showTier && (
-            <span className={qualityScoreTierVariants({ size, tier })}>
-              {tierLabel}
-            </span>
+            <span className={qualityScoreTierVariants({ size, tier })}>{tierLabel}</span>
           )}
         </div>
       );
@@ -129,15 +127,9 @@ export const QualityScore = forwardRef<HTMLDivElement, QualityScoreProps>(
           {...props}
         >
           {showScore && (
-            <span className={qualityScoreTierVariants({ size, tier })}>
-              {normalizedScore}
-            </span>
+            <span className={qualityScoreTierVariants({ size, tier })}>{normalizedScore}</span>
           )}
-          {showTier && (
-            <span className="text-foreground-muted">
-              ({tierLabel})
-            </span>
-          )}
+          {showTier && <span className="text-foreground-muted">({tierLabel})</span>}
         </div>
       );
     }
@@ -157,48 +149,35 @@ export const QualityScore = forwardRef<HTMLDivElement, QualityScoreProps>(
             </div>
             <div className="flex flex-col">
               {showTier && (
-                <span className={qualityScoreTierVariants({ size, tier })}>
-                  {tierLabel}
-                </span>
+                <span className={qualityScoreTierVariants({ size, tier })}>{tierLabel}</span>
               )}
-              {showScore && (
-                <span className="text-foreground-muted text-xs">
-                  out of 100
-                </span>
-              )}
+              {showScore && <span className="text-foreground-muted text-xs">out of 100</span>}
             </div>
           </div>
 
           {/* Breakdown */}
           {breakdown && (
             <div className={qualityScoreBreakdownVariants({})}>
-              {(Object.keys(breakdown) as Array<keyof QualityScoreBreakdown>).map(
-                (key) => {
-                  const value = breakdown[key];
-                  if (value === undefined) return null;
+              {(Object.keys(breakdown) as Array<keyof QualityScoreBreakdown>).map((key) => {
+                const value = breakdown[key];
+                if (value === undefined) return null;
 
-                  const percentage = Math.round(value * 100);
-                  const breakdownTier = getTierFromScore(percentage);
+                const percentage = Math.round(value * 100);
+                const breakdownTier = getTierFromScore(percentage);
 
-                  return (
-                    <div
-                      key={key}
-                      className={qualityScoreBreakdownRowVariants({ size })}
-                    >
-                      <span className="w-20 text-right">
-                        {BREAKDOWN_LABELS[key]}
-                      </span>
-                      <div className={qualityScoreBarVariants({ size })}>
-                        <div
-                          className={qualityScoreBarFillVariants({ tier: breakdownTier })}
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
-                      <span className="w-8 text-right">{percentage}</span>
+                return (
+                  <div key={key} className={qualityScoreBreakdownRowVariants({ size })}>
+                    <span className="w-20 text-right">{BREAKDOWN_LABELS[key]}</span>
+                    <div className={qualityScoreBarVariants({ size })}>
+                      <div
+                        className={qualityScoreBarFillVariants({ tier: breakdownTier })}
+                        style={{ width: `${percentage}%` }}
+                      />
                     </div>
-                  );
-                }
-              )}
+                    <span className="w-8 text-right">{percentage}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -207,19 +186,13 @@ export const QualityScore = forwardRef<HTMLDivElement, QualityScoreProps>(
 
     // Default variant
     return (
-      <div
-        ref={ref}
-        className={cn(qualityScoreVariants({ variant, size }), className)}
-        {...props}
-      >
+      <div ref={ref} className={cn(qualityScoreVariants({ variant, size }), className)} {...props}>
         <div className={qualityScoreCircleVariants({ size, tier })}>
           {showScore && normalizedScore}
         </div>
         {showTier && (
           <div className="flex flex-col">
-            <span className={qualityScoreTierVariants({ size, tier })}>
-              {tierLabel}
-            </span>
+            <span className={qualityScoreTierVariants({ size, tier })}>{tierLabel}</span>
             <div className={qualityScoreBarVariants({ size })}>
               <div
                 className={qualityScoreBarFillVariants({ tier })}

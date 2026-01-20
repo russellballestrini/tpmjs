@@ -47,20 +47,17 @@ export function useAgents(params: UseAgentsParams = {}) {
   const queryString = searchParams.toString();
 
   // Custom response handler since the API returns { success, data, pagination }
-  return useSWR<AgentsResponse>(
-    `/api/public/agents?${queryString}`,
-    async (url: string) => {
-      const res = await fetch(url);
-      const json = await res.json();
+  return useSWR<AgentsResponse>(`/api/public/agents?${queryString}`, async (url: string) => {
+    const res = await fetch(url);
+    const json = await res.json();
 
-      if (!json.success) {
-        throw new Error(json.error?.message || 'Failed to fetch agents');
-      }
-
-      return {
-        agents: json.data,
-        pagination: json.pagination,
-      };
+    if (!json.success) {
+      throw new Error(json.error?.message || 'Failed to fetch agents');
     }
-  );
+
+    return {
+      agents: json.data,
+      pagination: json.pagination,
+    };
+  });
 }

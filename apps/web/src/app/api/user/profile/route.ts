@@ -1,5 +1,5 @@
 import { prisma } from '@tpmjs/db';
-import { RESERVED_USERNAMES, USERNAME_REGEX, UpdateUserProfileSchema } from '@tpmjs/types/user';
+import { RESERVED_USERNAMES, UpdateUserProfileSchema, USERNAME_REGEX } from '@tpmjs/types/user';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { authenticateRequest } from '~/lib/api-keys/middleware';

@@ -102,11 +102,7 @@ export default class ToolSearch extends Command {
       );
 
       if (response.pagination.hasMore) {
-        output.text(
-          output.dim(
-            `Use --offset ${flags.offset + flags.limit} to see more results`
-          )
-        );
+        output.text(output.dim(`Use --offset ${flags.offset + flags.limit} to see more results`));
       }
     } catch (error) {
       spinner.fail('Search failed');

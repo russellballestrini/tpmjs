@@ -3,7 +3,7 @@
  * Loads environment variables and configures test environment
  */
 
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { config } from 'dotenv';
 
 // Load environment variables from .env.local or .env

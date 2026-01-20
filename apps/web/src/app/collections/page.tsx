@@ -242,7 +242,11 @@ export default function PublicCollectionsPage(): React.ReactElement {
           <EmptyState
             icon="folder"
             title="No collections found"
-            description={search ? 'Try adjusting your search terms' : 'Be the first to share a public collection!'}
+            description={
+              search
+                ? 'Try adjusting your search terms'
+                : 'Be the first to share a public collection!'
+            }
           />
         ) : (
           <>

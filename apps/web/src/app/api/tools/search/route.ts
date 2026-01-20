@@ -1,6 +1,6 @@
 import { prisma } from '@tpmjs/db';
 import { type NextRequest, NextResponse } from 'next/server';
-import { STRICT_RATE_LIMIT, checkRateLimit } from '~/lib/rate-limit';
+import { checkRateLimit, STRICT_RATE_LIMIT } from '~/lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     // Accept both 'q' and 'query' parameters for flexibility
     const query = searchParams.get('q') || searchParams.get('query') || '';
     const category = searchParams.get('category');
-    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '10'), 100);
+    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '10', 10), 100);
 
     // Parse excludeIds to filter out tools already in user's collection
     const excludeIdsParam = searchParams.get('excludeIds');
@@ -206,7 +206,8 @@ export async function GET(request: NextRequest) {
       // Boost for package name match (when user searches by package name like @tpmjs/tools-unsandbox)
       const packageNameBoost = hasPackageNameMatch(query, tool.package.npmPackageName) ? 50 : 0;
 
-      const finalScore = bm25Score + qualityBoost + downloadBoost + exactNameBoost + packageNameBoost;
+      const finalScore =
+        bm25Score + qualityBoost + downloadBoost + exactNameBoost + packageNameBoost;
 
       return { tool, score: finalScore };
     });

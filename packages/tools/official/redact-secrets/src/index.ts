@@ -53,12 +53,12 @@ const SECRET_PATTERNS: Array<{
   },
   {
     type: 'aws-secret-key',
-    pattern: /aws(.{0,20})?['\"][0-9a-zA-Z/+]{40}['\"]/gi,
+    pattern: /aws(.{0,20})?['"][0-9a-zA-Z/+]{40}['"]/gi,
     description: 'AWS Secret Access Key',
   },
   {
     type: 'aws-account-id',
-    pattern: /aws(.{0,20})?['\"]?[0-9]{12}['\"]?/gi,
+    pattern: /aws(.{0,20})?['"]?[0-9]{12}['"]?/gi,
     description: 'AWS Account ID',
   },
 
@@ -109,12 +109,12 @@ const SECRET_PATTERNS: Array<{
   // Generic API Keys
   {
     type: 'generic-api-key',
-    pattern: /api[_-]?key['\"]?\s*[:=]\s*['\"]?[0-9a-zA-Z_\-]{20,}['\"]?/gi,
+    pattern: /api[_-]?key['"]?\s*[:=]\s*['"]?[0-9a-zA-Z_-]{20,}['"]?/gi,
     description: 'Generic API Key',
   },
   {
     type: 'generic-secret',
-    pattern: /secret['\"]?\s*[:=]\s*['\"]?[0-9a-zA-Z_\-]{20,}['\"]?/gi,
+    pattern: /secret['"]?\s*[:=]\s*['"]?[0-9a-zA-Z_-]{20,}['"]?/gi,
     description: 'Generic Secret',
   },
 
@@ -155,7 +155,7 @@ const SECRET_PATTERNS: Array<{
   // Generic Passwords in Code
   {
     type: 'hardcoded-password',
-    pattern: /password['\"]?\s*[:=]\s*['\"][^'\"]{8,}['\"](?!\s*=)/gi,
+    pattern: /password['"]?\s*[:=]\s*['"][^'"]{8,}['"](?!\s*=)/gi,
     description: 'Hardcoded Password',
   },
 
@@ -190,7 +190,7 @@ const SECRET_PATTERNS: Array<{
   // Generic Bearer Tokens
   {
     type: 'bearer-token',
-    pattern: /bearer\s+[a-zA-Z0-9_\-\.=]{20,}/gi,
+    pattern: /bearer\s+[a-zA-Z0-9_\-.=]{20,}/gi,
     description: 'Bearer Token',
   },
 
@@ -237,7 +237,7 @@ async function generateFingerprint(value: string): Promise<string> {
       hash = hash & hash; // Convert to 32bit integer
     }
     return `fallback-${Math.abs(hash).toString(16)}`;
-  } catch (error) {
+  } catch (_error) {
     // If all else fails, return a placeholder
     return `error-${value.length}`;
   }

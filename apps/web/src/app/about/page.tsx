@@ -18,9 +18,9 @@ export default function AboutPage(): React.ReactElement {
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <p className="text-lg text-foreground-secondary mb-6">
-            TPMJS (Tool Package Manager for JavaScript) is the npm registry for AI agent tools.
-            It was started in 2024 to make it easy for developers to publish and discover tools
-            that AI agents can use.
+            TPMJS (Tool Package Manager for JavaScript) is the npm registry for AI agent tools. It
+            was started in 2024 to make it easy for developers to publish and discover tools that AI
+            agents can use.
           </p>
 
           <h2 className="text-xl font-semibold mt-10 mb-4 text-foreground">Creator</h2>

@@ -86,9 +86,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
     };
 
     const isControlled = controlledValue !== undefined;
-    const [internalValue, setInternalValue] = useState<string[]>(
-      normalizeValue(defaultValue)
-    );
+    const [internalValue, setInternalValue] = useState<string[]>(normalizeValue(defaultValue));
 
     const value = isControlled ? normalizeValue(controlledValue) : internalValue;
 
@@ -138,11 +136,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
 
     return (
       <AccordionContext.Provider value={contextValue}>
-        <div
-          ref={ref}
-          className={cn(accordionVariants({ variant }), className)}
-          {...props}
-        >
+        <div ref={ref} className={cn(accordionVariants({ variant }), className)} {...props}>
           {children}
         </div>
       </AccordionContext.Provider>
@@ -232,7 +226,10 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
         aria-expanded={isExpanded}
         aria-controls={contentId}
         disabled={disabled}
-        className={cn(accordionTriggerVariants({ disabled: disabled ? 'true' : 'false' }), className)}
+        className={cn(
+          accordionTriggerVariants({ disabled: disabled ? 'true' : 'false' }),
+          className
+        )}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         {...props}
@@ -266,12 +263,13 @@ export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps
         ref={ref}
         role="region"
         aria-hidden={!isExpanded}
-        className={cn(accordionContentVariants({ expanded: isExpanded ? 'true' : 'false' }), className)}
+        className={cn(
+          accordionContentVariants({ expanded: isExpanded ? 'true' : 'false' }),
+          className
+        )}
         {...props}
       >
-        <div className={accordionContentInnerVariants({})}>
-          {children}
-        </div>
+        <div className={accordionContentInnerVariants({})}>{children}</div>
       </div>
     );
   }

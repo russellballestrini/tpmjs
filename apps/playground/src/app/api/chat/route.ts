@@ -1,6 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { searchTpmjsToolsTool } from '@tpmjs/search-registry';
-import { type UIMessage, convertToModelMessages, stepCountIs, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 'ai';
 import type { NextRequest } from 'next/server';
 import { env } from '~/env';
 import {

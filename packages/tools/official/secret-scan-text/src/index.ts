@@ -61,13 +61,13 @@ const SECRET_PATTERNS: Array<{
   },
   {
     type: 'aws-secret-key',
-    pattern: /aws(.{0,20})?['\"][0-9a-zA-Z/+]{40}['\"]/gi,
+    pattern: /aws(.{0,20})?['"][0-9a-zA-Z/+]{40}['"]/gi,
     severity: 'critical',
     description: 'AWS Secret Access Key',
   },
   {
     type: 'aws-account-id',
-    pattern: /aws(.{0,20})?['\"]?[0-9]{12}['\"]?/gi,
+    pattern: /aws(.{0,20})?['"]?[0-9]{12}['"]?/gi,
     severity: 'medium',
     description: 'AWS Account ID',
   },
@@ -126,13 +126,13 @@ const SECRET_PATTERNS: Array<{
   // Generic API Keys
   {
     type: 'generic-api-key',
-    pattern: /api[_-]?key['\"]?\s*[:=]\s*['\"]?[0-9a-zA-Z_\-]{20,}['\"]?/gi,
+    pattern: /api[_-]?key['"]?\s*[:=]\s*['"]?[0-9a-zA-Z_-]{20,}['"]?/gi,
     severity: 'high',
     description: 'Generic API Key',
   },
   {
     type: 'generic-secret',
-    pattern: /secret['\"]?\s*[:=]\s*['\"]?[0-9a-zA-Z_\-]{20,}['\"]?/gi,
+    pattern: /secret['"]?\s*[:=]\s*['"]?[0-9a-zA-Z_-]{20,}['"]?/gi,
     severity: 'high',
     description: 'Generic Secret',
   },
@@ -179,7 +179,7 @@ const SECRET_PATTERNS: Array<{
   // Generic Passwords in Code
   {
     type: 'hardcoded-password',
-    pattern: /password['\"]?\s*[:=]\s*['\"][^'\"]{8,}['\"](?!\s*=)/gi,
+    pattern: /password['"]?\s*[:=]\s*['"][^'"]{8,}['"](?!\s*=)/gi,
     severity: 'high',
     description: 'Hardcoded Password',
   },
@@ -219,7 +219,7 @@ const SECRET_PATTERNS: Array<{
   // Generic Bearer Tokens
   {
     type: 'bearer-token',
-    pattern: /bearer\s+[a-zA-Z0-9_\-\.=]{20,}/gi,
+    pattern: /bearer\s+[a-zA-Z0-9_\-.=]{20,}/gi,
     severity: 'high',
     description: 'Bearer Token',
   },

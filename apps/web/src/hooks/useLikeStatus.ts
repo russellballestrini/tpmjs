@@ -41,10 +41,7 @@ export function useLikeStatus(
     const newCount = newLiked ? data.likeCount + 1 : Math.max(0, data.likeCount - 1);
 
     // Optimistic update
-    await mutate(
-      { liked: newLiked, likeCount: newCount },
-      { revalidate: false }
-    );
+    await mutate({ liked: newLiked, likeCount: newCount }, { revalidate: false });
 
     try {
       const response = await fetch(`/api/${entityType}s/${entityId}/like`, {

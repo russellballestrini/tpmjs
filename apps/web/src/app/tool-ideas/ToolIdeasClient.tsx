@@ -228,7 +228,9 @@ export function ToolIdeasClient() {
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 bg-surface p-4 rounded-lg border border-border">
         <div>
-          <Label htmlFor="tool-search" className="text-xs mb-1.5">Search</Label>
+          <Label htmlFor="tool-search" className="text-xs mb-1.5">
+            Search
+          </Label>
           <Input
             id="tool-search"
             type="text"
@@ -240,7 +242,9 @@ export function ToolIdeasClient() {
         </div>
 
         <div>
-          <Label htmlFor="tool-category" className="text-xs mb-1.5">Category</Label>
+          <Label htmlFor="tool-category" className="text-xs mb-1.5">
+            Category
+          </Label>
           <Select
             id="tool-category"
             value={category}
@@ -251,7 +255,9 @@ export function ToolIdeasClient() {
         </div>
 
         <div>
-          <Label htmlFor="tool-verb" className="text-xs mb-1.5">Verb</Label>
+          <Label htmlFor="tool-verb" className="text-xs mb-1.5">
+            Verb
+          </Label>
           <Select
             id="tool-verb"
             value={verb}
@@ -262,7 +268,9 @@ export function ToolIdeasClient() {
         </div>
 
         <div>
-          <Label htmlFor="tool-quality" className="text-xs mb-1.5">Min Quality</Label>
+          <Label htmlFor="tool-quality" className="text-xs mb-1.5">
+            Min Quality
+          </Label>
           <Select
             id="tool-quality"
             value={minQuality}

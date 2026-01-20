@@ -913,14 +913,15 @@ export const manualTools: ManualTool[] = [
     category: 'search',
     frameworks: ['vercel-ai'],
     name: 'takoSearch',
-    description: 'Search Tako\'s knowledge base for data visualizations, insights, and well-sourced information with charts and analytics.',
+    description:
+      "Search Tako's knowledge base for data visualizations, insights, and well-sourced information with charts and analytics.",
     tags: ['search', 'data', 'visualization', 'analytics'],
     env: [
       {
         name: 'TAKO_API_KEY',
         description: 'API key for authenticating requests to Tako services.',
         required: true,
-      }
+      },
     ],
     docsUrl: 'https://github.com/TakoData/ai-sdk#readme',
     apiKeyUrl: 'https://tako.com',

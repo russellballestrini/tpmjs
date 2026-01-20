@@ -595,7 +595,7 @@ export const execute = tool({
       stderr: result.stderr || '',
       exit_code: result.exit_code ?? 0,
       total_time_ms: result.total_time_ms || 0,
-      success: result.success ?? (result.exit_code === 0),
+      success: result.success ?? result.exit_code === 0,
       artifact: result.artifact,
       wasm_artifact: result.wasm_artifact,
     };
@@ -691,7 +691,7 @@ export const run = tool({
       stdout: result.stdout || '',
       stderr: result.stderr || '',
       exit_code: result.exit_code ?? 0,
-      success: result.success ?? (result.exit_code === 0),
+      success: result.success ?? result.exit_code === 0,
     };
   },
 });
@@ -896,8 +896,7 @@ export interface LanguagesResult {
  * List all supported programming languages.
  */
 export const getLanguages = tool({
-  description:
-    'List all supported programming languages and their aliases for code execution.',
+  description: 'List all supported programming languages and their aliases for code execution.',
   inputSchema: jsonSchema<Record<string, never>>({
     type: 'object',
     properties: {},
@@ -923,8 +922,7 @@ export interface ShellsResult {
  * List all supported shells and REPLs for interactive sessions.
  */
 export const getShells = tool({
-  description:
-    'List all supported shells and REPLs for interactive sessions, grouped by category.',
+  description: 'List all supported shells and REPLs for interactive sessions, grouped by category.',
   inputSchema: jsonSchema<Record<string, never>>({
     type: 'object',
     properties: {},
@@ -1019,7 +1017,11 @@ export const getSession = tool({
     additionalProperties: false,
   }),
   async execute(input: GetSessionInput): Promise<SessionResult> {
-    return apiRequest<SessionResult>('GET', `/sessions/${encodeURIComponent(input.session_id)}`, undefined);
+    return apiRequest<SessionResult>(
+      'GET',
+      `/sessions/${encodeURIComponent(input.session_id)}`,
+      undefined
+    );
   },
 });
 
@@ -1103,7 +1105,8 @@ export interface SessionStateResult {
  * Freeze a session to save resources.
  */
 export const freezeSession = tool({
-  description: 'Freeze a session to save resources. Container state is preserved and can be woken later.',
+  description:
+    'Freeze a session to save resources. Container state is preserved and can be woken later.',
   inputSchema: jsonSchema<SessionIdInput>({
     type: 'object',
     properties: {
@@ -1223,7 +1226,10 @@ export const createSessionSnapshot = tool({
     properties: {
       session_id: { type: 'string', description: 'The session ID' },
       name: { type: 'string', description: 'Optional snapshot name' },
-      hot: { type: 'boolean', description: 'Create hot snapshot without stopping container. Default: false' },
+      hot: {
+        type: 'boolean',
+        description: 'Create hot snapshot without stopping container. Default: false',
+      },
       ttl: { type: 'number', description: 'Auto-delete after N seconds (optional)' },
     },
     required: ['session_id'],
@@ -1329,7 +1335,10 @@ export const createService = tool({
     properties: {
       name: { type: 'string', description: 'Service name (becomes NAME.on.unsandbox.com)' },
       bootstrap: { type: 'string', description: 'Bootstrap script content or URL' },
-      bootstrap_content: { type: 'string', description: 'Bootstrap script content (alternative to bootstrap)' },
+      bootstrap_content: {
+        type: 'string',
+        description: 'Bootstrap script content (alternative to bootstrap)',
+      },
       ports: {
         type: 'array',
         items: { type: 'number' },
@@ -1384,7 +1393,11 @@ export const getService = tool({
     additionalProperties: false,
   }),
   async execute(input: ServiceIdInput): Promise<ServiceResult> {
-    return apiRequest<ServiceResult>('GET', `/services/${encodeURIComponent(input.service_id)}`, undefined);
+    return apiRequest<ServiceResult>(
+      'GET',
+      `/services/${encodeURIComponent(input.service_id)}`,
+      undefined
+    );
   },
 });
 
@@ -1814,7 +1827,11 @@ export const getSnapshot = tool({
     additionalProperties: false,
   }),
   async execute(input: SnapshotIdInput): Promise<SnapshotResult> {
-    return apiRequest<SnapshotResult>('GET', `/snapshots/${encodeURIComponent(input.snapshot_id)}`, undefined);
+    return apiRequest<SnapshotResult>(
+      'GET',
+      `/snapshots/${encodeURIComponent(input.snapshot_id)}`,
+      undefined
+    );
   },
 });
 
@@ -2066,7 +2083,11 @@ export const getImage = tool({
     additionalProperties: false,
   }),
   async execute(input: ImageIdInput): Promise<ImageResult> {
-    return apiRequest<ImageResult>('GET', `/images/${encodeURIComponent(input.image_id)}`, undefined);
+    return apiRequest<ImageResult>(
+      'GET',
+      `/images/${encodeURIComponent(input.image_id)}`,
+      undefined
+    );
   },
 });
 
@@ -2165,11 +2186,9 @@ export const grantImageAccess = tool({
     additionalProperties: false,
   }),
   async execute(input: GrantImageAccessInput): Promise<ImageResult> {
-    return apiRequest<ImageResult>(
-      'POST',
-      `/images/${encodeURIComponent(input.image_id)}/grant`,
-      { api_key: input.api_key }
-    );
+    return apiRequest<ImageResult>('POST', `/images/${encodeURIComponent(input.image_id)}/grant`, {
+      api_key: input.api_key,
+    });
   },
 });
 
@@ -2188,11 +2207,9 @@ export const revokeImageAccess = tool({
     additionalProperties: false,
   }),
   async execute(input: GrantImageAccessInput): Promise<ImageResult> {
-    return apiRequest<ImageResult>(
-      'POST',
-      `/images/${encodeURIComponent(input.image_id)}/revoke`,
-      { api_key: input.api_key }
-    );
+    return apiRequest<ImageResult>('POST', `/images/${encodeURIComponent(input.image_id)}/revoke`, {
+      api_key: input.api_key,
+    });
   },
 });
 
@@ -2348,7 +2365,8 @@ export interface DeleteImageResult {
  * Delete an image.
  */
 export const deleteImage = tool({
-  description: 'Permanently delete an image from LXD and the database. Cannot delete locked images.',
+  description:
+    'Permanently delete an image from LXD and the database. Cannot delete locked images.',
   inputSchema: jsonSchema<ImageIdInput>({
     type: 'object',
     properties: {

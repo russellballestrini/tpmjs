@@ -126,7 +126,7 @@ export function useCountUp(options: UseCountUpOptions): {
       start();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoStart]);
+  }, [autoStart, start]);
 
   return {
     count,

@@ -3,11 +3,10 @@
  * Securely executes npm packages using isolated-vm
  */
 
-import { execSync } from 'child_process';
-import { existsSync, mkdirSync } from 'fs';
-import { join } from 'path';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { execSync } from 'node:child_process';
+import { existsSync, mkdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import express from 'express';
 import ivm from 'isolated-vm';
@@ -34,7 +33,7 @@ app.use(express.json({ limit: '1mb' }));
 /**
  * Health check endpoint
  */
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'healthy',
     service: 'tpmjs-sandbox-executor',
@@ -72,7 +71,7 @@ app.post('/execute', async (req, res) => {
     await jail.set('global', jail.derefInto());
 
     // Create console mock that captures logs
-    const logs = [];
+    const _logs = [];
     const consoleObject = await isolate.compileScript(`
       ({
         log: (...args) => { logs.push(args.join(' ')); },
@@ -84,7 +83,7 @@ app.post('/execute', async (req, res) => {
     await jail.set('logs', []);
 
     // Build execution code
-    const code = `
+    const _code = `
       (async function() {
         try {
           // Dynamic import is not available in isolated-vm
@@ -111,7 +110,9 @@ app.post('/execute', async (req, res) => {
         pkg = await import(packagePath);
       } catch {
         // Fallback to require for CommonJS
-        pkg = await import('module').then((m) => m.createRequire(import.meta.url)(packagePath));
+        pkg = await import('node:module').then((m) =>
+          m.createRequire(import.meta.url)(packagePath)
+        );
       }
 
       const fn = typeof pkg === 'function' ? pkg : pkg[functionName] || pkg.default;
@@ -146,7 +147,7 @@ app.post('/execute', async (req, res) => {
 /**
  * Clear package cache endpoint
  */
-app.post('/cache/clear', async (req, res) => {
+app.post('/cache/clear', async (_req, res) => {
   try {
     if (existsSync(CACHE_DIR)) {
       execSync(`rm -rf ${CACHE_DIR}`, { stdio: 'ignore' });

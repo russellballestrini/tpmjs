@@ -1,11 +1,8 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Slide } from './Slide';
-import { SlideNavigation } from './SlideNavigation';
-import { SlideProgress } from './SlideProgress';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { AuthorNextStepsSlide } from './author-slides/AuthorNextStepsSlide';
 import { AuthorWelcomeSlide } from './author-slides/AuthorWelcomeSlide';
 import { GetDiscoveredSlide } from './author-slides/GetDiscoveredSlide';
@@ -15,6 +12,9 @@ import { PackageSetupSlide } from './author-slides/PackageSetupSlide';
 import { QualityScoringSlide } from './author-slides/QualityScoringSlide';
 import { ToolDefinitionSlide } from './author-slides/ToolDefinitionSlide';
 import { WhatIsRegistrySlide } from './author-slides/WhatIsRegistrySlide';
+import { Slide } from './Slide';
+import { SlideNavigation } from './SlideNavigation';
+import { SlideProgress } from './SlideProgress';
 
 const SLIDES = [
   { id: 'welcome', Component: AuthorWelcomeSlide },

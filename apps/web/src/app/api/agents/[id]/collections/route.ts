@@ -1,5 +1,5 @@
 import { prisma } from '@tpmjs/db';
-import { AGENT_LIMITS, AddCollectionToAgentSchema } from '@tpmjs/types/agent';
+import { AddCollectionToAgentSchema, AGENT_LIMITS } from '@tpmjs/types/agent';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 

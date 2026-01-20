@@ -1,17 +1,17 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Slide } from './Slide';
-import { SlideNavigation } from './SlideNavigation';
-import { SlideProgress } from './SlideProgress';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { AgentCodeSlide } from './agent-example-slides/AgentCodeSlide';
 import { AgentExampleNextStepsSlide } from './agent-example-slides/AgentExampleNextStepsSlide';
 import { AgentExampleWelcomeSlide } from './agent-example-slides/AgentExampleWelcomeSlide';
 import { ExecutionFlowSlide } from './agent-example-slides/ExecutionFlowSlide';
 import { SetupCodeSlide } from './agent-example-slides/SetupCodeSlide';
 import { TheGoalSlide } from './agent-example-slides/TheGoalSlide';
+import { Slide } from './Slide';
+import { SlideNavigation } from './SlideNavigation';
+import { SlideProgress } from './SlideProgress';
 
 const SLIDES = [
   { id: 'welcome', Component: AgentExampleWelcomeSlide },

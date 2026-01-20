@@ -1,5 +1,5 @@
-import { createVariants } from '../system/variants';
 import { formControlBase } from '../system/formVariants';
+import { createVariants } from '../system/variants';
 
 /**
  * Radio variant definitions

@@ -4,14 +4,15 @@ import { z } from 'zod';
 import { getDatabase } from '../db/client.js';
 import {
   type Category,
-  type ToolObject,
-  type Verb,
   categories,
   categoryVerbAffinity,
   objects,
+  type ToolObject,
+  type Verb,
   verbObjectCompatibility,
   verbs,
 } from '../db/schema.js';
+
 // Drizzle operators imported as needed
 
 // =============================================================================
@@ -216,7 +217,7 @@ export async function seedCompatibilityRules(options: { dbPath?: string } = {}) 
           .onConflictDoNothing()
           .run();
         voCount++;
-      } catch (e) {
+      } catch (_e) {
         // Ignore duplicates
       }
     }
@@ -241,7 +242,7 @@ export async function seedCompatibilityRules(options: { dbPath?: string } = {}) 
           .onConflictDoNothing()
           .run();
         cvCount++;
-      } catch (e) {
+      } catch (_e) {
         // Ignore duplicates
       }
     }
@@ -300,7 +301,7 @@ export function loadCompatibilityRules(db: ReturnType<typeof getDatabase>) {
       cvRules.set(cat.name, { verbs: new Set(), score: rule.score });
     }
 
-    cvRules.get(cat.name)!.verbs.add(verb.name);
+    cvRules.get(cat.name)?.verbs.add(verb.name);
   }
 
   return { voRules, cvRules };

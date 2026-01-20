@@ -1,5 +1,5 @@
-import { OverviewSlideshow } from '@/components/OverviewSlideshow';
 import type { Metadata } from 'next';
+import { OverviewSlideshow } from '@/components/OverviewSlideshow';
 
 export const metadata: Metadata = {
   title: 'Overview | TPMJS Tutorials',

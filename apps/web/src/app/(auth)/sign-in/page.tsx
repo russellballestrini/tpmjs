@@ -91,7 +91,9 @@ export default function SignInPage() {
 
         <div>
           <div className="flex items-center justify-between mb-1">
-            <Label htmlFor="password" className="mb-0">Password</Label>
+            <Label htmlFor="password" className="mb-0">
+              Password
+            </Label>
             <Link
               href="/forgot-password"
               className="text-sm text-foreground-secondary hover:text-foreground hover:underline"
@@ -122,12 +124,7 @@ export default function SignInPage() {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          disabled={loading}
-          loading={loading}
-          className="w-full"
-        >
+        <Button type="submit" disabled={loading} loading={loading} className="w-full">
           {loading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>

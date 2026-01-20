@@ -106,11 +106,7 @@ export const toastContentVariants = createVariants({
  * Toast title variant definitions
  */
 export const toastTitleVariants = createVariants({
-  base: [
-    'font-mono font-semibold text-sm',
-    'text-foreground',
-    'lowercase',
-  ].join(' '),
+  base: ['font-mono font-semibold text-sm', 'text-foreground', 'lowercase'].join(' '),
 
   variants: {},
 
@@ -121,11 +117,7 @@ export const toastTitleVariants = createVariants({
  * Toast description variant definitions
  */
 export const toastDescriptionVariants = createVariants({
-  base: [
-    'font-mono text-sm',
-    'text-foreground-muted',
-    'mt-1',
-  ].join(' '),
+  base: ['font-mono text-sm', 'text-foreground-muted', 'mt-1'].join(' '),
 
   variants: {},
 
@@ -155,10 +147,7 @@ export const toastCloseButtonVariants = createVariants({
  * Toast action variant definitions
  */
 export const toastActionVariants = createVariants({
-  base: [
-    'mt-2',
-    'flex gap-2',
-  ].join(' '),
+  base: ['mt-2', 'flex gap-2'].join(' '),
 
   variants: {},
 

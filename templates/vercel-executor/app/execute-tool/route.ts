@@ -6,7 +6,7 @@
  * This re-exports from the api version for backwards compatibility
  */
 
-export { POST, OPTIONS } from '../api/execute-tool/route';
+export { OPTIONS, POST } from '../api/execute-tool/route';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

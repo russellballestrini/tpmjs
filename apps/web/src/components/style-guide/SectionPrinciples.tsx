@@ -6,8 +6,8 @@ export function SectionPrinciples(): React.ReactElement {
   return (
     <FieldsetSection title="1. design principles" id="principles">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        These principles guide every design decision in TPMJS. They ensure consistency
-        and prevent drift as the system grows.
+        These principles guide every design decision in TPMJS. They ensure consistency and prevent
+        drift as the system grows.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -46,14 +46,14 @@ export function SectionPrinciples(): React.ReactElement {
       <SubSection title="design philosophy">
         <div className="bg-surface-2 p-6 border border-dashed border-border prose-width">
           <p className="font-sans text-foreground leading-relaxed mb-4">
-            TPMJS is a <strong>developer platform</strong> for AI tools. The design reflects
-            this through industrial aesthetics: sharp edges, technical typography, and
-            a muted palette with copper as the signal color.
+            TPMJS is a <strong>developer platform</strong> for AI tools. The design reflects this
+            through industrial aesthetics: sharp edges, technical typography, and a muted palette
+            with copper as the signal color.
           </p>
           <p className="font-sans text-foreground-secondary leading-relaxed">
             Unlike consumer products that aim for delight, TPMJS aims for
-            <strong> efficiency and trust</strong>. Users should feel confident that the
-            interface will behave predictably and help them accomplish tasks quickly.
+            <strong> efficiency and trust</strong>. Users should feel confident that the interface
+            will behave predictably and help them accomplish tasks quickly.
           </p>
         </div>
       </SubSection>

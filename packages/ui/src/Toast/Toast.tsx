@@ -35,7 +35,9 @@ import {
 /**
  * Get the default icon for a toast variant
  */
-function getVariantIcon(variant: ToastVariant): 'checkCircle' | 'xCircle' | 'alertTriangle' | 'info' | 'bell' {
+function getVariantIcon(
+  variant: ToastVariant
+): 'checkCircle' | 'xCircle' | 'alertTriangle' | 'info' | 'bell' {
   switch (variant) {
     case 'success':
       return 'checkCircle';
@@ -144,9 +146,7 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(
         {/* Content */}
         <div className={toastContentVariants()}>
           {title && <div className={toastTitleVariants()}>{title}</div>}
-          {description && (
-            <div className={toastDescriptionVariants()}>{description}</div>
-          )}
+          {description && <div className={toastDescriptionVariants()}>{description}</div>}
           {action && <div className={toastActionVariants()}>{action}</div>}
         </div>
 
@@ -192,11 +192,7 @@ export const ToastContainer = forwardRef<HTMLDivElement, ToastContainerProps>(
     if (typeof window === 'undefined') return null;
 
     return createPortal(
-      <div
-        ref={ref}
-        className={cn(toastContainerVariants({ position }), className)}
-        {...props}
-      >
+      <div ref={ref} className={cn(toastContainerVariants({ position }), className)} {...props}>
         {children}
       </div>,
       document.body
@@ -277,9 +273,7 @@ export function ToastProvider({
   );
 
   const dismiss = useCallback((id: string) => {
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, open: false } : t))
-    );
+    setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, open: false } : t)));
     // Remove from DOM after animation
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));

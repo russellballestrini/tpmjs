@@ -1,9 +1,9 @@
 'use client';
 
-import { useSession } from '@/lib/auth-client';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
+import { useSession } from '@/lib/auth-client';
 import { DashboardActivityStream } from '~/components/DashboardActivityStream';
 import { DashboardLayout } from '~/components/dashboard/DashboardLayout';
 

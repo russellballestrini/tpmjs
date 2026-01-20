@@ -3,7 +3,6 @@
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Input } from '@tpmjs/ui/Input/Input';
-import { Textarea } from '@tpmjs/ui/Textarea/Textarea';
 import {
   Table,
   TableBody,
@@ -13,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@tpmjs/ui/Table/Table';
+import { Textarea } from '@tpmjs/ui/Textarea/Textarea';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { DashboardLayout } from '~/components/dashboard/DashboardLayout';
@@ -268,24 +268,22 @@ ANOTHER_SECRET=xyz789"
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <>
-                {[0, 1, 2].map((idx) => (
-                  <TableRow key={`key-skeleton-${idx}`}>
-                    <TableCell>
-                      <div className="h-4 w-40 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 w-20 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-4 w-24 bg-surface-secondary rounded animate-pulse" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="h-8 w-8 bg-surface-secondary rounded animate-pulse ml-auto" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
+              [0, 1, 2].map((idx) => (
+                <TableRow key={`key-skeleton-${idx}`}>
+                  <TableCell>
+                    <div className="h-4 w-40 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-20 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-4 w-24 bg-surface-secondary rounded animate-pulse" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="h-8 w-8 bg-surface-secondary rounded animate-pulse ml-auto" />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : keys.length === 0 ? (
               <TableEmpty
                 colSpan={4}

@@ -13,8 +13,8 @@ export function SectionPatternForms(): React.ReactElement {
   return (
     <FieldsetSection title="15. form patterns" id="form-patterns">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Consistent form patterns for data entry, validation, and submission.
-        Forms should guide users through tasks with clear feedback.
+        Consistent form patterns for data entry, validation, and submission. Forms should guide
+        users through tasks with clear feedback.
       </p>
 
       <SubSection title="validation timing">
@@ -55,9 +55,21 @@ export function SectionPatternForms(): React.ReactElement {
               <span className="font-mono text-sm font-medium text-error">please fix 3 errors</span>
             </div>
             <ul className="space-y-1 text-sm text-foreground-secondary font-sans">
-              <li><a href="#name" className="text-error hover:underline">Name is required</a></li>
-              <li><a href="#email" className="text-error hover:underline">Email format is invalid</a></li>
-              <li><a href="#description" className="text-error hover:underline">Description must be at least 50 characters</a></li>
+              <li>
+                <a href="#name" className="text-error hover:underline">
+                  Name is required
+                </a>
+              </li>
+              <li>
+                <a href="#email" className="text-error hover:underline">
+                  Email format is invalid
+                </a>
+              </li>
+              <li>
+                <a href="#description" className="text-error hover:underline">
+                  Description must be at least 50 characters
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -79,10 +91,7 @@ export function SectionPatternForms(): React.ReactElement {
       <SubSection title="help text placement">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <DoDontCard type="do" title="Help text below the input">
-            <FormField
-              label="api key"
-              helperText="You can find this in your dashboard settings"
-            >
+            <FormField label="api key" helperText="You can find this in your dashboard settings">
               <Input placeholder="sk-xxxx..." />
             </FormField>
           </DoDontCard>
@@ -101,7 +110,9 @@ export function SectionPatternForms(): React.ReactElement {
       <SubSection title="required vs optional">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
           <div className="bg-surface p-6 border border-dashed border-border">
-            <p className="font-mono text-xs text-foreground-tertiary mb-4">when most fields are required</p>
+            <p className="font-mono text-xs text-foreground-tertiary mb-4">
+              when most fields are required
+            </p>
             <div className="space-y-4">
               <FormField label="name" required>
                 <Input placeholder="Tool name" />
@@ -115,7 +126,9 @@ export function SectionPatternForms(): React.ReactElement {
             </div>
           </div>
           <div className="bg-surface p-6 border border-dashed border-border">
-            <p className="font-mono text-xs text-foreground-tertiary mb-4">when most fields are optional</p>
+            <p className="font-mono text-xs text-foreground-tertiary mb-4">
+              when most fields are optional
+            </p>
             <div className="space-y-4">
               <FormField label="website">
                 <Input placeholder="https://example.com" />
@@ -131,8 +144,8 @@ export function SectionPatternForms(): React.ReactElement {
         </div>
         <div className="bg-surface p-4 border border-dashed border-border">
           <p className="font-sans text-sm text-foreground-secondary">
-            <strong>Rule:</strong> Mark the minority. If most fields are required, mark optional fields.
-            If most are optional, mark required fields.
+            <strong>Rule:</strong> Mark the minority. If most fields are required, mark optional
+            fields. If most are optional, mark required fields.
           </p>
         </div>
       </SubSection>
@@ -213,7 +226,9 @@ export function SectionPatternForms(): React.ReactElement {
                 Once deleted, this tool cannot be recovered.
               </p>
             </div>
-            <Button variant="destructive" size="sm">delete tool</Button>
+            <Button variant="destructive" size="sm">
+              delete tool
+            </Button>
           </div>
           <div className="flex items-center justify-between py-4 border-t border-dashed border-error">
             <div>
@@ -222,7 +237,9 @@ export function SectionPatternForms(): React.ReactElement {
                 Transfer this tool to another user or organization.
               </p>
             </div>
-            <Button variant="outline" size="sm">transfer</Button>
+            <Button variant="outline" size="sm">
+              transfer
+            </Button>
           </div>
         </div>
       </SubSection>

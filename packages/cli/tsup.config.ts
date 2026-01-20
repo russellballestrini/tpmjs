@@ -1,11 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: [
-    'src/index.ts',
-    'src/commands/**/*.ts',
-    'src/hooks/**/*.ts',
-  ],
+  entry: ['src/index.ts', 'src/commands/**/*.ts', 'src/hooks/**/*.ts'],
   format: ['esm'],
   dts: true,
   clean: true,

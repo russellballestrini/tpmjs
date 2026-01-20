@@ -4,17 +4,17 @@ import { eq, inArray, sql } from 'drizzle-orm';
 import pLimit from 'p-limit';
 import { getDatabase } from '../db/client.js';
 import {
-  type NewToolIdea,
-  type ToolSkeleton,
   categories,
   contexts,
+  type NewToolIdea,
   objects,
   processingErrors,
+  type ToolSkeleton,
   toolIdeas,
   toolSkeletons,
   verbs,
 } from '../db/schema.js';
-import { type SkeletonWithRelations, createEnrichmentPrompt } from './prompts.js';
+import { createEnrichmentPrompt, type SkeletonWithRelations } from './prompts.js';
 import { EnrichedToolSchema } from './schemas.js';
 
 // =============================================================================

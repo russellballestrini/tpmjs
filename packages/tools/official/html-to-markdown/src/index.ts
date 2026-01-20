@@ -42,7 +42,7 @@ export interface HtmlToMarkdownResult {
 function countWords(text: string): number {
   // Remove markdown formatting characters for accurate word count
   const plainText = text
-    .replace(/[#*_`~\[\]()]/g, ' ') // Remove markdown syntax
+    .replace(/[#*_`~[\]()]/g, ' ') // Remove markdown syntax
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim();
 

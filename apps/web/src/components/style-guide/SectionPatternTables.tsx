@@ -21,24 +21,57 @@ export function SectionPatternTables(): React.ReactElement {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const mockData = [
-    { id: '1', name: '@tpmjs/parser', category: 'utility', downloads: 125432, status: 'active', score: 0.92 },
-    { id: '2', name: '@tpmjs/validator', category: 'validation', downloads: 89231, status: 'active', score: 0.87 },
-    { id: '3', name: '@tpmjs/transform', category: 'data', downloads: 45678, status: 'beta', score: 0.81 },
-    { id: '4', name: '@tpmjs/executor', category: 'runtime', downloads: 34521, status: 'active', score: 0.78 },
-    { id: '5', name: '@tpmjs/config', category: 'utility', downloads: 23456, status: 'deprecated', score: 0.65 },
+    {
+      id: '1',
+      name: '@tpmjs/parser',
+      category: 'utility',
+      downloads: 125432,
+      status: 'active',
+      score: 0.92,
+    },
+    {
+      id: '2',
+      name: '@tpmjs/validator',
+      category: 'validation',
+      downloads: 89231,
+      status: 'active',
+      score: 0.87,
+    },
+    {
+      id: '3',
+      name: '@tpmjs/transform',
+      category: 'data',
+      downloads: 45678,
+      status: 'beta',
+      score: 0.81,
+    },
+    {
+      id: '4',
+      name: '@tpmjs/executor',
+      category: 'runtime',
+      downloads: 34521,
+      status: 'active',
+      score: 0.78,
+    },
+    {
+      id: '5',
+      name: '@tpmjs/config',
+      category: 'utility',
+      downloads: 23456,
+      status: 'deprecated',
+      score: 0.65,
+    },
   ];
 
   const toggleRow = (id: string) => {
-    setSelectedRows(prev =>
-      prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
-    );
+    setSelectedRows((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]));
   };
 
   const toggleAll = () => {
     if (selectedRows.length === mockData.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(mockData.map(d => d.id));
+      setSelectedRows(mockData.map((d) => d.id));
     }
   };
 
@@ -77,7 +110,9 @@ export function SectionPatternTables(): React.ReactElement {
                 <TableRow key={row.id}>
                   <TableCell className="font-mono">{row.name}</TableCell>
                   <TableCell>{row.category}</TableCell>
-                  <TableCell className="text-right font-mono">{row.downloads.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-mono">
+                    {row.downloads.toLocaleString()}
+                  </TableCell>
                   <TableCell className="text-right font-mono">{row.score}</TableCell>
                 </TableRow>
               ))}
@@ -98,8 +133,12 @@ export function SectionPatternTables(): React.ReactElement {
                 {selectedRows.length} item{selectedRows.length !== 1 ? 's' : ''} selected
               </span>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline">export</Button>
-                <Button size="sm" variant="destructive">delete</Button>
+                <Button size="sm" variant="outline">
+                  export
+                </Button>
+                <Button size="sm" variant="destructive">
+                  delete
+                </Button>
               </div>
             </div>
           )}
@@ -121,7 +160,10 @@ export function SectionPatternTables(): React.ReactElement {
             </TableHeader>
             <TableBody>
               {mockData.map((row) => (
-                <TableRow key={row.id} className={selectedRows.includes(row.id) ? 'bg-accent/5' : ''}>
+                <TableRow
+                  key={row.id}
+                  className={selectedRows.includes(row.id) ? 'bg-accent/5' : ''}
+                >
                   <TableCell>
                     <Checkbox
                       checked={selectedRows.includes(row.id)}
@@ -133,13 +175,21 @@ export function SectionPatternTables(): React.ReactElement {
                   <TableCell>{row.category}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={row.status === 'active' ? 'success' : row.status === 'deprecated' ? 'error' : 'warning'}
+                      variant={
+                        row.status === 'active'
+                          ? 'success'
+                          : row.status === 'deprecated'
+                            ? 'error'
+                            : 'warning'
+                      }
                       size="sm"
                     >
                       {row.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right font-mono">{row.downloads.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-mono">
+                    {row.downloads.toLocaleString()}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -167,23 +217,13 @@ export function SectionPatternTables(): React.ReactElement {
           {/* Simple pagination */}
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-4">simple pagination</p>
-            <Pagination
-              page={page}
-              totalPages={10}
-              onPageChange={setPage}
-              variant="simple"
-            />
+            <Pagination page={page} totalPages={10} onPageChange={setPage} variant="simple" />
           </div>
 
           {/* Minimal pagination */}
           <div className="bg-surface p-4 border border-dashed border-border">
             <p className="font-mono text-xs text-foreground-tertiary mb-4">minimal pagination</p>
-            <Pagination
-              page={page}
-              totalPages={10}
-              onPageChange={setPage}
-              variant="minimal"
-            />
+            <Pagination page={page} totalPages={10} onPageChange={setPage} variant="minimal" />
           </div>
         </div>
       </SubSection>
@@ -215,9 +255,15 @@ export function SectionPatternTables(): React.ReactElement {
               <TableBody>
                 {[1, 2, 3].map((i) => (
                   <TableRow key={i}>
-                    <TableCell><div className="h-4 bg-muted animate-pulse w-32" /></TableCell>
-                    <TableCell><div className="h-4 bg-muted animate-pulse w-20" /></TableCell>
-                    <TableCell className="text-right"><div className="h-4 bg-muted animate-pulse w-16 ml-auto" /></TableCell>
+                    <TableCell>
+                      <div className="h-4 bg-muted animate-pulse w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 bg-muted animate-pulse w-20" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="h-4 bg-muted animate-pulse w-16 ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

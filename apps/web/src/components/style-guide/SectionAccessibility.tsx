@@ -9,8 +9,8 @@ export function SectionAccessibility(): React.ReactElement {
   return (
     <FieldsetSection title="6. accessibility" id="accessibility">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        TPMJS targets WCAG 2.1 AA compliance. Accessibility is not optional—it's
-        a core requirement for every component.
+        TPMJS targets WCAG 2.1 AA compliance. Accessibility is not optional—it's a core requirement
+        for every component.
       </p>
 
       <SubSection title="standards">
@@ -35,8 +35,8 @@ export function SectionAccessibility(): React.ReactElement {
           <div className="bg-surface p-6 border border-dashed border-border">
             <h4 className="font-mono text-sm font-medium mb-4">focus ring design</h4>
             <p className="font-sans text-sm text-foreground-secondary mb-4">
-              Focus rings use the copper accent color with 2px width and 2px offset.
-              They are <strong>never removed</strong> from interactive elements.
+              Focus rings use the copper accent color with 2px width and 2px offset. They are{' '}
+              <strong>never removed</strong> from interactive elements.
             </p>
             <div className="flex gap-4">
               <Button className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
@@ -49,10 +49,23 @@ export function SectionAccessibility(): React.ReactElement {
           <div className="bg-surface p-6 border border-dashed border-border">
             <h4 className="font-mono text-sm font-medium mb-4">keyboard navigation</h4>
             <ul className="space-y-2 text-sm text-foreground-secondary font-sans">
-              <li>• <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Tab</kbd> moves focus forward through interactive elements</li>
-              <li>• <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Shift+Tab</kbd> moves focus backward</li>
-              <li>• <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Enter</kbd> / <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Space</kbd> activates buttons and links</li>
-              <li>• <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Esc</kbd> closes modals and dropdowns</li>
+              <li>
+                • <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Tab</kbd> moves focus
+                forward through interactive elements
+              </li>
+              <li>
+                • <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Shift+Tab</kbd> moves
+                focus backward
+              </li>
+              <li>
+                • <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Enter</kbd> /{' '}
+                <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Space</kbd> activates
+                buttons and links
+              </li>
+              <li>
+                • <kbd className="px-2 py-1 bg-surface-2 font-mono text-xs">Esc</kbd> closes modals
+                and dropdowns
+              </li>
               <li>• Arrow keys navigate within components (tabs, radios, menus)</li>
             </ul>
           </div>

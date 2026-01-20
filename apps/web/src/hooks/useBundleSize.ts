@@ -21,11 +21,8 @@ export function useBundleSize(packageName: string | undefined, version?: string)
     }
   }
 
-  return useSWR<BundleSizeData>(
-    packageName ? `/api/bundlephobia?${params.toString()}` : null,
-    {
-      // Don't retry on 404s (common for scoped packages)
-      shouldRetryOnError: false,
-    }
-  );
+  return useSWR<BundleSizeData>(packageName ? `/api/bundlephobia?${params.toString()}` : null, {
+    // Don't retry on 404s (common for scoped packages)
+    shouldRetryOnError: false,
+  });
 }

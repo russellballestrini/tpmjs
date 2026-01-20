@@ -13,7 +13,7 @@
  * - GitHub secrets for CI testing
  */
 
-import { randomBytes, createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { resolve } from 'node:path';
 import { config } from 'dotenv';
 
@@ -150,7 +150,7 @@ async function main() {
     }
 
     // 5. Output credentials
-    console.log('\n' + '='.repeat(60));
+    console.log(`\n${'='.repeat(60)}`);
     console.log('🎉 Integration test credentials generated!\n');
     console.log('Add these to your .env.local or GitHub secrets:\n');
     console.log('```');
@@ -159,7 +159,7 @@ async function main() {
     console.log(`INTEGRATION_TEST_SESSION_TOKEN=${sessionToken}`);
     console.log(`INTEGRATION_TEST_API_KEY=${apiKeyRaw}`);
     console.log('```');
-    console.log('\n' + '='.repeat(60));
+    console.log(`\n${'='.repeat(60)}`);
 
     // 5. Verify credentials work
     console.log('\n🔍 Verifying credentials...');

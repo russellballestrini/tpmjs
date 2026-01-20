@@ -69,7 +69,7 @@ function normalizeUrl(
   let url: URL;
   try {
     url = new URL(urlString);
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`Invalid URL: ${urlString}`);
   }
 

@@ -69,7 +69,9 @@ export default class ToolExecute extends Command {
         const content = fs.readFileSync(flags['input-file'], 'utf-8');
         params = JSON.parse(content);
       } catch (error) {
-        output.error(`Failed to read input file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        output.error(
+          `Failed to read input file: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
         return;
       }
     }

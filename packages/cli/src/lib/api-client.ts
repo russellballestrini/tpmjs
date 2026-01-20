@@ -250,7 +250,7 @@ export class TpmClient {
     };
 
     if (this.apiKey) {
-      headers['Authorization'] = `Bearer ${this.apiKey}`;
+      headers.Authorization = `Bearer ${this.apiKey}`;
     }
 
     const controller = new AbortController();
@@ -357,7 +357,7 @@ export class TpmClient {
     };
 
     if (this.apiKey) {
-      headers['Authorization'] = `Bearer ${this.apiKey}`;
+      headers.Authorization = `Bearer ${this.apiKey}`;
     }
 
     const response = await fetch(url, {

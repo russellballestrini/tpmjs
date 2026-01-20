@@ -257,7 +257,7 @@ function checkLinkFormatting(lines: string[]): LintIssue[] {
     if (!line) continue;
 
     // Check for bare URLs (not in links or code)
-    const bareUrlMatch = line.match(/(?<![\(\[`])(https?:\/\/[^\s\)]+)(?![\)\]`])/);
+    const bareUrlMatch = line.match(/(?<![([`])(https?:\/\/[^\s)]+)(?![)\]`])/);
     if (bareUrlMatch?.[1]) {
       const url = bareUrlMatch[1];
       // Make sure it's not in a code block or already a link

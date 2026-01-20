@@ -9,12 +9,12 @@
  */
 
 export {
+  cancelJob,
   executeCode,
   executeCodeAsync,
+  getJob,
+  listJobs,
+  listLanguages,
   runCode,
   runCodeAsync,
-  listJobs,
-  getJob,
-  cancelJob,
-  listLanguages,
 } from '@thomasdavis/unsandbox';

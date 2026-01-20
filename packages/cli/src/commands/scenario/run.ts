@@ -121,7 +121,7 @@ export default class ScenarioRun extends Command {
     let errors = 0;
 
     for (const scenario of scenarios) {
-      const name = scenario.name || scenario.prompt.slice(0, 40) + '...';
+      const name = scenario.name || `${scenario.prompt.slice(0, 40)}...`;
       const runSpinner = output.spinner(`Running: ${name}`);
 
       try {

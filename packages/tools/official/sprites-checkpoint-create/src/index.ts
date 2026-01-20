@@ -146,7 +146,7 @@ export const spritesCheckpointCreateTool = tool({
         // Also try to extract from complete message like "Checkpoint v2 created successfully"
         if (parsed.type === 'complete' && parsed.data && !checkpointId) {
           const match = parsed.data.match(/Checkpoint\s+(\S+)\s+created/);
-          if (match && match[1]) {
+          if (match?.[1]) {
             checkpointId = match[1];
           }
         }

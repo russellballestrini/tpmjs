@@ -112,7 +112,7 @@ export function BarChart({
         .attr('dominant-baseline', 'middle')
         .attr('fill', colors.foregroundSecondary)
         .style('font-size', '0.75rem')
-        .text((d) => (d.label.length > 12 ? d.label.slice(0, 12) + '...' : d.label));
+        .text((d) => (d.label.length > 12 ? `${d.label.slice(0, 12)}...` : d.label));
 
       // Values
       if (showValues) {
@@ -196,7 +196,7 @@ export function BarChart({
         .attr('text-anchor', 'middle')
         .attr('fill', colors.foregroundSecondary)
         .style('font-size', '0.7rem')
-        .text((d) => (d.label.length > 8 ? d.label.slice(0, 8) + '...' : d.label))
+        .text((d) => (d.label.length > 8 ? `${d.label.slice(0, 8)}...` : d.label))
         .attr(
           'transform',
           (d) => `rotate(-45, ${(x(d.label) || 0) + x.bandwidth() / 2}, ${innerHeight + 20})`

@@ -947,7 +947,7 @@ async function handler(req: Request): Promise<Response> {
 }
 
 // Start server
-const port = Number.parseInt(Deno.env.get('PORT') || '3002');
+const port = Number.parseInt(Deno.env.get('PORT') || '3002', 10);
 
 console.log(`🚀 Railway Tool Executor (Deno) running on port ${port}`);
 console.log('📦 HTTP imports: ENABLED');

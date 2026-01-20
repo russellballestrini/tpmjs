@@ -1,17 +1,17 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Slide } from './Slide';
-import { SlideNavigation } from './SlideNavigation';
-import { SlideProgress } from './SlideProgress';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { ArchitectureSlide } from './overview-slides/ArchitectureSlide';
 import { EcosystemSlide } from './overview-slides/EcosystemSlide';
 import { ExploreSlide } from './overview-slides/ExploreSlide';
 import { OverviewWelcomeSlide } from './overview-slides/OverviewWelcomeSlide';
 import { UseCasesSlide } from './overview-slides/UseCasesSlide';
 import { WhatIsTpmjsSlide } from './overview-slides/WhatIsTpmjsSlide';
+import { Slide } from './Slide';
+import { SlideNavigation } from './SlideNavigation';
+import { SlideProgress } from './SlideProgress';
 
 const SLIDES = [
   { id: 'welcome', Component: OverviewWelcomeSlide },

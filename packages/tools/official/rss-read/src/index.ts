@@ -78,7 +78,7 @@ function normalizeToIsoDate(dateStr: string | undefined): string | undefined {
   if (!dateStr) return undefined;
   try {
     const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr; // Return original if parsing fails
+    if (Number.isNaN(date.getTime())) return dateStr; // Return original if parsing fails
     return date.toISOString();
   } catch {
     return dateStr; // Return original on error

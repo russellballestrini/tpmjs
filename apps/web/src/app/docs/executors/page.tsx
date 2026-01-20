@@ -214,8 +214,7 @@ export default function ExecutorsDocsPage(): React.ReactElement {
             {/* GET /health */}
             <div className="mb-8">
               <h3 className="text-lg font-medium text-foreground mb-2">
-                <code className="px-2 py-1 bg-success/10 text-success rounded">GET</code>{' '}
-                /health
+                <code className="px-2 py-1 bg-success/10 text-success rounded">GET</code> /health
               </h3>
               <p className="text-foreground-secondary mb-4">
                 Check executor health status. Used by TPMJS to verify the executor is reachable.

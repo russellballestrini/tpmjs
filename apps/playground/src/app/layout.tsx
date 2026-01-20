@@ -1,7 +1,7 @@
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
-import { ThemeProvider } from 'next-themes';
 import { Space_Grotesk, Space_Mono } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({

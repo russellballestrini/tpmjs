@@ -1,17 +1,17 @@
 'use client';
 
-import { useSlideshow } from '@/hooks/useSlideshow';
 import { AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Slide } from './Slide';
-import { SlideNavigation } from './SlideNavigation';
-import { SlideProgress } from './SlideProgress';
+import { useSlideshow } from '@/hooks/useSlideshow';
 import { FillParametersSlide } from './playground-slides/FillParametersSlide';
 import { FindToolSlide } from './playground-slides/FindToolSlide';
 import { OpenPlaygroundSlide } from './playground-slides/OpenPlaygroundSlide';
 import { PlaygroundNextStepsSlide } from './playground-slides/PlaygroundNextStepsSlide';
 import { PlaygroundWelcomeSlide } from './playground-slides/PlaygroundWelcomeSlide';
 import { SeeResultsSlide } from './playground-slides/SeeResultsSlide';
+import { Slide } from './Slide';
+import { SlideNavigation } from './SlideNavigation';
+import { SlideProgress } from './SlideProgress';
 
 const SLIDES = [
   { id: 'welcome', Component: PlaygroundWelcomeSlide },

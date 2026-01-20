@@ -1,8 +1,8 @@
-import { Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
-import { getApiKey, getApiUrl, getConfigDir, hasCredentials, getConfig } from '../lib/config.js';
+import { Command, Flags } from '@oclif/core';
 import { TpmClient } from '../lib/api-client.js';
+import { getApiKey, getApiUrl, getConfig, getConfigDir, hasCredentials } from '../lib/config.js';
 import { createOutput } from '../lib/output.js';
 
 interface DiagnosticCheck {
@@ -59,7 +59,11 @@ export default class Doctor extends Command {
 
     // 3. Check authentication
     const hasAuth = hasCredentials() || !!process.env.TPMJS_API_KEY;
-    const authSource = process.env.TPMJS_API_KEY ? 'environment' : hasCredentials() ? 'config file' : 'none';
+    const authSource = process.env.TPMJS_API_KEY
+      ? 'environment'
+      : hasCredentials()
+        ? 'config file'
+        : 'none';
     checks.push({
       name: 'Authentication',
       status: hasAuth ? 'ok' : 'warning',

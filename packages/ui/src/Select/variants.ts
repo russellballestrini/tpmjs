@@ -1,5 +1,5 @@
-import { createVariants } from '../system/variants';
 import { formInputBase } from '../system/formVariants';
+import { createVariants } from '../system/variants';
 
 /**
  * Select variant definitions

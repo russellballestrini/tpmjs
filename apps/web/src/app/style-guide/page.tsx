@@ -132,8 +132,12 @@ export default function StyleGuidePage(): React.ReactElement {
                 Design System
               </h2>
               <div className="flex gap-2">
-                <Badge variant="default" size="sm">v2.0</Badge>
-                <Badge variant="outline" size="sm">wcag aa</Badge>
+                <Badge variant="default" size="sm">
+                  v2.0
+                </Badge>
+                <Badge variant="outline" size="sm">
+                  wcag aa
+                </Badge>
               </div>
             </div>
 

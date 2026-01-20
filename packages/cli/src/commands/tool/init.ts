@@ -1,7 +1,7 @@
-import { Args, Command, Flags } from '@oclif/core';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as readline from 'node:readline';
+import { Args, Command, Flags } from '@oclif/core';
 import { createOutput } from '../../lib/output.js';
 
 const CATEGORIES = [
@@ -154,7 +154,8 @@ export default class ToolInit extends Command {
       }
     }
 
-    const author = (await this.prompt(`Author (${process.env.USER}): `)) || process.env.USER || 'unknown';
+    const author =
+      (await this.prompt(`Author (${process.env.USER}): `)) || process.env.USER || 'unknown';
 
     return { name: toolName, description, category: category ?? 'utilities', author };
   }
@@ -219,7 +220,7 @@ export default class ToolInit extends Command {
         ],
         ...(template === 'rich'
           ? {
-              documentation: 'https://github.com/yourname/' + config.name + '#readme',
+              documentation: `https://github.com/yourname/${config.name}#readme`,
               examples: [
                 {
                   title: 'Basic usage',
@@ -231,10 +232,7 @@ export default class ToolInit extends Command {
       },
     };
 
-    fs.writeFileSync(
-      path.join(targetDir, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
-    );
+    fs.writeFileSync(path.join(targetDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
     // tsconfig.json
     const tsconfig = {
@@ -254,10 +252,7 @@ export default class ToolInit extends Command {
       exclude: ['node_modules', 'dist'],
     };
 
-    fs.writeFileSync(
-      path.join(targetDir, 'tsconfig.json'),
-      JSON.stringify(tsconfig, null, 2)
-    );
+    fs.writeFileSync(path.join(targetDir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2));
 
     // tsup.config.ts
     const tsupConfig = `import { defineConfig } from 'tsup';

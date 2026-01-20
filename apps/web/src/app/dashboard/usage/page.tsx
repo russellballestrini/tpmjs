@@ -245,7 +245,7 @@ export default function UsagePage(): React.ReactElement {
                 </span>
                 <span>
                   {data.timeSeries.at(-1)?.periodStart &&
-                    new Date(data.timeSeries.at(-1)!.periodStart).toLocaleDateString()}
+                    new Date(data.timeSeries.at(-1)?.periodStart).toLocaleDateString()}
                 </span>
               </div>
             </div>

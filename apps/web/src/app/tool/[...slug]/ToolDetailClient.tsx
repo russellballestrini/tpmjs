@@ -273,9 +273,7 @@ export function ToolDetailClient({ tool, slug }: ToolDetailClientProps): React.R
             <div className="flex items-start gap-3">
               <span className="text-xl mt-0.5">🔍</span>
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-warning mb-1">
-                  Auto-discovered tool
-                </h3>
+                <h3 className="text-sm font-semibold text-warning mb-1">Auto-discovered tool</h3>
                 <p className="text-sm text-warning/80">
                   This tool was automatically discovered from the package exports. The author did
                   not explicitly register it in their{' '}

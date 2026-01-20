@@ -6,7 +6,7 @@
  */
 
 import { jsonSchema, tool } from 'ai';
-import { type Token, marked } from 'marked';
+import { marked, type Token } from 'marked';
 
 /**
  * Heading information extracted from markdown

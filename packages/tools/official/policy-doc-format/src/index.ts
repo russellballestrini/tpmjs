@@ -203,7 +203,7 @@ function extractPurpose(content: string): string {
   const purposeMatch = content.match(
     /(?:purpose|objective|intent)[\s:]+(.+?)(?=\n\n|scope|policy|$)/is
   );
-  if (purposeMatch && purposeMatch[1]) {
+  if (purposeMatch?.[1]) {
     return purposeMatch[1].trim();
   }
 
@@ -216,7 +216,7 @@ function extractPurpose(content: string): string {
  */
 function extractScope(content: string): string {
   const scopeMatch = content.match(/scope[\s:]+(.+?)(?=\n\n|policy|procedure|$)/is);
-  if (scopeMatch && scopeMatch[1]) {
+  if (scopeMatch?.[1]) {
     return scopeMatch[1].trim();
   }
 
@@ -229,7 +229,7 @@ function extractScope(content: string): string {
  */
 function extractPolicyStatement(content: string): string {
   const statementMatch = content.match(/policy[\s:]+(.+?)(?=\n\n|procedure|$)/is);
-  if (statementMatch && statementMatch[1]) {
+  if (statementMatch?.[1]) {
     return statementMatch[1].trim();
   }
 
@@ -246,7 +246,7 @@ function extractProcedures(content: string): string[] {
 
   // Look for numbered lists or bullet points
   const procedureSection = content.match(/procedure[s]?[\s:]+(.+?)(?=\n\n[A-Z]|$)/is);
-  if (procedureSection && procedureSection[1]) {
+  if (procedureSection?.[1]) {
     const text = procedureSection[1];
     const matches = text.match(/(?:^|\n)\s*(?:\d+\.|[-*])\s*(.+)/gm);
     if (matches) {
@@ -276,7 +276,7 @@ function extractResponsibilities(content: string): Record<string, string[]> {
   // Look for responsibility sections
   const respMatch = content.match(/responsibilit(?:ies|y)[\s:]+(.+?)(?=\n\n[A-Z]|$)/is);
 
-  if (respMatch && respMatch[1]) {
+  if (respMatch?.[1]) {
     const text = respMatch[1];
     const roleMatches = text.matchAll(/([A-Za-z\s]+?)[:]\s*(.+?)(?=\n[A-Z]|$)/gs);
 
@@ -295,11 +295,11 @@ function extractResponsibilities(content: string): Record<string, string[]> {
 
   // Default responsibilities if none found
   if (Object.keys(responsibilities).length === 0) {
-    responsibilities['Employees'] = [
+    responsibilities.Employees = [
       'Comply with policy requirements',
       'Report violations or concerns',
     ];
-    responsibilities['Managers'] = [
+    responsibilities.Managers = [
       'Ensure team compliance',
       'Address policy violations',
       'Provide guidance and support',
@@ -321,7 +321,7 @@ function extractDefinitions(content: string): Map<string, string> {
   const definitions = new Map<string, string>();
 
   const defMatch = content.match(/definition[s]?[\s:]+(.+?)(?=\n\n[A-Z]|$)/is);
-  if (defMatch && defMatch[1]) {
+  if (defMatch?.[1]) {
     const text = defMatch[1];
     const termMatches = text.matchAll(/([A-Za-z\s]+?)[:]\s*(.+?)(?=\n|$)/g);
 
@@ -344,7 +344,7 @@ function extractRelatedPolicies(content: string): string[] {
   const policies: string[] = [];
 
   const relatedMatch = content.match(/related\s+polic(?:ies|y)[\s:]+(.+?)(?=\n\n|$)/is);
-  if (relatedMatch && relatedMatch[1]) {
+  if (relatedMatch?.[1]) {
     const text = relatedMatch[1];
     const policyMatches = text.match(/(?:^|\n)\s*(?:\d+\.|[-*])\s*(.+)/gm);
     if (policyMatches) {
@@ -360,7 +360,7 @@ function extractRelatedPolicies(content: string): string[] {
  */
 function extractEnforcement(content: string): string {
   const enforcementMatch = content.match(/enforcement|violation[s]?[\s:]+(.+?)(?=\n\n|$)/is);
-  if (enforcementMatch && enforcementMatch[1]) {
+  if (enforcementMatch?.[1]) {
     return enforcementMatch[1].trim();
   }
 

@@ -1,5 +1,5 @@
-import { FirstToolSlideshow } from '@/components/FirstToolSlideshow';
 import type { Metadata } from 'next';
+import { FirstToolSlideshow } from '@/components/FirstToolSlideshow';
 
 export const metadata: Metadata = {
   title: 'Build Your First Tool | TPMJS Tutorials',

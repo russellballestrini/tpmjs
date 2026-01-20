@@ -74,19 +74,19 @@ function stringSimilarity(str1: string, str2: string): number {
   for (let i = 1; i <= s2.length; i++) {
     for (let j = 1; j <= s1.length; j++) {
       if (s2.charAt(i - 1) === s1.charAt(j - 1)) {
-        matrix[i]![j] = matrix[i - 1]![j - 1]!;
+        matrix[i]![j] = matrix[i - 1]?.[j - 1]!;
       } else {
         matrix[i]![j] = Math.min(
-          matrix[i - 1]![j - 1]! + 1,
-          matrix[i]![j - 1]! + 1,
-          matrix[i - 1]![j]! + 1
+          matrix[i - 1]?.[j - 1]! + 1,
+          matrix[i]?.[j - 1]! + 1,
+          matrix[i - 1]?.[j]! + 1
         );
       }
     }
   }
 
   const maxLength = Math.max(s1.length, s2.length);
-  return 1 - matrix[s2.length]![s1.length]! / maxLength;
+  return 1 - matrix[s2.length]?.[s1.length]! / maxLength;
 }
 
 /**

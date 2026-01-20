@@ -101,11 +101,7 @@ export const modalHeaderVariants = createVariants({
  * Modal body variant definitions
  */
 export const modalBodyVariants = createVariants({
-  base: [
-    'flex-1',
-    'px-6 py-4',
-    'overflow-y-auto',
-  ].join(' '),
+  base: ['flex-1', 'px-6 py-4', 'overflow-y-auto'].join(' '),
 
   variants: {},
 
@@ -132,11 +128,7 @@ export const modalFooterVariants = createVariants({
  * Modal title variant definitions
  */
 export const modalTitleVariants = createVariants({
-  base: [
-    'font-mono font-semibold text-lg',
-    'text-foreground',
-    'lowercase',
-  ].join(' '),
+  base: ['font-mono font-semibold text-lg', 'text-foreground', 'lowercase'].join(' '),
 
   variants: {},
 

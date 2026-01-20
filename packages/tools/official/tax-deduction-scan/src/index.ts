@@ -277,7 +277,7 @@ export const taxDeductionScanTool = tool({
       if (!categoryMap.has(normalizedCategory)) {
         categoryMap.set(normalizedCategory, []);
       }
-      categoryMap.get(normalizedCategory)!.push(expense);
+      categoryMap.get(normalizedCategory)?.push(expense);
       totalExpenses += expense.amount;
     }
 
@@ -287,7 +287,7 @@ export const taxDeductionScanTool = tool({
     const flaggedForReview: string[] = [];
 
     for (const [category, categoryExpenses] of categoryMap.entries()) {
-      const rules = DEDUCTION_RULES[category] || DEDUCTION_RULES['other']!;
+      const rules = DEDUCTION_RULES[category] || DEDUCTION_RULES.other!;
 
       // Check for entity-specific rules
       let deductionRate = rules.rate;

@@ -1,5 +1,5 @@
-import { TPMJS_CATEGORIES, TpmjsToolDefinitionSchema } from '@tpmjs/types/tpmjs';
 import type { TpmjsCategory } from '@tpmjs/types/tpmjs';
+import { TPMJS_CATEGORIES, TpmjsToolDefinitionSchema } from '@tpmjs/types/tpmjs';
 import type { ToolDefinition } from '../types.js';
 
 /**

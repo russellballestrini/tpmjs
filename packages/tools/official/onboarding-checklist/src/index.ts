@@ -50,7 +50,7 @@ type OnboardingChecklistInput = {
  */
 function validateDate(dateStr: string): boolean {
   const date = new Date(dateStr);
-  return !isNaN(date.getTime());
+  return !Number.isNaN(date.getTime());
 }
 
 /**
@@ -404,7 +404,7 @@ function formatChecklist(
       if (!byOwner.has(task.owner)) {
         byOwner.set(task.owner, []);
       }
-      byOwner.get(task.owner)!.push(task);
+      byOwner.get(task.owner)?.push(task);
     }
 
     // Display tasks grouped by owner

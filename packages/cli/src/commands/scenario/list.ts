@@ -104,7 +104,7 @@ export default class ScenarioList extends Command {
         if (scenarios.length === 0) {
           output.info(`No scenarios found for collection "${collection.name}"`);
           output.text(
-            'Generate some with: tpm scenario generate ' + (collection.slug || collection.id)
+            `Generate some with: tpm scenario generate ${collection.slug || collection.id}`
           );
           return;
         }
@@ -112,8 +112,8 @@ export default class ScenarioList extends Command {
         output.text(output.bold(`Scenarios for ${collection.name}\n`));
         output.table(
           scenarios.map((s) => ({
-            name: s.name || s.prompt.slice(0, 30) + '...',
-            quality: (s.qualityScore * 100).toFixed(0) + '%',
+            name: s.name || `${s.prompt.slice(0, 30)}...`,
+            quality: `${(s.qualityScore * 100).toFixed(0)}%`,
             runs: s.totalRuns,
             status: s.lastRunStatus || '-',
             tags: s.tags.slice(0, 3).join(', ') || '-',
@@ -147,9 +147,9 @@ export default class ScenarioList extends Command {
 
         output.table(
           response.data.map((s) => ({
-            name: s.name || s.prompt.slice(0, 30) + '...',
+            name: s.name || `${s.prompt.slice(0, 30)}...`,
             collection: s.collection?.name || '-',
-            quality: (s.qualityScore * 100).toFixed(0) + '%',
+            quality: `${(s.qualityScore * 100).toFixed(0)}%`,
             runs: s.totalRuns,
             status: s.lastRunStatus || '-',
           })),

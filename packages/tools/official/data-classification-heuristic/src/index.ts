@@ -143,7 +143,7 @@ const PATTERNS = {
 
   // Authentication Credentials
   apiKey: {
-    regex: /\b(?:api[_-]?key|apikey|access[_-]?token)[\s:=]*['"]?[A-Za-z0-9_\-]{20,}['"]?/gi,
+    regex: /\b(?:api[_-]?key|apikey|access[_-]?token)[\s:=]*['"]?[A-Za-z0-9_-]{20,}['"]?/gi,
     severity: 'critical' as const,
     type: 'API Key',
     description: 'API key or access token detected',

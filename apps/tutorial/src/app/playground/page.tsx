@@ -1,5 +1,5 @@
-import { PlaygroundSlideshow } from '@/components/PlaygroundSlideshow';
 import type { Metadata } from 'next';
+import { PlaygroundSlideshow } from '@/components/PlaygroundSlideshow';
 
 export const metadata: Metadata = {
   title: 'Interactive Playground | TPMJS Tutorials',

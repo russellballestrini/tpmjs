@@ -16,10 +16,7 @@ export const cardVariants = createVariants({
 
   variants: {
     variant: {
-      default: [
-        'border border-dashed border-border',
-        'bg-card text-card-foreground',
-      ].join(' '),
+      default: ['border border-dashed border-border', 'bg-card text-card-foreground'].join(' '),
 
       elevated: [
         'border border-dashed border-border',
@@ -28,17 +25,13 @@ export const cardVariants = createVariants({
 
       outline: ['border-2 border-dashed border-border', 'bg-transparent text-foreground'].join(' '),
 
-      blueprint: [
-        'border border-dashed border-border',
-        'bg-card text-card-foreground',
-      ].join(' '),
+      blueprint: ['border border-dashed border-border', 'bg-card text-card-foreground'].join(' '),
 
       ghost: ['bg-transparent text-foreground'].join(' '),
 
-      featured: [
-        'border-2 border-solid border-foreground',
-        'bg-card text-card-foreground',
-      ].join(' '),
+      featured: ['border-2 border-solid border-foreground', 'bg-card text-card-foreground'].join(
+        ' '
+      ),
 
       brutalist: [
         'border-[6px] border-foreground',

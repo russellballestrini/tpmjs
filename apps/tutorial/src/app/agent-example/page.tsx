@@ -1,5 +1,5 @@
-import { AgentExampleSlideshow } from '@/components/AgentExampleSlideshow';
 import type { Metadata } from 'next';
+import { AgentExampleSlideshow } from '@/components/AgentExampleSlideshow';
 
 export const metadata: Metadata = {
   title: 'Real-World Agent Example | TPMJS Tutorials',

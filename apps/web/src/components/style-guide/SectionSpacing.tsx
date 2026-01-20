@@ -6,8 +6,8 @@ export function SectionSpacing(): React.ReactElement {
   return (
     <FieldsetSection title="4. spacing" id="spacing">
       <p className="text-foreground-secondary mb-8 font-sans prose-width">
-        Consistent spacing creates visual rhythm. Use the 4px base unit
-        and generous whitespace for clarity.
+        Consistent spacing creates visual rhythm. Use the 4px base unit and generous whitespace for
+        clarity.
       </p>
 
       <SubSection title="spacing scale">
@@ -15,10 +15,7 @@ export function SectionSpacing(): React.ReactElement {
           {[1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64].map((space) => (
             <div key={space} className="flex items-center gap-4">
               <span className="font-mono text-xs text-foreground-secondary w-12">{space}</span>
-              <div
-                className="bg-accent h-4"
-                style={{ width: `${space * 4}px` }}
-              />
+              <div className="bg-accent h-4" style={{ width: `${space * 4}px` }} />
               <span className="font-mono text-xs text-foreground-tertiary">{space * 4}px</span>
             </div>
           ))}

@@ -315,7 +315,7 @@ export async function seedVocabulary(options: SeedVocabularyOptions = {}) {
         })
         .onConflictDoNothing()
         .run();
-    } catch (e) {
+    } catch (_e) {
       // Ignore duplicates
     }
   }
@@ -334,7 +334,7 @@ export async function seedVocabulary(options: SeedVocabularyOptions = {}) {
         })
         .onConflictDoNothing()
         .run();
-    } catch (e) {
+    } catch (_e) {
       // Ignore duplicates
     }
   }
@@ -352,7 +352,7 @@ export async function seedVocabulary(options: SeedVocabularyOptions = {}) {
         })
         .onConflictDoNothing()
         .run();
-    } catch (e) {
+    } catch (_e) {
       // Ignore duplicates
     }
   }
@@ -369,7 +369,7 @@ export async function seedVocabulary(options: SeedVocabularyOptions = {}) {
         })
         .onConflictDoNothing()
         .run();
-    } catch (e) {
+    } catch (_e) {
       // Ignore duplicates
     }
   }
@@ -386,7 +386,7 @@ export async function seedVocabulary(options: SeedVocabularyOptions = {}) {
         })
         .onConflictDoNothing()
         .run();
-    } catch (e) {
+    } catch (_e) {
       // Ignore duplicates
     }
   }

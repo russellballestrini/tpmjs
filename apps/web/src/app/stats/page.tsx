@@ -194,10 +194,7 @@ export default function StatsPage() {
   if (error || !stats) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <ErrorState
-          title="Failed to load statistics"
-          message={error || 'Unknown error'}
-        />
+        <ErrorState title="Failed to load statistics" message={error || 'Unknown error'} />
       </div>
     );
   }

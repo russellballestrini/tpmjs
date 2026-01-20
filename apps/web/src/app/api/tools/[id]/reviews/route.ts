@@ -79,7 +79,6 @@ export async function GET(
       case 'lowest':
         orderBy = [{ rating: 'asc' }, { createdAt: 'desc' }];
         break;
-      case 'recent':
       default:
         orderBy = [{ createdAt: 'desc' }];
     }
@@ -365,18 +364,18 @@ export async function POST(
     return NextResponse.json({
       success: true,
       data: {
-        id: review!.id,
-        title: review!.title,
-        content: review!.content,
-        rating: review!.rating,
-        helpfulCount: review!.helpfulCount,
-        createdAt: review!.createdAt.toISOString(),
-        updatedAt: review!.updatedAt.toISOString(),
+        id: review?.id,
+        title: review?.title,
+        content: review?.content,
+        rating: review?.rating,
+        helpfulCount: review?.helpfulCount,
+        createdAt: review?.createdAt.toISOString(),
+        updatedAt: review?.updatedAt.toISOString(),
         user: {
-          id: review!.user.id,
-          name: review!.user.name,
-          image: review!.user.image,
-          username: review!.user.username,
+          id: review?.user.id,
+          name: review?.user.name,
+          image: review?.user.image,
+          username: review?.user.username,
         },
       },
       meta: { version: API_VERSION, timestamp: new Date().toISOString(), requestId },

@@ -22,8 +22,8 @@ export const toolCardVariants = createVariants({
       featured: 'p-6 border-2',
     },
     clickable: {
-      'true': 'cursor-pointer',
-      'false': '',
+      true: 'cursor-pointer',
+      false: '',
     },
   },
 
@@ -37,10 +37,7 @@ export const toolCardVariants = createVariants({
  * ToolCard header variant definitions
  */
 export const toolCardHeaderVariants = createVariants({
-  base: [
-    'flex items-start gap-3',
-    'mb-3',
-  ].join(' '),
+  base: ['flex items-start gap-3', 'mb-3'].join(' '),
 
   variants: {
     variant: {
@@ -108,11 +105,7 @@ export const toolCardTitleVariants = createVariants({
  * ToolCard version variant definitions
  */
 export const toolCardVersionVariants = createVariants({
-  base: [
-    'font-mono text-xs',
-    'text-foreground-muted',
-    'ml-2',
-  ].join(' '),
+  base: ['font-mono text-xs', 'text-foreground-muted', 'ml-2'].join(' '),
 
   variants: {},
 
@@ -123,11 +116,7 @@ export const toolCardVersionVariants = createVariants({
  * ToolCard description variant definitions
  */
 export const toolCardDescriptionVariants = createVariants({
-  base: [
-    'font-mono',
-    'text-foreground-muted',
-    'line-clamp-2',
-  ].join(' '),
+  base: ['font-mono', 'text-foreground-muted', 'line-clamp-2'].join(' '),
 
   variants: {
     variant: {
@@ -146,11 +135,7 @@ export const toolCardDescriptionVariants = createVariants({
  * ToolCard meta variant definitions
  */
 export const toolCardMetaVariants = createVariants({
-  base: [
-    'flex items-center gap-4',
-    'font-mono text-xs',
-    'text-foreground-muted',
-  ].join(' '),
+  base: ['flex items-center gap-4', 'font-mono text-xs', 'text-foreground-muted'].join(' '),
 
   variants: {
     variant: {
@@ -169,9 +154,7 @@ export const toolCardMetaVariants = createVariants({
  * ToolCard meta item variant definitions
  */
 export const toolCardMetaItemVariants = createVariants({
-  base: [
-    'flex items-center gap-1',
-  ].join(' '),
+  base: ['flex items-center gap-1'].join(' '),
 
   variants: {},
 
@@ -224,11 +207,7 @@ export const toolCardOfficialBadgeVariants = createVariants({
  * ToolCard action variant definitions
  */
 export const toolCardActionVariants = createVariants({
-  base: [
-    'mt-3',
-    'pt-3',
-    'border-t border-border',
-  ].join(' '),
+  base: ['mt-3', 'pt-3', 'border-t border-border'].join(' '),
 
   variants: {
     variant: {

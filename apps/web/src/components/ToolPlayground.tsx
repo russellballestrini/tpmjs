@@ -5,7 +5,6 @@
  * Interactive playground for executing TPMJS tools with AI agents
  */
 
-import type { TokenBreakdown as TokenData } from '@/lib/ai-agent/tool-executor-agent';
 import type { Package, Tool } from '@tpmjs/db';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Label } from '@tpmjs/ui/Label/Label';
@@ -14,6 +13,7 @@ import { Textarea } from '@tpmjs/ui/Textarea/Textarea';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { TokenBreakdown as TokenData } from '@/lib/ai-agent/tool-executor-agent';
 import { TokenBreakdown } from './TokenBreakdown';
 
 interface ToolPlaygroundProps {
@@ -240,7 +240,9 @@ export function ToolPlayground({ tool }: ToolPlaygroundProps): React.ReactElemen
         {activeTab === 'input' && (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="prompt" className="mb-2">Prompt</Label>
+              <Label htmlFor="prompt" className="mb-2">
+                Prompt
+              </Label>
               <Textarea
                 id="prompt"
                 value={prompt}

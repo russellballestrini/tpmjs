@@ -1,6 +1,6 @@
-import { Command, Flags } from '@oclif/core';
 import * as http from 'node:http';
 import * as readline from 'node:readline';
+import { Command, Flags } from '@oclif/core';
 import { getClient } from '../../lib/api-client.js';
 import { createOutput } from '../../lib/output.js';
 

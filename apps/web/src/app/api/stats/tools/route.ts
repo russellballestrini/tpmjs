@@ -64,7 +64,6 @@ export async function GET(request: NextRequest) {
       case 'recent':
         orderBy = [{ createdAt: 'desc' }];
         break;
-      case 'quality':
       default:
         orderBy = [{ qualityScore: 'desc' }, { package: { npmDownloadsLastMonth: 'desc' } }];
         break;

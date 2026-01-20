@@ -65,7 +65,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       case 'month':
         recencyPeriodMs = 30 * 24 * 60 * 60 * 1000;
         break;
-      case 'all':
       default:
         recencyPeriodMs = 365 * 24 * 60 * 60 * 1000; // 1 year
     }

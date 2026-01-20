@@ -26,11 +26,11 @@ vocabCommand
       getDatabase(options.db);
 
       const counts = {
-        categories: Number.parseInt(options.categories),
-        verbs: Number.parseInt(options.verbs),
-        objects: Number.parseInt(options.objects),
-        contexts: Number.parseInt(options.contexts),
-        qualifiers: Number.parseInt(options.qualifiers),
+        categories: Number.parseInt(options.categories, 10),
+        verbs: Number.parseInt(options.verbs, 10),
+        objects: Number.parseInt(options.objects, 10),
+        contexts: Number.parseInt(options.contexts, 10),
+        qualifiers: Number.parseInt(options.qualifiers, 10),
       };
 
       spinner.text = `Generating ${counts.categories} categories...`;

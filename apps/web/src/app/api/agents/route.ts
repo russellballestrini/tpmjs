@@ -33,8 +33,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '20'), 50);
-    const offset = Number.parseInt(searchParams.get('offset') || '0');
+    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '20', 10), 50);
+    const offset = Number.parseInt(searchParams.get('offset') || '0', 10);
 
     const agents = await prisma.agent.findMany({
       where: { userId: authResult.userId },

@@ -44,7 +44,6 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
           aria-valuenow={clampedValue}
           aria-valuemin={0}
           aria-valuemax={100}
-          tabIndex={0}
           {...props}
         >
           <div
@@ -72,7 +71,6 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
           aria-valuenow={clampedValue}
           aria-valuemin={0}
           aria-valuemax={100}
-          tabIndex={0}
         >
           <div
             className={progressBarFillVariants({
