@@ -313,19 +313,21 @@ describe('Button', () => {
       expect(button.className).toContain('items-center');
       expect(button.className).toContain('justify-center');
       expect(button.className).toContain('font-medium');
-      expect(button.className).toContain('rounded-md');
+      expect(button.className).toContain('rounded-none');
     });
 
     it('includes focus ring classes', () => {
       render(<Button data-testid="button">Focus</Button>);
       const button = screen.getByTestId('button');
-      expect(button.className).toContain('focus-ring');
+      expect(button.className).toContain('focus-visible:outline-none');
+      expect(button.className).toContain('focus-visible:ring-2');
     });
 
     it('includes transition classes', () => {
       render(<Button data-testid="button">Transition</Button>);
       const button = screen.getByTestId('button');
-      expect(button.className).toContain('transition-base');
+      expect(button.className).toContain('transition-colors');
+      expect(button.className).toContain('duration-150');
     });
   });
 });

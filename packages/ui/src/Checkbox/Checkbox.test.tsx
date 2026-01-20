@@ -399,13 +399,13 @@ describe('Checkbox', () => {
     it('should include transition classes on UI element', () => {
       const { container } = render(<Checkbox />);
       const ui = container.querySelector('span');
-      expect(ui).toHaveClass('transition-all', 'duration-200');
+      expect(ui).toHaveClass('transition-colors', 'duration-150');
     });
 
     it('should include border and background classes on UI element', () => {
       const { container } = render(<Checkbox />);
       const ui = container.querySelector('span');
-      expect(ui).toHaveClass('border-2', 'bg-background', 'rounded-sm');
+      expect(ui).toHaveClass('border-2', 'bg-background', 'rounded-none');
     });
 
     it('should include cursor classes on UI element', () => {

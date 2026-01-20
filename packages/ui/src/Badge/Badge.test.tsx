@@ -232,7 +232,7 @@ describe('Badge', () => {
       );
       const badge = screen.getByTestId('badge');
       expect(badge.className).toContain('custom-badge');
-      expect(badge.className).toContain('rounded-full');
+      expect(badge.className).toContain('rounded-none');
       expect(badge.className).toContain('bg-primary');
     });
   });
@@ -260,15 +260,16 @@ describe('Badge', () => {
       const badge = screen.getByTestId('badge');
       expect(badge.className).toContain('inline-flex');
       expect(badge.className).toContain('items-center');
-      expect(badge.className).toContain('font-semibold');
+      expect(badge.className).toContain('font-medium');
       expect(badge.className).toContain('whitespace-nowrap');
-      expect(badge.className).toContain('rounded-full');
+      expect(badge.className).toContain('rounded-none');
     });
 
     it('includes transition classes', () => {
       render(<Badge data-testid="badge">Badge</Badge>);
       const badge = screen.getByTestId('badge');
-      expect(badge.className).toContain('transition-base');
+      expect(badge.className).toContain('transition-colors');
+      expect(badge.className).toContain('duration-150');
     });
   });
 

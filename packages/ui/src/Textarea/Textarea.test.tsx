@@ -357,7 +357,7 @@ describe('Textarea', () => {
       render(<Textarea className="custom-class" data-testid="textarea" />);
       const textarea = screen.getByTestId('textarea');
       expect(textarea.className).toContain('custom-class');
-      expect(textarea.className).toContain('rounded-md');
+      expect(textarea.className).toContain('rounded-none');
       expect(textarea.className).toContain('border');
     });
 
@@ -424,13 +424,13 @@ describe('Textarea', () => {
     it('always includes typography classes', () => {
       render(<Textarea data-testid="textarea" />);
       const textarea = screen.getByTestId('textarea');
-      expect(textarea.className).toContain('font-sans');
+      expect(textarea.className).toContain('font-mono');
     });
 
     it('always includes border and radius classes', () => {
       render(<Textarea data-testid="textarea" />);
       const textarea = screen.getByTestId('textarea');
-      expect(textarea.className).toContain('rounded-md');
+      expect(textarea.className).toContain('rounded-none');
       expect(textarea.className).toContain('border');
     });
 
@@ -443,13 +443,16 @@ describe('Textarea', () => {
     it('always includes transition classes', () => {
       render(<Textarea data-testid="textarea" />);
       const textarea = screen.getByTestId('textarea');
-      expect(textarea.className).toContain('transition-base');
+      expect(textarea.className).toContain('transition-colors');
+      expect(textarea.className).toContain('duration-150');
     });
 
     it('always includes focus ring classes', () => {
       render(<Textarea data-testid="textarea" />);
       const textarea = screen.getByTestId('textarea');
-      expect(textarea.className).toContain('focus-ring');
+      expect(textarea.className).toContain('focus-visible:outline-none');
+      expect(textarea.className).toContain('focus-visible:ring-2');
+      expect(textarea.className).toContain('focus-visible:ring-primary');
     });
 
     it('always includes placeholder styling', () => {

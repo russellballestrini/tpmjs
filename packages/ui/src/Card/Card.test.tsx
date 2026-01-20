@@ -40,9 +40,8 @@ describe('Card', () => {
         </Card>
       );
       const card = screen.getByTestId('card');
-      expect(card.className).toContain('border-dotted');
+      expect(card.className).toContain('border-dashed');
       expect(card.className).toContain('bg-card');
-      expect(card.className).toContain('shadow-sm');
     });
 
     it('applies elevated variant classes', () => {
@@ -52,9 +51,8 @@ describe('Card', () => {
         </Card>
       );
       const card = screen.getByTestId('card');
-      expect(card.className).toContain('border-dotted');
+      expect(card.className).toContain('border-dashed');
       expect(card.className).toContain('bg-surface-elevated');
-      expect(card.className).toContain('shadow-md');
     });
 
     it('applies outline variant classes', () => {
@@ -64,7 +62,7 @@ describe('Card', () => {
         </Card>
       );
       const card = screen.getByTestId('card');
-      expect(card.className).toContain('border-dotted');
+      expect(card.className).toContain('border-dashed');
       expect(card.className).toContain('border-2');
       expect(card.className).toContain('bg-transparent');
     });
@@ -359,7 +357,7 @@ describe('Card', () => {
       );
       const card = screen.getByTestId('card');
       expect(card.className).toContain('custom-card');
-      expect(card.className).toContain('rounded-lg');
+      expect(card.className).toContain('rounded-none');
     });
 
     it('merges custom className with CardHeader', () => {
@@ -527,8 +525,9 @@ describe('Card', () => {
       render(<Card data-testid="card">Card</Card>);
       const card = screen.getByTestId('card');
       expect(card.className).toContain('relative');
-      expect(card.className).toContain('rounded-lg');
-      expect(card.className).toContain('transition-base');
+      expect(card.className).toContain('rounded-none');
+      expect(card.className).toContain('transition-colors');
+      expect(card.className).toContain('duration-150');
     });
 
     it('CardHeader always includes base classes', () => {

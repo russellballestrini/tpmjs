@@ -299,7 +299,7 @@ describe('Input', () => {
       render(<Input className="custom-input" data-testid="input" />);
       const input = screen.getByTestId('input');
       expect(input.className).toContain('custom-input');
-      expect(input.className).toContain('rounded-md');
+      expect(input.className).toContain('rounded-none');
       expect(input.className).toContain('border');
     });
   });
@@ -339,8 +339,8 @@ describe('Input', () => {
       const input = screen.getByTestId('input');
       expect(input.className).toContain('flex');
       expect(input.className).toContain('w-full');
-      expect(input.className).toContain('font-sans');
-      expect(input.className).toContain('rounded-md');
+      expect(input.className).toContain('font-mono');
+      expect(input.className).toContain('rounded-none');
       expect(input.className).toContain('border');
       expect(input.className).toContain('bg-surface');
     });
@@ -348,13 +348,15 @@ describe('Input', () => {
     it('includes transition classes', () => {
       render(<Input data-testid="input" />);
       const input = screen.getByTestId('input');
-      expect(input.className).toContain('transition-base');
+      expect(input.className).toContain('transition-colors');
+      expect(input.className).toContain('duration-150');
     });
 
     it('includes focus ring classes', () => {
       render(<Input data-testid="input" />);
       const input = screen.getByTestId('input');
-      expect(input.className).toContain('focus-ring');
+      expect(input.className).toContain('focus-visible:outline-none');
+      expect(input.className).toContain('focus-visible:ring-2');
     });
   });
 

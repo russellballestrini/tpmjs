@@ -430,13 +430,13 @@ describe('Select', () => {
 
     it('should include transition classes', () => {
       render(<Select options={simpleOptions} />);
-      expect(screen.getByRole('combobox')).toHaveClass('transition-base');
+      expect(screen.getByRole('combobox')).toHaveClass('transition-colors');
     });
 
     it('should include border and background classes', () => {
       render(<Select options={simpleOptions} />);
       const select = screen.getByRole('combobox');
-      expect(select).toHaveClass('rounded-md', 'border', 'bg-surface');
+      expect(select).toHaveClass('rounded-none', 'border', 'bg-surface');
     });
 
     it('should remove native appearance', () => {
