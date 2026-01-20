@@ -176,8 +176,12 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       if (!isOpen || !triggerRef.current || !contentRef.current) return;
 
       const updatePosition = () => {
-        const triggerRect = triggerRef.current?.getBoundingClientRect();
-        const contentRect = contentRef.current?.getBoundingClientRect();
+        const triggerElement = triggerRef.current;
+        const contentElement = contentRef.current;
+        if (!triggerElement || !contentElement) return;
+
+        const triggerRect = triggerElement.getBoundingClientRect();
+        const contentRect = contentElement.getBoundingClientRect();
         const newPosition = calculatePosition(triggerRect, contentRect, placement, offset);
         setPosition(newPosition);
       };
