@@ -1,0 +1,137 @@
+# Tool Discovery Flow (Hero Path)
+# Purpose: Show how npm packages become TPMJS tools
+# Direction: Left → Right
+
+direction: right
+
+# ==============================================================================
+# STYLES
+# ==============================================================================
+
+classes: {
+  external: {
+    style: {
+      fill: "#fff3e0"
+      stroke: "#f57c00"
+      border-radius: 8
+    }
+  }
+  sync: {
+    style: {
+      fill: "#e8eaf6"
+      stroke: "#3f51b5"
+      border-radius: 8
+    }
+  }
+  extract: {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#7b1fa2"
+      border-radius: 8
+    }
+  }
+  storage: {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#388e3c"
+      border-radius: 8
+    }
+  }
+  available: {
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1976d2"
+      border-radius: 8
+    }
+  }
+  hero: {
+    style: {
+      stroke-width: 3
+      stroke: "#1976d2"
+    }
+  }
+}
+
+# ==============================================================================
+# NPM REGISTRY (Source)
+# ==============================================================================
+
+npm: npm Registry {
+  class: external
+
+  packages: "'tpmjs' keyword"
+}
+
+# ==============================================================================
+# SYNC WORKERS
+# ==============================================================================
+
+sync: Sync Workers {
+  class: sync
+}
+
+# ==============================================================================
+# SCHEMA EXTRACTION
+# ==============================================================================
+
+extract: Schema Extraction {
+  class: extract
+
+  import: Import via esm.sh
+  analyze: Extract Schema
+  zod: Convert to Zod
+}
+
+# ==============================================================================
+# TOOL REGISTRY (Storage)
+# ==============================================================================
+
+registry: Tool Registry {
+  class: storage
+
+  tools: Tool Table
+}
+
+# ==============================================================================
+# AVAILABLE FOR USE
+# ==============================================================================
+
+available: Available {
+  class: available
+
+  web: Web UI
+  mcp: MCP Protocol
+  api: REST API
+}
+
+# ==============================================================================
+# HERO PATH CONNECTIONS (emphasized)
+# ==============================================================================
+
+npm -> sync: {
+  class: hero
+  style.stroke: "#1976d2"
+  style.stroke-width: 3
+}
+
+sync -> extract: {
+  class: hero
+  style.stroke: "#1976d2"
+  style.stroke-width: 3
+}
+
+
+
+# ==============================================================================
+# INTERNAL CONNECTIONS
+# ==============================================================================
+
+# Extract internal
+extract.import -> extract.analyze
+extract.analyze -> extract.zod
+extract.zod -> registry.tools
+
+# Available internal
+registry.tools -> available.web
+registry.tools -> available.mcp
+registry.tools -> available.api

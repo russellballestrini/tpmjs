@@ -236,6 +236,12 @@ export default function UseCaseCaseStudy({ useCase }: UseCaseCaseStudyProps) {
                   >
                     {useCase.scenario.collection.name}
                   </a>
+                  <a
+                    href={`/${useCase.scenario.collection.user.username}/collections/${useCase.scenario.collection.slug}/scenarios/${useCase.scenario.id}`}
+                    className="mt-2 block text-sm text-primary hover:underline"
+                  >
+                    View scenario details
+                  </a>
                 </div>
               )}
             </div>

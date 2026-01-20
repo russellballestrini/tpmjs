@@ -1,0 +1,139 @@
+# System Overview
+# Purpose: Show the TPMJS ecosystem from tools to execution
+
+direction: down
+
+# ==============================================================================
+# STYLES
+# ==============================================================================
+
+classes: {
+  tools: {
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1976d2"
+      border-radius: 8
+    }
+  }
+  npm: {
+    style: {
+      fill: "#fff3e0"
+      stroke: "#f57c00"
+      border-radius: 8
+    }
+  }
+  tpmjs: {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#388e3c"
+      border-radius: 8
+    }
+  }
+  user: {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#7b1fa2"
+      border-radius: 8
+    }
+  }
+  execution: {
+    style: {
+      fill: "#fce4ec"
+      stroke: "#c2185b"
+      border-radius: 8
+    }
+  }
+  output: {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#388e3c"
+      border-radius: 8
+    }
+  }
+}
+
+# ==============================================================================
+# TOOLS (Examples)
+# ==============================================================================
+
+tools: Tools {
+  class: tools
+
+  weather: weather-tool
+  calculator: calculator-tool
+  translator: translator-tool
+}
+
+# ==============================================================================
+# NPM REGISTRY
+# ==============================================================================
+
+npm: npm Registry {
+  class: npm
+
+  packages: Packages with\n'tpmjs' keyword
+}
+
+# ==============================================================================
+# TPMJS PLATFORM
+# ==============================================================================
+
+tpmjs: TPMJS {
+  class: tpmjs
+
+  sync: Sync Workers
+  registry: Tool Registry
+}
+
+# ==============================================================================
+# USER LAYER
+# ==============================================================================
+
+user: Users {
+  class: user
+
+  collections: Collections
+  agents: Agents
+  mcp: MCP Servers
+}
+
+# ==============================================================================
+# EXECUTION
+# ==============================================================================
+
+execution: Executors {
+  class: execution
+  direction: down
+
+  sandbox: Official Sandbox
+  custom: Custom Executor
+}
+
+# ==============================================================================
+# OUTPUTS
+# ==============================================================================
+
+outputs: Outputs {
+  class: output
+
+  sse: SSE Response
+  jsonrpc: JSON-RPC Response
+}
+
+# ==============================================================================
+# MAIN FLOW
+# ==============================================================================
+
+tools -> npm: publish
+npm -> tpmjs.sync: sync
+tpmjs.sync -> tpmjs.registry: store
+
+tpmjs.registry -> user.collections: collect & share
+user.collections -> user.agents: power
+user.collections -> user.mcp: auto-generate
+
+user.collections -> execution: run
+user.agents -> execution: run
+user.mcp -> execution: run
+
+execution -> outputs: expose

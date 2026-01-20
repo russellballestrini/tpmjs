@@ -145,7 +145,7 @@ async function generateMarketingContent(
     model: openai('gpt-4o-mini'),
     schema: UseCaseGenerationSchema,
     system: `You are a marketing expert specializing in B2B SaaS and AI tools.
-Your task is to transform technical test scenarios into compelling marketing use cases.
+Your task is to transform technical test scenarios into compelling marketing use cases that read like natural, human-written copy.
 
 Guidelines:
 1. Write clear, benefit-focused titles that resonate with business users
@@ -157,6 +157,14 @@ Guidelines:
    - functional: what it does (automation, analysis, monitoring)
    - business-process: business area (customer-support, sales, hr)
    - technical: technical domain (api-integration, data-processing)
+
+Writing rules (avoid AI tell-tales):
+- Avoid inflated significance, trend talk, or vague "experts say" attributions.
+- Avoid promo hype, generic positivity, and grand claims.
+- Prefer simple copula sentences ("is/are/has") over "serves as/stands as/boasts."
+- Avoid filler and hedging, rule-of-three padding, and negative parallelism.
+- Avoid em dashes, bolded lists, emojis, and title-case headings.
+- Use concrete details and natural rhythm with varied sentence length.
 
 For personas, use common roles like:
 - CTO, VP Engineering, Engineering Manager
@@ -515,8 +523,8 @@ export async function generateUseCasesForQualifyingScenarios(): Promise<UseCaseG
   // Find qualifying scenarios
   const scenarios = await prisma.scenario.findMany({
     where: {
-      qualityScore: { gte: 0.3 },
-      totalRuns: { gte: 1 },
+      qualityScore: { gte: 0 },
+      totalRuns: { gte: 0 },
       lastRunStatus: 'pass',
     },
     include: {
@@ -585,7 +593,7 @@ export async function generateUseCaseForScenario(
   }
 
   // Check qualification
-  if (scenario.qualityScore < 0.3 || scenario.totalRuns < 1 || scenario.lastRunStatus !== 'pass') {
+  if (scenario.qualityScore < 0 || scenario.totalRuns < 0 || scenario.lastRunStatus !== 'pass') {
     return {
       success: false,
       error: 'Scenario does not meet qualification criteria',
