@@ -8,6 +8,9 @@
     "tailwind",
     "tsconfig"
   ],
+  "exports": {
+    "./tailwind/base": "./tailwind/base.ts"
+  },
   "dependencies": {
     "zod": "^4.3.5"
   }
