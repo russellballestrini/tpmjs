@@ -6,10 +6,10 @@ import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { Streamdown } from 'streamdown';
 import { AppHeader } from '~/components/AppHeader';
+import { ExpandedRunDetails } from './ExpandedRunDetails';
 
-interface ScenarioRun {
+export interface ScenarioRun {
   id: string;
   status: string;
   retryCount: number;
@@ -167,7 +167,6 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
   const [isRunning, setIsRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
   const [expandedRunId, setExpandedRunId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'chat' | 'debug'>('chat');
 
   const fetchScenario = useCallback(async () => {
     try {
@@ -261,43 +260,13 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
 
             {/* Header */}
             <div className="flex items-start justify-between gap-4">
-               <div className="flex-1">
-                 <h1 className="text-2xl font-bold text-foreground">
-                   {scenario.name || 'Unnamed Scenario'}
-                 </h1>
-                 {scenario.description && (
-                   <p className="text-foreground-secondary mt-2">{scenario.description}</p>
-                 )}
-                 <div className="flex gap-2">
-                   {scenario.isOwner && (
-                     <Button onClick={handleRunScenario} disabled={isRunning}>
-                       {isRunning ? (
-                         <>
-                           <Icon icon="loader" className="w-4 h-4 mr-1.5 animate-spin" />
-                           Running...
-                         </>
-                       ) : (
-                         <>
-                           <Icon icon="arrowRight" className="w-4 h-4 mr-1.5" />
-                           Run Scenario
-                         </>
-                       )}
-                     </Button>
-                   )}
-                   {scenario.isOwner && (
-                     <Button
-                       variant="outline"
-                       size="sm"
-                       onClick={() => {
-                         if (run.conversation && run.conversation.length > 0) {
-                           setViewMode(viewMode === 'chat' ? 'debug' : 'chat');
-                         }
-                       }}
-                       disabled={!run.conversation || run.conversation.length === 0}
-                     >
-                       {viewMode === 'chat' ? 'View Raw' : 'View Chat'}
-                     </Button>
-                   )}
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {scenario.name || 'Unnamed Scenario'}
+                </h1>
+                {scenario.description && (
+                  <p className="text-foreground-secondary mt-2">{scenario.description}</p>
+                )}
               </div>
               {scenario.isOwner && (
                 <Button onClick={handleRunScenario} disabled={isRunning}>
@@ -421,187 +390,7 @@ export default function CollectionScenarioDetailPage(): React.ReactElement {
                       </button>
 
                       {/* Run Details (Expanded) */}
-                      {expandedRunId === run.id && (
-                        <div className="px-4 pb-4 border-t border-border/50">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                            {/* Evaluator */}
-                            {run.evaluator?.verdict && (
-                              <div className="p-3 bg-surface-secondary rounded-lg">
-                                <h4 className="text-xs font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
-                                  LLM Evaluation
-                                </h4>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <StatusBadge status={run.evaluator.verdict} />
-                                  {run.evaluator.model && (
-                                    <Badge variant="secondary" size="sm">
-                                      {run.evaluator.model}
-                                    </Badge>
-                                  )}
-                                </div>
-                                {run.evaluator?.reason && (
-                                  <p className="text-sm text-foreground-secondary">
-                                    {run.evaluator.reason}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-
-                             {/* Usage Stats */}
-                             <div className="p-3 bg-surface-secondary rounded-lg">
-                               <h4 className="text-xs font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
-                                 Usage
-                               </h4>
-                               {run.usage ? (
-                                 <div className="grid grid-cols-2 gap-2 text-sm">
-                                   <div>
-                                     <span className="text-foreground-tertiary">Duration:</span>{' '}
-                                     <span className="text-foreground">
-                                       {formatDuration(run.usage.executionTimeMs || null)}
-                                     </span>
-                                   </div>
-                                   <div>
-                                     <span className="text-foreground-tertiary">Tokens:</span>{' '}
-                                     <span className="text-foreground">
-                                       {run.usage.totalTokens?.toLocaleString() || '—'}
-                                     </span>
-                                   </div>
-                                   <div>
-                                     <span className="text-foreground-tertiary">Retries:</span>{' '}
-                                     <span className="text-foreground">{run.retryCount}</span>
-                                   </div>
-                                 </div>
-                               ) : (
-                                 <div className="text-sm text-foreground-secondary">
-                                   No usage data available
-                                 </div>
-                               )}
-                             </div>
-
-                          {/* Output (if owner) */}
-                          {run.output && (
-                            <div className="mt-4">
-                              <h4 className="text-xs font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
-                                Output
-                              </h4>
-                              <pre className="p-3 bg-surface-secondary rounded-lg text-sm text-foreground overflow-x-auto whitespace-pre-wrap">
-                                {run.output}
-                              </pre>
-                            </div>
-                          )}
-
-                          {/* Error Log (if owner and error) */}
-                          {run.errorLog && (
-                            <div className="mt-4">
-                              <h4 className="text-xs font-semibold text-error uppercase tracking-wide mb-2">
-                                Error Log
-                              </h4>
-                              <pre className="p-3 bg-error/5 border border-error/20 rounded-lg text-sm text-error overflow-x-auto whitespace-pre-wrap">
-                                {run.errorLog}
-                              </pre>
-                            </div>
-                          )}
-
-                          {/* Conversation History */}
-                          {run.conversation && (
-                            <div className="mt-4">
-                              <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-xs font-semibold text-foreground-secondary uppercase tracking-wide">
-                                  Conversation History
-                                </h4>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant={viewMode === 'chat' ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={() => setViewMode('chat')}
-                                  >
-                                    Chat
-                                  </Button>
-                                  <Button
-                                    variant={viewMode === 'debug' ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={() => setViewMode('debug')}
-                                  >
-                                    Raw
-                                  </Button>
-                                </div>
-                              </div>
-                              {viewMode === 'debug' ? (
-                                <div className="p-4">
-                                  <div className="flex items-center justify-between mb-4">
-                                    <h5 className="text-sm font-medium text-foreground">
-                                      Raw Messages ({run.conversation.length})
-                                    </h5>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        navigator.clipboard.writeText(
-                                          JSON.stringify(run.conversation, null, 2)
-                                        );
-                                      }}
-                                    >
-                                      <Icon icon="copy" size="xs" className="mr-2" />
-                                      Copy JSON
-                                    </Button>
-                                  </div>
-                                  <pre className="text-xs font-mono bg-surface-secondary border border-border rounded-lg p-4 overflow-x-auto whitespace-pre-wrap">
-                                    {JSON.stringify(run.conversation, null, 2)}
-                                  </pre>
-                                </div>
-                              ) : (
-                                <div className="space-y-4">
-                                  {run.conversation.map((msg) => (
-                                    <div key={msg.id}>
-                                      {msg.role === 'USER' && (
-                                        <div className="flex justify-end">
-                                          <div className="max-w-[80%] rounded-lg p-4 bg-primary text-primary-foreground">
-                                            <div className="text-sm whitespace-pre-wrap">
-                                              {msg.content}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )}
-                                      {msg.role === 'ASSISTANT' && (
-                                        <div className="space-y-2">
-                                          {msg.content && (
-                                            <div className="flex justify-start">
-                                              <div className="max-w-[80%] rounded-lg p-4 bg-surface-secondary">
-                                                <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
-                                                  <Streamdown>{msg.content}</Streamdown>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          )}
-                                        </div>
-                                      )}
-                                      {msg.role === 'TOOL' && (
-                                        <div className="flex justify-start">
-                                          <div className="max-w-[80%] rounded-lg border border-border bg-surface-secondary overflow-hidden">
-                                            <div className="p-3">
-                                              <div className="text-sm font-medium text-foreground">
-                                                {msg.toolName || 'Unknown Tool'}
-                                              </div>
-                                              {msg.toolResult && (
-                                                <div className="mt-2 pt-2 border-t border-border/50">
-                                                  <pre className="text-xs text-success overflow-x-auto whitespace-pre-wrap break-all">
-                                                    {typeof msg.toolResult === 'string'
-                                                      ? msg.toolResult
-                                                      : JSON.stringify(msg.toolResult, null, 2)}
-                                                  </pre>
-                                                </div>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      {expandedRunId === run.id && <ExpandedRunDetails run={run} />}
                     </div>
                   ))}
                 </div>
