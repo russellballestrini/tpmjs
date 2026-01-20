@@ -393,6 +393,16 @@ export function CollectionDetailClient({
             </div>
           )}
 
+          {/* Use Cases Section */}
+          {collection.tools.length > 0 && (
+            <UseCasesSection
+              collectionId={collection.id}
+              useCases={collection.useCases}
+              generatedAt={collection.useCasesGeneratedAt}
+              onUseCasesGenerated={handleUseCasesGenerated}
+            />
+          )}
+
           {/* Scenarios Section */}
           {collection.tools.length > 0 && (
             <ScenariosSection
@@ -400,16 +410,6 @@ export function CollectionDetailClient({
               collectionOwnerId={collection.createdBy.id}
               username={username}
               slug={collection.slug}
-            />
-          )}
-
-          {/* Use Cases Section - at the bottom */}
-          {collection.tools.length > 0 && (
-            <UseCasesSection
-              collectionId={collection.id}
-              useCases={collection.useCases}
-              generatedAt={collection.useCasesGeneratedAt}
-              onUseCasesGenerated={handleUseCasesGenerated}
             />
           )}
         </div>
