@@ -108,6 +108,7 @@ model Tool {
   likes        ToolLike[]
   ratings      ToolRating[]
   reviews      ToolReview[]
+  skillsCache  ToolSkillsCache?
 
   @@unique([packageId, name])
   @@index([qualityScore])
@@ -467,11 +468,12 @@ model Collection {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  tools       CollectionTool[]
-  agents      AgentCollection[]
-  likes       CollectionLike[]
-  bridgeTools CollectionBridgeTool[]
-  scenarios   Scenario[]
+  tools                  CollectionTool[]
+  agents                 AgentCollection[]
+  likes                  CollectionLike[]
+  bridgeTools            CollectionBridgeTool[]
+  scenarios              Scenario[]
+  skillsGenerationJobs   SkillsGenerationJob[]
 
   // Unique constraint: user can't have duplicate collection slugs
   @@unique([userId, slug])
@@ -1417,4 +1419,54 @@ model SocialProof {
   @@index([qualityScore])
   @@index([totalRuns])
   @@map("social_proofs")
+}
+
+// ============================================================================
+// Skills Generation Models (Chunked Generation for Large Collections)
+// ============================================================================
+
+/// ToolSkillsCache - per-tool cached skills markdown section
+model ToolSkillsCache {
+  id              String   @id @default(cuid())
+
+  // Tool relationship
+  toolId          String   @unique @map("tool_id")
+  tool            Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  // Cached markdown section for this tool
+  skillsMarkdown  String   @map("skills_markdown") @db.Text
+
+  // Timestamps
+  generatedAt     DateTime @default(now()) @map("generated_at")
+
+  @@index([toolId])
+  @@map("tool_skills_cache")
+}
+
+/// SkillsGenerationJob - tracks chunked skills.md generation progress
+model SkillsGenerationJob {
+  id               String     @id @default(cuid())
+
+  // Collection relationship
+  collectionId     String     @map("collection_id")
+  collection       Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Job status
+  status           String     @default("pending") @db.VarChar(20) // 'pending' | 'processing' | 'completed' | 'failed'
+
+  // Progress tracking
+  currentBatch     Int        @default(0) @map("current_batch")
+  totalBatches     Int        @map("total_batches")
+  completedToolIds String[]   @default([]) @map("completed_tool_ids")
+
+  // Error tracking
+  error            String?    @db.Text
+
+  // Timestamps
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  @@index([collectionId])
+  @@index([status])
+  @@map("skills_generation_jobs")
 }

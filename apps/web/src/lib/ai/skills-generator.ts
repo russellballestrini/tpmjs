@@ -1,6 +1,11 @@
 /**
  * AI-powered skills documentation generator for tool collections
  * Uses Vercel AI SDK to analyze package source code and generate comprehensive skills.md
+ *
+ * This module provides the original monolithic generation function for backward compatibility.
+ * For chunked generation of large collections, use the new modules:
+ * - tool-skills-generator.ts: Per-tool skills generation
+ * - skills-summary-generator.ts: Summary/intro generation
  */
 
 import { openai } from '@ai-sdk/openai';

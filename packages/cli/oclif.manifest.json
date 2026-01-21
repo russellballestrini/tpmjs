@@ -75,6 +75,86 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "playground.js"]
     },
+    "run": {
+      "aliases": [],
+      "args": {},
+      "description": "Execute a tool from a collection via MCP",
+      "examples": [
+        "<%= config.bin %> run -c ajax/unsandbox -t execute --args '{\"code\":\"print(1)\",\"language\":\"python\"}'",
+        "<%= config.bin %> run --collection ajax/ajax-collection --tool base64Encode --args '{\"data\":\"hello\"}'",
+        "OPENAI_API_KEY=xxx <%= config.bin %> run -c ajax/my-collection -t myTool",
+        "<%= config.bin %> run -c ajax/tools -t search --args '{\"query\":\"test\"}' --json",
+        "<%= config.bin %> run -c ajax/tools -t search --env API_KEY=xxx --env DEBUG=true"
+      ],
+      "flags": {
+        "collection": {
+          "char": "c",
+          "description": "Collection identifier (username/slug)",
+          "name": "collection",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "tool": {
+          "char": "t",
+          "description": "Tool name (MCP format: package--toolName)",
+          "name": "tool",
+          "required": true,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "args": {
+          "char": "a",
+          "description": "Tool arguments as JSON string",
+          "name": "args",
+          "default": "{}",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "env": {
+          "char": "e",
+          "description": "Environment variables (key=value)",
+          "name": "env",
+          "hasDynamicHelp": false,
+          "multiple": true,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output result as JSON",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "timeout": {
+          "description": "Request timeout in seconds",
+          "name": "timeout",
+          "default": 60,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "run",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "run.js"]
+    },
     "update": {
       "aliases": [],
       "args": {},
@@ -614,6 +694,127 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "auth", "whoami.js"]
     },
+    "mcp:config": {
+      "aliases": [],
+      "args": {
+        "collection": {
+          "description": "Collection path (username/slug)",
+          "name": "collection",
+          "required": true
+        }
+      },
+      "description": "Generate MCP configuration for AI clients",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection",
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --client cursor",
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --output ~/Library/Application\\ Support/Claude/claude_desktop_config.json"
+      ],
+      "flags": {
+        "client": {
+          "char": "c",
+          "description": "Target client (claude, cursor, windsurf, generic)",
+          "name": "client",
+          "default": "claude",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": ["claude", "cursor", "windsurf", "generic"],
+          "type": "option"
+        },
+        "output": {
+          "char": "o",
+          "description": "Output file path (will merge with existing config)",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "api-key": {
+          "char": "k",
+          "description": "API key to include in config (optional)",
+          "name": "api-key",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "mcp:config",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "mcp", "config.js"]
+    },
+    "mcp:serve": {
+      "aliases": [],
+      "args": {},
+      "description": "Run as a local MCP server",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --port 8080",
+        "<%= config.bin %> <%= command.id %> --stdio",
+        "<%= config.bin %> <%= command.id %> --collection my-collection"
+      ],
+      "flags": {
+        "port": {
+          "char": "p",
+          "description": "Port to run the server on (HTTP mode)",
+          "name": "port",
+          "default": 3333,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "stdio": {
+          "description": "Use stdio transport instead of HTTP",
+          "name": "stdio",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "collection": {
+          "char": "c",
+          "description": "Serve tools from a specific collection",
+          "name": "collection",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "tool": {
+          "char": "t",
+          "description": "Serve specific tools (comma-separated)",
+          "name": "tool",
+          "hasDynamicHelp": false,
+          "multiple": true,
+          "type": "option"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "mcp:serve",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "mcp", "serve.js"]
+    },
     "collection:add": {
       "aliases": [],
       "args": {
@@ -962,127 +1163,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "collection", "update.js"]
-    },
-    "mcp:config": {
-      "aliases": [],
-      "args": {
-        "collection": {
-          "description": "Collection path (username/slug)",
-          "name": "collection",
-          "required": true
-        }
-      },
-      "description": "Generate MCP configuration for AI clients",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection",
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --client cursor",
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --output ~/Library/Application\\ Support/Claude/claude_desktop_config.json"
-      ],
-      "flags": {
-        "client": {
-          "char": "c",
-          "description": "Target client (claude, cursor, windsurf, generic)",
-          "name": "client",
-          "default": "claude",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": ["claude", "cursor", "windsurf", "generic"],
-          "type": "option"
-        },
-        "output": {
-          "char": "o",
-          "description": "Output file path (will merge with existing config)",
-          "name": "output",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "api-key": {
-          "char": "k",
-          "description": "API key to include in config (optional)",
-          "name": "api-key",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "mcp:config",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "mcp", "config.js"]
-    },
-    "mcp:serve": {
-      "aliases": [],
-      "args": {},
-      "description": "Run as a local MCP server",
-      "examples": [
-        "<%= config.bin %> <%= command.id %>",
-        "<%= config.bin %> <%= command.id %> --port 8080",
-        "<%= config.bin %> <%= command.id %> --stdio",
-        "<%= config.bin %> <%= command.id %> --collection my-collection"
-      ],
-      "flags": {
-        "port": {
-          "char": "p",
-          "description": "Port to run the server on (HTTP mode)",
-          "name": "port",
-          "default": 3333,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "stdio": {
-          "description": "Use stdio transport instead of HTTP",
-          "name": "stdio",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "collection": {
-          "char": "c",
-          "description": "Serve tools from a specific collection",
-          "name": "collection",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "tool": {
-          "char": "t",
-          "description": "Serve specific tools (comma-separated)",
-          "name": "tool",
-          "hasDynamicHelp": false,
-          "multiple": true,
-          "type": "option"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "mcp:serve",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "mcp", "serve.js"]
     },
     "publish:check": {
       "aliases": [],
