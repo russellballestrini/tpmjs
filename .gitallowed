@@ -1,0 +1,12 @@
+# Allowed patterns for git-secrets (false positive exclusions)
+# These are documentation examples, not real secrets
+
+# Example API keys in documentation
+tpmjs_sk_your_api_key_here
+tpmjs_sk_your_api_key
+tpmjs_sk_xxx
+tpmjs_sk_abc123
+tpmjs_sk_xxxxxxxxxxxxxxxxxxxx
+
+# Ellipsized examples in docs (e.g., "tpmjs_sk_abc1...")
+tpmjs_sk_[a-z0-9]+\.\.\.
