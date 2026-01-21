@@ -17,8 +17,8 @@ export interface PackageSource {
 
 // Maximum files to fetch per package
 const MAX_FILES_PER_PACKAGE = 10;
-// Maximum file size to fetch (50KB)
-const MAX_FILE_SIZE = 50 * 1024;
+// Maximum file size to fetch (100KB)
+const MAX_FILE_SIZE = 100 * 1024;
 // Timeout for individual fetches
 const FETCH_TIMEOUT_MS = 10000;
 
