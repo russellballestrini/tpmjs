@@ -458,6 +458,10 @@ model Collection {
   useCases            Json?     @map("use_cases") @db.JsonB
   useCasesGeneratedAt DateTime? @map("use_cases_generated_at")
 
+  // AI-generated skills documentation
+  skillsMarkdown      String?   @map("skills_markdown") @db.Text
+  skillsGeneratedAt   DateTime? @map("skills_generated_at")
+
   // Timestamps
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

@@ -72,6 +72,24 @@ tpm collection add       # Add tools to a collection
 tpm collection remove    # Remove tools from a collection
 ```
 
+### Run Tools
+
+Execute tools directly from collections via the MCP API:
+
+```bash
+# Basic usage
+tpm run -c ajax/unsandbox -t execute --args '{"code":"print(1)","language":"python"}'
+
+# With environment variables
+tpm run -c ajax/my-collection -t myTool --env API_KEY=xxx --env DEBUG=true
+
+# Using process environment
+OPENAI_API_KEY=xxx tpm run -c ajax/ai-tools -t generate
+
+# JSON output for scripting
+tpm run -c ajax/tools -t base64Encode --args '{"data":"hello"}' --json | jq .result
+```
+
 ### MCP Integration
 
 ```bash
