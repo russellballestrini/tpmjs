@@ -15,7 +15,6 @@ dist
 
 # misc
 .DS_Store
-*.pem
 
 # debug
 npm-debug.log*
@@ -23,11 +22,29 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# local env files
-.env*.local
+# environment files - NEVER commit secrets
 .env
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
 .env.production
+.env.production.local
+.env.staging
 .env.vercel*
+
+# secret files
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+secrets.json
+*_secret*
+*_credentials*
 
 # turbo
 .turbo

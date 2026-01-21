@@ -1,6 +1,12 @@
 pre-commit:
   parallel: true
   commands:
+    secrets:
+      # Scan for secrets before allowing commit - runs first
+      priority: 1
+      run: git secrets --scan --cached
+      fail_text: "🚨 Secrets detected! Remove sensitive data before committing."
+
     format:
       glob: "*.{ts,tsx,js,jsx,json,md}"
       run: pnpm biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
