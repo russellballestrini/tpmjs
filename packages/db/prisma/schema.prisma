@@ -1470,3 +1470,148 @@ model SkillsGenerationJob {
   @@index([status])
   @@map("skills_generation_jobs")
 }
+
+// ============================================================================
+// Omega Models (AI Agent Chat with Full Registry Access)
+// ============================================================================
+
+/// OmegaConversation - chat session for Omega AI agent
+model OmegaConversation {
+  id                String   @id @default(cuid())
+
+  // Owner relationship
+  ownerId           String   @map("owner_id")
+
+  // Conversation metadata
+  title             String?  @db.VarChar(200)
+
+  // Execution state
+  executionState    String   @default("idle") @map("execution_state") @db.VarChar(20) // idle, running, paused, cancelled
+
+  // Token tracking (aggregate across all messages)
+  inputTokensTotal  Int      @default(0) @map("input_tokens_total")
+  outputTokensTotal Int      @default(0) @map("output_tokens_total")
+
+  // Timestamps
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  messages          OmegaMessage[]
+  participants      OmegaParticipant[]
+  toolRuns          OmegaToolRun[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+  @@map("omega_conversations")
+}
+
+/// OmegaMessage - individual message in an Omega conversation
+model OmegaMessage {
+  id             String   @id @default(cuid())
+
+  // Conversation relationship
+  conversationId String   @map("conversation_id")
+  conversation   OmegaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Message content
+  role           MessageRole
+  content        String   @db.Text
+
+  // Author info (for multi-user conversations)
+  authorId       String?  @map("author_id")
+  authorEmail    String?  @map("author_email")
+  authorName     String?  @map("author_name") @db.VarChar(100)
+
+  // Tool calls (for ASSISTANT messages)
+  toolCalls      Json?    @map("tool_calls") @db.JsonB
+
+  // Token tracking
+  inputTokens    Int?     @map("input_tokens")
+  outputTokens   Int?     @map("output_tokens")
+
+  // Timestamps
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([conversationId])
+  @@index([createdAt])
+  @@map("omega_messages")
+}
+
+/// OmegaParticipant - tracks users in an Omega conversation
+model OmegaParticipant {
+  id             String   @id @default(cuid())
+
+  // Conversation relationship
+  conversationId String   @map("conversation_id")
+  conversation   OmegaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // User info
+  userId         String?  @map("user_id")
+  displayName    String   @map("display_name") @db.VarChar(100)
+  email          String?
+
+  // Role in conversation
+  role           String   @default("collaborator") @db.VarChar(20) // owner, collaborator
+
+  // Timestamps
+  joinedAt       DateTime @default(now()) @map("joined_at")
+
+  @@unique([conversationId, userId])
+  @@index([conversationId])
+  @@map("omega_participants")
+}
+
+/// OmegaToolRun - tracks tool executions within Omega conversations
+model OmegaToolRun {
+  id              String    @id @default(cuid())
+
+  // Conversation relationship
+  conversationId  String    @map("conversation_id")
+  conversation    OmegaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Message relationship (optional - for linking to specific message)
+  messageId       String?   @map("message_id")
+
+  // Tool execution details
+  toolName        String    @map("tool_name") @db.VarChar(200)
+  input           Json      @db.JsonB
+  output          Json?     @db.JsonB
+  error           String?   @db.Text
+
+  // Status tracking
+  status          String    @db.VarChar(20) // pending, running, success, error
+
+  // Timing
+  startedAt       DateTime  @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  executionTimeMs Int?      @map("execution_time_ms")
+
+  @@index([conversationId])
+  @@index([status])
+  @@map("omega_tool_runs")
+}
+
+/// OmegaUserSettings - user preferences for Omega
+model OmegaUserSettings {
+  id                 String   @id @default(cuid())
+
+  // User relationship
+  userId             String   @unique @map("user_id")
+
+  // Tool preferences
+  pinnedToolIds      String[] @default([]) @map("pinned_tool_ids")
+  blockedToolIds     String[] @default([]) @map("blocked_tool_ids")
+
+  // Customization
+  customSystemPrompt String?  @map("custom_system_prompt") @db.Text
+
+  // UI preferences
+  showDebugMode      Boolean  @default(false) @map("show_debug_mode")
+
+  // Timestamps
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("omega_user_settings")
+}
