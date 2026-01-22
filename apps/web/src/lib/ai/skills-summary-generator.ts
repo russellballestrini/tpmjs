@@ -262,10 +262,21 @@ ${
 
 ---
 
-## 7. Canonical References
+## 7. Usage Examples
+
+For real-world usage patterns and tested scenarios, see the usage documentation:
+
+**Usage Guide:** ${baseUrl}/${collection.username}/collections/${collection.slug}/usage.md
+
+This document contains ${toolSections.length > 0 ? 'tested scenarios demonstrating common usage patterns' : 'usage examples once scenarios are created'}.
+
+---
+
+## 8. Canonical References
 
 - TPMJS: https://tpmjs.com
 - MCP Protocol: https://modelcontextprotocol.io
 - Collection Page: ${collectionUrl}
+- Usage Examples: ${baseUrl}/${collection.username}/collections/${collection.slug}/usage.md
 `;
 }
