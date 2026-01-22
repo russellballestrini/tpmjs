@@ -25,7 +25,7 @@ The CLI asks for just your package name and uses sensible defaults for everythin
 
 - **Description**: Auto-generated from package name
 - **Tools**: 2 example tools you can customize
-- **Category**: `ai-ml` (generic)
+- **Category**: `utilities` (generic)
 - **License**: MIT
 - **Output**: Derived from package name
 
@@ -81,6 +81,56 @@ content-tools/
 ```
 
 Simply rename `exampleTool.ts` and `anotherTool.ts` to match your use case, then customize the implementation.
+
+## Generated package.json `tpmjs` Field
+
+The generator creates a properly formatted `tpmjs` field in your package.json:
+
+```json
+{
+  "name": "@myorg/content-tools",
+  "keywords": ["tpmjs", "ai-sdk", "utilities"],
+  "tpmjs": {
+    "category": "utilities",
+    "tools": [
+      {
+        "name": "exampleTool",
+        "description": "An example tool - customize this for your use case"
+      },
+      {
+        "name": "anotherTool",
+        "description": "Another example tool - add your implementation here"
+      }
+    ]
+  }
+}
+```
+
+**Important:** The `tools` field must be an **array** of objects, not an object map:
+
+```json
+// ✅ Correct - tools is an array
+"tools": [
+  { "name": "myTool", "description": "Does something useful" }
+]
+
+// ❌ Wrong - tools is an object (will fail validation)
+"tools": {
+  "myTool": { "description": "Does something useful" }
+}
+```
+
+**Minimal format:** If you just want auto-discovery, only `category` is required:
+
+```json
+{
+  "tpmjs": {
+    "category": "web"
+  }
+}
+```
+
+TPMJS will automatically discover and extract tool metadata from your package exports.
 
 ## Generated Tool File Example
 
@@ -165,18 +215,23 @@ Your tools will appear on [tpmjs.com](https://tpmjs.com) within 2-15 minutes aft
 
 The generator validates against these official TPMJS categories:
 
-- `web-scraping`
-- `data-processing`
-- `file-operations`
-- `communication`
-- `database`
-- `api-integration`
-- `image-processing`
-- `text-analysis`
-- `automation`
-- `ai-ml`
-- `security`
-- `monitoring`
+**Core categories:**
+- `research` - Research and information gathering tools
+- `web` - Web scraping, fetching, and browser automation
+- `data` - Data processing and transformation
+- `documentation` - Documentation generation and management
+- `engineering` - Software engineering and development tools
+- `security` - Security analysis and vulnerability scanning
+- `statistics` - Statistical analysis and calculations
+- `ops` - DevOps and infrastructure tools
+- `agent` - AI agent orchestration and management
+- `sandbox` - Code execution and sandboxing
+- `utilities` - General-purpose utility tools
+- `html` - HTML generation and manipulation
+- `compliance` - Compliance and regulatory tools
+
+**Legacy categories (still supported):**
+- `web-scraping`, `data-processing`, `file-operations`, `communication`, `database`, `api-integration`, `image-processing`, `text-analysis`, `automation`, `ai-ml`, `monitoring`
 
 ## Requirements
 

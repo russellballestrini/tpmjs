@@ -56,7 +56,7 @@ export async function runInteractiveCLI(): Promise<GenerationResult> {
     description: `AI SDK tools for ${packageNameWithoutScope}`,
     author: '',
     license: 'MIT',
-    category: 'ai-ml',
+    category: 'utilities',
   };
 
   const tools = [

@@ -52,7 +52,10 @@ function parseToolArgs(argsStr: string): Record<string, unknown> | null {
 /**
  * Build environment variables from process.env and explicit flags
  */
-function buildEnvVars(envFlags: string[] | undefined, output: OutputFormatter): Record<string, string> {
+function buildEnvVars(
+  envFlags: string[] | undefined,
+  output: OutputFormatter
+): Record<string, string> {
   const envVars: Record<string, string> = {};
 
   // Add process env vars that might be relevant
@@ -168,11 +171,28 @@ export default class Run extends Command {
   static description = 'Execute a tool from a collection via MCP';
 
   static examples = [
-    '<%= config.bin %> run -c ajax/unsandbox -t execute --args \'{"code":"print(1)","language":"python"}\'',
-    '<%= config.bin %> run --collection ajax/ajax-collection --tool base64Encode --args \'{"data":"hello"}\'',
-    'OPENAI_API_KEY=xxx <%= config.bin %> run -c ajax/my-collection -t myTool',
-    '<%= config.bin %> run -c ajax/tools -t search --args \'{"query":"test"}\' --json',
-    '<%= config.bin %> run -c ajax/tools -t search --env API_KEY=xxx --env DEBUG=true',
+    {
+      description: 'First, list all tools in a collection',
+      command: '<%= config.bin %> collection info ajax/unsandbox',
+    },
+    {
+      description: 'Execute Python code in the unsandbox collection',
+      command:
+        '<%= config.bin %> run -c ajax/unsandbox -t unsandbox--execute --args \'{"language":"python","code":"print(42)"}\'',
+    },
+    {
+      description: 'Pass environment variables for tool authentication',
+      command:
+        '<%= config.bin %> run -c ajax/unsandbox -t unsandbox--execute -e UNSANDBOX_PUBLIC_KEY=xxx -e UNSANDBOX_SECRET_KEY=xxx --args \'{"language":"python","code":"print(1)"}\'',
+    },
+    {
+      description: 'Output result as JSON',
+      command: '<%= config.bin %> run -c ajax/tools -t search --args \'{"query":"test"}\' --json',
+    },
+    {
+      description: 'Show verbose output for debugging',
+      command: "<%= config.bin %> run -c ajax/unsandbox -t unsandbox--healthCheck --args '{}' -v",
+    },
   ];
 
   static flags = {

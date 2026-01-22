@@ -2389,21 +2389,37 @@ export const deleteImage = tool({
 // ============================================================================
 
 export interface HealthResult {
-  status: string;
+  status: 'ok' | 'error';
+  version?: string;
+  available?: number;
+  allocated?: number;
 }
 
 /**
- * Health check.
+ * Health check - verifies the Unsandbox API is operational.
+ * Returns a simplified status derived from the cluster endpoint.
  */
 export const healthCheck = tool({
-  description: 'Simple health check endpoint to verify the Unsandbox API is operational.',
+  description: 'Check the health status of the Unsandbox API service.',
   inputSchema: jsonSchema<Record<string, never>>({
     type: 'object',
     properties: {},
     additionalProperties: false,
   }),
   async execute(): Promise<HealthResult> {
-    return apiRequest<HealthResult>('GET', '/health', undefined);
+    // Use /cluster endpoint which is known to work
+    const cluster = await apiRequest<{
+      version?: string;
+      available?: number;
+      allocated?: number;
+    }>('GET', '/cluster', undefined);
+
+    return {
+      status: 'ok',
+      version: cluster.version,
+      available: cluster.available,
+      allocated: cluster.allocated,
+    };
   },
 });
 
