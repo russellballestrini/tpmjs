@@ -189,7 +189,7 @@ function extractUserRequest(messages: Message[], provided?: string): string {
   const userMessages = messages.filter((m) => m.role === 'user');
   if (userMessages.length === 0) return 'Unknown request';
 
-  return userMessages[0]?.content;
+  return userMessages[0]?.content ?? 'Unknown request';
 }
 
 /**
