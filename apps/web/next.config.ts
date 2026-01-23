@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     '@tpmjs/types',
     '@tpmjs/env',
     '@tpmjs/config',
+    '@tpmjs/registry-search',
+    '@tpmjs/registry-execute',
   ],
   reactStrictMode: true,
   serverExternalPackages: ['@tpmjs/package-executor'],
