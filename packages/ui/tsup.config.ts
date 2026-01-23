@@ -44,6 +44,13 @@ entries.push('src/system/hooks/useParallax.ts');
 entries.push('src/system/hooks/useReducedMotion.ts');
 entries.push('src/system/hooks/useDitherAnimation.ts');
 
+// Manually add ToolRenderer files that don't match naming conventions
+entries.push('src/ToolRenderer/types.ts');
+entries.push('src/ToolRenderer/registry.ts');
+entries.push('src/ToolRenderer/registerBuiltInRenderers.ts');
+entries.push('src/ToolRenderer/renderers/RegistrySearchRenderer.tsx');
+entries.push('src/ToolRenderer/renderers/RegistryExecuteRenderer.tsx');
+
 export default defineConfig({
   entry: entries,
   format: ['esm'],

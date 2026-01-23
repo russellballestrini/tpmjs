@@ -234,6 +234,34 @@
     "./PageHeader/PageHeader": {
       "types": "./dist/PageHeader/PageHeader.d.ts",
       "default": "./dist/PageHeader/PageHeader.js"
+    },
+    "./ToolRenderer/ToolRenderer": {
+      "types": "./dist/ToolRenderer/ToolRenderer.d.ts",
+      "default": "./dist/ToolRenderer/ToolRenderer.js"
+    },
+    "./ToolRenderer/types": {
+      "types": "./dist/ToolRenderer/types.d.ts",
+      "default": "./dist/ToolRenderer/types.js"
+    },
+    "./ToolRenderer/registry": {
+      "types": "./dist/ToolRenderer/registry.d.ts",
+      "default": "./dist/ToolRenderer/registry.js"
+    },
+    "./ToolRenderer/DefaultJsonRenderer": {
+      "types": "./dist/ToolRenderer/DefaultJsonRenderer.d.ts",
+      "default": "./dist/ToolRenderer/DefaultJsonRenderer.js"
+    },
+    "./ToolRenderer/registerBuiltInRenderers": {
+      "types": "./dist/ToolRenderer/registerBuiltInRenderers.d.ts",
+      "default": "./dist/ToolRenderer/registerBuiltInRenderers.js"
+    },
+    "./ToolRenderer/renderers/RegistrySearchRenderer": {
+      "types": "./dist/ToolRenderer/renderers/RegistrySearchRenderer.d.ts",
+      "default": "./dist/ToolRenderer/renderers/RegistrySearchRenderer.js"
+    },
+    "./ToolRenderer/renderers/RegistryExecuteRenderer": {
+      "types": "./dist/ToolRenderer/renderers/RegistryExecuteRenderer.d.ts",
+      "default": "./dist/ToolRenderer/renderers/RegistryExecuteRenderer.js"
     }
   },
   "files": [

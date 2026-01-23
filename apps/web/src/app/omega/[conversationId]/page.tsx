@@ -4,12 +4,18 @@ import { Badge } from '@tpmjs/ui/Badge/Badge';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Textarea } from '@tpmjs/ui/Textarea/Textarea';
+import { registerBuiltInRenderers } from '@tpmjs/ui/ToolRenderer/registerBuiltInRenderers';
+import { ToolRenderer } from '@tpmjs/ui/ToolRenderer/ToolRenderer';
+import type { ToolPart, ToolState } from '@tpmjs/ui/ToolRenderer/types';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { AppHeader } from '~/components/AppHeader';
 import { EnvVarWarningBanner } from '~/components/omega/EnvVarWarningBanner';
+
+// Initialize built-in tool renderers (idempotent)
+registerBuiltInRenderers();
 
 interface ToolDiscoveryInfo {
   staticTools?: string[];
@@ -29,7 +35,8 @@ interface Message {
   toolCalls?: Array<{
     toolCallId: string;
     toolName: string;
-    args: unknown;
+    args?: unknown;
+    output?: unknown;
   }>;
   inputTokens?: number;
   outputTokens?: number;
@@ -69,115 +76,32 @@ interface Conversation {
 }
 
 /**
- * Tool call debug card component
+ * Convert ToolCall status to ToolState
  */
-function ToolCallCard({
-  toolCall,
-  isExpanded,
-  onToggle,
-}: {
-  toolCall: ToolCall;
-  isExpanded: boolean;
-  onToggle: () => void;
-}) {
-  const statusColors = {
-    pending: 'bg-warning/10 text-warning border-warning/30',
-    running: 'bg-info/10 text-info border-info/30',
-    success: 'bg-success/10 text-success border-success/30',
-    error: 'bg-error/10 text-error border-error/30',
+function statusToToolState(status: ToolCall['status']): ToolState {
+  switch (status) {
+    case 'pending':
+      return 'partial-call';
+    case 'running':
+      return 'call';
+    case 'success':
+    case 'error':
+      return 'result';
+  }
+}
+
+/**
+ * Convert ToolCall to ToolPart for rendering
+ */
+function toolCallToToolPart(tc: ToolCall): ToolPart {
+  return {
+    type: tc.status === 'success' || tc.status === 'error' ? 'tool-result' : 'tool-call',
+    toolCallId: tc.toolCallId,
+    toolName: tc.toolName,
+    args: tc.input,
+    result: tc.isError ? { error: tc.output } : tc.output,
+    state: statusToToolState(tc.status),
   };
-
-  const statusIcons: Record<ToolCall['status'], 'loader' | 'check' | 'alertCircle' | 'info'> = {
-    pending: 'info',
-    running: 'loader',
-    success: 'check',
-    error: 'alertCircle',
-  };
-
-  const formatJson = (data: unknown): React.ReactNode => {
-    try {
-      return JSON.stringify(data, null, 2);
-    } catch {
-      return String(data);
-    }
-  };
-
-  return (
-    <div className="rounded-lg border border-border bg-surface-secondary/50 overflow-hidden font-mono text-xs">
-      {/* Header */}
-      <Button
-        variant="ghost"
-        onClick={onToggle}
-        className="w-full flex items-center gap-3 p-3 h-auto justify-start rounded-none hover:bg-surface-secondary/80"
-      >
-        <div className={`p-1.5 rounded ${statusColors[toolCall.status]}`}>
-          <Icon
-            icon={statusIcons[toolCall.status]}
-            size="xs"
-            className={toolCall.status === 'running' ? 'animate-spin' : ''}
-          />
-        </div>
-        <div className="flex-1 text-left">
-          <div className="flex items-center gap-2">
-            <span className="text-foreground font-semibold">{toolCall.toolName}</span>
-            <span className="text-foreground-tertiary text-[10px]">
-              {toolCall.toolCallId.slice(0, 8)}...
-            </span>
-          </div>
-        </div>
-        <Icon
-          icon="chevronRight"
-          size="xs"
-          className={`text-foreground-tertiary transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-        />
-      </Button>
-
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="border-t border-border">
-          {/* Input Section */}
-          {toolCall.input !== undefined && toolCall.input !== null ? (
-            <div className="p-3 border-b border-border/50">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] uppercase tracking-wider text-foreground-tertiary">
-                  Input
-                </span>
-                <div className="flex-1 h-px bg-border/50" />
-              </div>
-              <pre className="text-[11px] text-foreground-secondary overflow-x-auto whitespace-pre-wrap break-all max-h-48 overflow-y-auto">
-                {formatJson(toolCall.input)}
-              </pre>
-            </div>
-          ) : null}
-
-          {/* Output Section */}
-          {toolCall.output !== undefined && toolCall.output !== null ? (
-            <div className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] uppercase tracking-wider text-foreground-tertiary">
-                  Output
-                </span>
-                <div className="flex-1 h-px bg-border/50" />
-              </div>
-              <pre
-                className={`text-[11px] overflow-x-auto whitespace-pre-wrap break-all max-h-48 overflow-y-auto ${toolCall.isError ? 'text-error' : 'text-success'}`}
-              >
-                {formatJson(toolCall.output)}
-              </pre>
-            </div>
-          ) : null}
-
-          {/* Status indicator for running */}
-          {toolCall.status === 'running' && !toolCall.output && (
-            <div className="p-3 flex items-center gap-2 text-foreground-tertiary">
-              <Icon icon="loader" size="xs" className="animate-spin" />
-              <span>Executing...</span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
 
 /**
@@ -197,7 +121,6 @@ export default function OmegaChatPage(): React.ReactElement {
   const [streamingContent, setStreamingContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
-  const [expandedToolCalls, setExpandedToolCalls] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'chat' | 'debug'>('chat');
   // Map of message IDs to their tool discovery info (persisted in frontend state)
   const [messageToolDiscovery, setMessageToolDiscovery] = useState<Map<string, ToolDiscoveryInfo>>(
@@ -208,18 +131,6 @@ export default function OmegaChatPage(): React.ReactElement {
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  const toggleToolCall = (toolCallId: string) => {
-    setExpandedToolCalls((prev) => {
-      const next = new Set(prev);
-      if (next.has(toolCallId)) {
-        next.delete(toolCallId);
-      } else {
-        next.add(toolCallId);
-      }
-      return next;
-    });
-  };
 
   // Fetch conversation details
   const fetchConversation = useCallback(async () => {
@@ -353,8 +264,6 @@ export default function OmegaChatPage(): React.ReactElement {
                     status: 'running',
                   },
                 ]);
-                // Auto-expand new tool calls
-                setExpandedToolCalls((prev) => new Set([...prev, data.toolCallId]));
                 break;
               case 'run.step.tool.completed':
                 // Update tool call with result
@@ -580,6 +489,7 @@ export default function OmegaChatPage(): React.ReactElement {
               </div>
 
               {/* Per-Message View */}
+              {/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Debug view with multiple conditional sections */}
               {messages.map((message, index) => {
                 const discovery = messageToolDiscovery.get(message.id);
                 return (
@@ -789,16 +699,24 @@ export default function OmegaChatPage(): React.ReactElement {
                           </div>
                         )}
 
-                        {/* TOOL message - show as collapsed tool result */}
-                        {message.role === 'TOOL' && (
+                        {/* TOOL message - show tool results from toolCalls field */}
+                        {message.role === 'TOOL' && message.toolCalls && (
                           <div className="flex justify-start">
-                            <div className="max-w-[80%]">
-                              <div className="text-xs text-foreground-tertiary mb-1">
-                                Tool Results
-                              </div>
-                              <pre className="text-xs font-mono bg-surface-secondary border border-border rounded p-2 overflow-x-auto max-h-32 overflow-y-auto">
-                                {message.content}
-                              </pre>
+                            <div className="max-w-[80%] space-y-2">
+                              {message.toolCalls.map((tc) => (
+                                <ToolRenderer
+                                  key={tc.toolCallId}
+                                  part={{
+                                    type: 'tool-result',
+                                    toolCallId: tc.toolCallId,
+                                    toolName: tc.toolName,
+                                    args: tc.args,
+                                    result: tc.output,
+                                    state: 'result',
+                                  }}
+                                  isStreaming={false}
+                                />
+                              ))}
                             </div>
                           </div>
                         )}
@@ -811,10 +729,9 @@ export default function OmegaChatPage(): React.ReactElement {
                         {toolCalls.map((tc) => (
                           <div key={tc.toolCallId} className="flex justify-start">
                             <div className="max-w-[80%]">
-                              <ToolCallCard
-                                toolCall={tc}
-                                isExpanded={expandedToolCalls.has(tc.toolCallId)}
-                                onToggle={() => toggleToolCall(tc.toolCallId)}
+                              <ToolRenderer
+                                part={toolCallToToolPart(tc)}
+                                isStreaming={tc.status === 'running'}
                               />
                             </div>
                           </div>
