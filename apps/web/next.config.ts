@@ -12,7 +12,11 @@ const nextConfig: NextConfig = {
     '@tpmjs/registry-execute',
   ],
   reactStrictMode: true,
-  serverExternalPackages: ['@tpmjs/package-executor'],
+  serverExternalPackages: [
+    '@tpmjs/package-executor',
+    '@tpmjs/registry-search',
+    '@tpmjs/registry-execute',
+  ],
   async redirects() {
     return [
       {
