@@ -4,18 +4,101 @@
  * POST: Send a message and stream the AI response via SSE
  *
  * This endpoint implements the core Omega chat functionality with:
- * - Automatic BM25 search to find relevant tools based on user message
- * - Dynamic tool loading - top 15 matching tools become available to the AI
+ * - Static tools: registrySearchTool and registryExecuteTool for external users
+ * - Dynamic tool loading: tools found via search are injected as callable tools
  * - SSE streaming for real-time updates
  */
 
 import { Prisma, prisma } from '@tpmjs/db';
+import { registryExecuteTool } from '@tpmjs/registry-execute';
+import { registrySearchTool } from '@tpmjs/registry-search';
 import { jsonSchema, type ModelMessage } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
+import { decryptApiKey } from '~/lib/crypto/api-keys';
 import { buildSystemPrompt } from '~/lib/omega/system-prompt';
 import { checkRateLimit, type RateLimitConfig } from '~/lib/rate-limit';
+
+/**
+ * Warning about missing environment variables
+ */
+interface EnvVarWarning {
+  toolId: string;
+  toolName: string;
+  packageName: string;
+  envVar: {
+    name: string;
+    description: string;
+    required: boolean;
+  };
+}
+
+/**
+ * Fetch and decrypt user's environment variables
+ */
+async function getUserEnvVarsDecrypted(userId: string): Promise<Record<string, string>> {
+  try {
+    const keys = await prisma.userApiKey.findMany({ where: { userId } });
+    const result: Record<string, string> = {};
+    for (const key of keys) {
+      try {
+        result[key.keyName] = decryptApiKey(key.encryptedKey, key.keyIv);
+      } catch (error) {
+        console.error(`Failed to decrypt env var ${key.keyName}:`, error);
+        // Skip this key if decryption fails
+      }
+    }
+    return result;
+  } catch (error) {
+    console.error('Failed to fetch user env vars:', error);
+    return {};
+  }
+}
+
+/**
+ * Detect missing required environment variables for tools
+ */
+function detectMissingEnvVars(
+  tools: Array<{
+    toolId: string;
+    packageName: string;
+    name: string;
+    env?: Array<{ name: string; description?: string; required?: boolean }> | null;
+  }>,
+  userEnvVars: Record<string, string>
+): EnvVarWarning[] {
+  const warnings: EnvVarWarning[] = [];
+  const userEnvKeys = new Set(Object.keys(userEnvVars));
+
+  for (const tool of tools) {
+    if (!tool.env || !Array.isArray(tool.env)) continue;
+
+    for (const envVar of tool.env) {
+      // Only warn about required env vars that are not set
+      if (envVar.required && !userEnvKeys.has(envVar.name)) {
+        warnings.push({
+          toolId: tool.toolId,
+          toolName: tool.name,
+          packageName: tool.packageName,
+          envVar: {
+            name: envVar.name,
+            description: envVar.description || '',
+            required: true,
+          },
+        });
+      }
+    }
+  }
+
+  // Deduplicate by env var name (same env var might be needed by multiple tools)
+  const seen = new Set<string>();
+  return warnings.filter((w) => {
+    if (seen.has(w.envVar.name)) return false;
+    seen.add(w.envVar.name);
+    return true;
+  });
+}
 
 /**
  * Rate limit for Omega chat: 20 requests per minute
@@ -41,6 +124,10 @@ const SendMessageSchema = z.object({
 // Executor service URL
 const EXECUTOR_URL = process.env.TPMJS_EXECUTOR_URL || 'https://executor.tpmjs.com';
 
+// In-memory conversation state for dynamically loaded tools
+// biome-ignore lint/suspicious/noExplicitAny: Tool types from AI SDK are complex
+const conversationStates = new Map<string, { loadedTools: Record<string, any> }>();
+
 /**
  * Search for relevant tools based on user query
  */
@@ -56,6 +143,7 @@ async function searchRelevantTools(
     version: string;
     importUrl: string;
     inputSchema?: unknown;
+    env?: Array<{ name: string; description?: string; required?: boolean }>;
   }>
 > {
   const params = new URLSearchParams({
@@ -88,23 +176,27 @@ async function searchRelevantTools(
     version: tool.package.npmVersion,
     importUrl: `https://esm.sh/${tool.package.npmPackageName}@${tool.package.npmVersion}`,
     inputSchema: tool.inputSchema,
+    env: tool.package.env || [],
   }));
 }
 
 /**
  * Create a dynamic tool wrapper that executes via the sandbox executor
  */
-function createDynamicTool(toolMeta: {
-  toolId: string;
-  packageName: string;
-  name: string;
-  description: string;
-  version: string;
-  importUrl: string;
-  inputSchema?: unknown;
-}) {
+async function createDynamicTool(
+  toolMeta: {
+    toolId: string;
+    packageName: string;
+    name: string;
+    description: string;
+    version: string;
+    importUrl: string;
+    inputSchema?: unknown;
+  },
+  userEnvVars: Record<string, string>
+) {
   // Import tool() dynamically to avoid top-level await
-  const { tool } = require('ai');
+  const { tool } = await import('ai');
 
   return tool({
     description: toolMeta.description,
@@ -128,7 +220,7 @@ function createDynamicTool(toolMeta: {
           version: toolMeta.version,
           importUrl: toolMeta.importUrl,
           params,
-          env: {}, // TODO: Pass user's env vars if needed
+          env: userEnvVars,
         }),
       });
 
@@ -156,6 +248,46 @@ function sanitizeToolName(name: string): string {
     .replace(/-/g, '_')
     .replace(/::/g, '_')
     .replace(/[^a-zA-Z0-9_]/g, '');
+}
+
+/**
+ * Add dynamically found tools to the conversation state
+ */
+async function addToolsToConversation(
+  conversationId: string,
+  toolMetas: Array<{
+    toolId: string;
+    packageName: string;
+    name: string;
+    description: string;
+    version: string;
+    importUrl: string;
+    inputSchema?: unknown;
+  }>,
+  userEnvVars: Record<string, string>
+): Promise<string[]> {
+  if (!conversationStates.has(conversationId)) {
+    conversationStates.set(conversationId, { loadedTools: {} });
+  }
+  // biome-ignore lint/style/noNonNullAssertion: We just ensured it exists
+  const state = conversationStates.get(conversationId)!;
+
+  const addedTools: string[] = [];
+
+  for (const toolMeta of toolMetas) {
+    const sanitizedName = sanitizeToolName(toolMeta.toolId);
+    if (!state.loadedTools[sanitizedName]) {
+      try {
+        state.loadedTools[sanitizedName] = await createDynamicTool(toolMeta, userEnvVars);
+        addedTools.push(sanitizedName);
+        console.log(`✅ Added dynamic tool: ${sanitizedName}`);
+      } catch (error) {
+        console.error(`❌ Failed to create tool wrapper for ${toolMeta.toolId}:`, error);
+      }
+    }
+  }
+
+  return addedTools;
 }
 
 /**
@@ -226,6 +358,10 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
       where: { userId: authResult.userId },
     });
 
+    // Fetch user's environment variables (decrypted) for tool execution
+    const userEnvVars = await getUserEnvVarsDecrypted(authResult.userId);
+    console.log(`🔑 Loaded ${Object.keys(userEnvVars).length} user env vars`);
+
     // Update conversation state to running
     await prisma.omegaConversation.update({
       where: { id: conversationId },
@@ -244,26 +380,44 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
       },
     });
 
-    // 🔍 Search for relevant tools based on user's message
-    console.log(`🔍 Searching for tools matching: "${parsed.data.message}"`);
-    const relevantTools = await searchRelevantTools(parsed.data.message, 15);
-    console.log(`📦 Found ${relevantTools.length} relevant tools`);
+    // Initialize or get conversation state
+    if (!conversationStates.has(conversationId)) {
+      conversationStates.set(conversationId, { loadedTools: {} });
+    }
+    // biome-ignore lint/style/noNonNullAssertion: We just ensured it exists
+    const state = conversationStates.get(conversationId)!;
 
-    // Create dynamic tool wrappers for each found tool
-    // biome-ignore lint/suspicious/noExplicitAny: Dynamic tool types
-    const tools: Record<string, any> = {};
+    // 🔍 Auto-search for relevant tools based on user's message (BM25)
+    console.log(`🔍 Auto-searching for tools matching: "${parsed.data.message}"`);
+    const relevantTools = await searchRelevantTools(parsed.data.message, 10);
+    console.log(`📦 Found ${relevantTools.length} relevant tools via BM25`);
 
-    for (const toolMeta of relevantTools) {
-      const sanitizedName = sanitizeToolName(toolMeta.toolId);
-      try {
-        tools[sanitizedName] = createDynamicTool(toolMeta);
-        console.log(`✅ Loaded tool: ${sanitizedName}`);
-      } catch (error) {
-        console.error(`❌ Failed to create tool wrapper for ${toolMeta.toolId}:`, error);
-      }
+    // Add auto-discovered tools to conversation state
+    const autoAddedTools = await addToolsToConversation(conversationId, relevantTools, userEnvVars);
+    console.log(`✨ Auto-added ${autoAddedTools.length} new tools`);
+
+    // Detect missing required environment variables
+    const missingEnvVars = detectMissingEnvVars(relevantTools, userEnvVars);
+    if (missingEnvVars.length > 0) {
+      console.log(
+        `⚠️ Missing ${missingEnvVars.length} required env vars:`,
+        missingEnvVars.map((w) => w.envVar.name)
+      );
     }
 
-    console.log(`🔧 ${Object.keys(tools).length} tools available for this request`);
+    // Build final tools object: static tools + dynamically loaded tools
+    // biome-ignore lint/suspicious/noExplicitAny: Dynamic tool types
+    const tools: Record<string, any> = {
+      // Static tools - these are the ones users can import into their own agents
+      registrySearchTool,
+      registryExecuteTool,
+      // Dynamically loaded tools from this conversation
+      ...state.loadedTools,
+    };
+
+    console.log(
+      `🔧 ${Object.keys(tools).length} total tools available (2 static + ${Object.keys(state.loadedTools).length} dynamic)`
+    );
 
     // Fetch recent messages for context
     const recentMessages = await prisma.omegaMessage.findMany({
@@ -277,7 +431,12 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
     const messages: ModelMessage[] = [];
 
     // Build tool list for system prompt
-    const toolsList = Object.entries(tools)
+    const staticToolsList = [
+      '- registrySearchTool: Search the TPMJS registry to find AI SDK tools by keyword. Returns toolIds for registryExecuteTool.',
+      '- registryExecuteTool: Execute any tool from the TPMJS registry by toolId. Use registrySearchTool first to find tools.',
+    ].join('\n');
+
+    const dynamicToolsList = Object.entries(state.loadedTools)
       .map(([name, t]) => {
         const tool = t as { description?: string };
         return `- ${name}: ${tool.description || 'No description'}`;
@@ -292,18 +451,32 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
 
     const systemPrompt = `${baseSystemPrompt}
 
-## Available Tools
+## Static Tools (Always Available)
 
-The following tools have been automatically loaded based on the user's request. Use them directly to accomplish the task:
+These tools let you access the entire TPMJS registry of 1M+ tools:
 
-${toolsList || 'No tools matched this query. Try to help the user with general knowledge.'}
+${staticToolsList}
 
-## Instructions
+## Dynamically Loaded Tools
 
-1. If a tool is available that can help, USE IT immediately
-2. Don't describe what tools could do - actually call them
-3. After calling a tool, explain the results to the user
-4. If no tools match, help the user with general knowledge`;
+These tools have been discovered and loaded for this conversation. Call them directly:
+
+${dynamicToolsList || 'No tools loaded yet. Use registrySearchTool to find tools, or they will be auto-loaded based on your requests.'}
+
+## How to Use Tools
+
+1. **To find a tool**: Use registrySearchTool with a keyword (e.g., "weather", "web scraping", "database")
+2. **To execute a found tool**: Use registryExecuteTool with the toolId returned from search
+3. **Direct execution**: If a tool is already loaded above, call it directly by name
+
+## Example Workflow
+
+User: "Get the weather in Tokyo"
+1. Use registrySearchTool to find weather tools
+2. Use registryExecuteTool to execute the found tool
+   OR call a loaded tool directly if available
+
+Remember: Your value is in EXECUTING tools to get real results, not just describing what tools could do.`;
 
     messages.push({ role: 'system', content: systemPrompt });
 
@@ -396,6 +569,11 @@ ${toolsList || 'No tools matched this query. Try to help the user with general k
           controller.enqueue(encoder.encode(message));
         };
 
+        // Emit env var warnings at the start of the stream
+        if (missingEnvVars.length > 0) {
+          sendEvent('env.warning', { missingEnvVars });
+        }
+
         try {
           const { streamText, stepCountIs } = await import('ai');
 
@@ -414,7 +592,7 @@ ${toolsList || 'No tools matched this query. Try to help the user with general k
             model,
             messages,
             tools: Object.keys(tools).length > 0 ? tools : undefined,
-            stopWhen: stepCountIs(5), // Allow up to 5 tool calls
+            stopWhen: stepCountIs(10), // Allow up to 10 tool calls for search + execute patterns
             onChunk: async (chunk) => {
               // Handle tool call (complete tool call with args)
               if (chunk.chunk.type === 'tool-call') {
@@ -464,6 +642,54 @@ ${toolsList || 'No tools matched this query. Try to help the user with general k
                 for (const tr of toolResults) {
                   const isError =
                     tr.output && typeof tr.output === 'object' && 'error' in tr.output;
+
+                  // Check if this is a registrySearchTool result - inject found tools
+                  if (
+                    tr.toolName === 'registrySearchTool' &&
+                    tr.output &&
+                    typeof tr.output === 'object'
+                  ) {
+                    const searchOutput = tr.output as {
+                      tools?: Array<{
+                        toolId: string;
+                        package: string;
+                        name: string;
+                        description: string;
+                      }>;
+                    };
+                    if (searchOutput.tools && Array.isArray(searchOutput.tools)) {
+                      console.log(
+                        `🔍 registrySearchTool found ${searchOutput.tools.length} tools - injecting dynamically`
+                      );
+
+                      // Convert search results to tool metadata format and add to conversation
+                      const toolMetas = searchOutput.tools.map((t) => {
+                        const parts = t.toolId.split('::');
+                        const pkg = t.package || parts[0] || t.toolId;
+                        const toolName = t.name || parts[1] || 'unknown';
+                        return {
+                          toolId: t.toolId,
+                          packageName: pkg,
+                          name: toolName,
+                          description: t.description || `Tool: ${toolName}`,
+                          version: 'latest',
+                          importUrl: `https://esm.sh/${pkg}`,
+                        };
+                      });
+
+                      const newlyAdded = await addToolsToConversation(
+                        conversationId,
+                        toolMetas,
+                        userEnvVars
+                      );
+                      if (newlyAdded.length > 0) {
+                        sendEvent('tools.loaded', {
+                          newTools: newlyAdded,
+                          totalDynamicTools: Object.keys(state.loadedTools).length,
+                        });
+                      }
+                    }
+                  }
 
                   // Build update data for tool run
                   const toolRunUpdateData: Prisma.OmegaToolRunUpdateManyMutationInput = {
@@ -582,9 +808,9 @@ ${toolsList || 'No tools matched this query. Try to help the user with general k
             inputTokens,
             outputTokens,
             toolCallCount: allToolCalls.length,
-            toolsLoaded: Object.keys(tools).length,
-            loadedToolNames: Object.keys(tools),
-            bm25Results: relevantTools.map((t) => ({
+            staticTools: ['registrySearchTool', 'registryExecuteTool'],
+            dynamicToolsLoaded: Object.keys(state.loadedTools),
+            autoDiscoveredTools: relevantTools.map((t) => ({
               toolId: t.toolId,
               name: t.name,
               packageName: t.packageName,

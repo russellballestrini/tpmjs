@@ -2,9 +2,11 @@
 
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { AppHeader } from '~/components/AppHeader';
+import { useSession } from '~/lib/auth-client';
 
 interface SamplePrompt {
   title: string;
@@ -58,11 +60,23 @@ const SAMPLE_PROMPTS: SamplePrompt[] = [
  */
 export default function OmegaLandingPage(): React.ReactElement {
   const router = useRouter();
+  const { data: session, isPending: isSessionLoading } = useSession();
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isAuthenticated = !!session?.user;
+
   const createConversation = useCallback(
     async (initialPrompt?: string) => {
+      if (!isAuthenticated) {
+        // Redirect to sign-in if not authenticated
+        const returnUrl = initialPrompt
+          ? `/omega?prompt=${encodeURIComponent(initialPrompt)}`
+          : '/omega';
+        router.push(`/sign-in?returnTo=${encodeURIComponent(returnUrl)}`);
+        return;
+      }
+
       setIsCreating(true);
       setError(null);
 
@@ -74,7 +88,12 @@ export default function OmegaLandingPage(): React.ReactElement {
 
         if (!response.ok) {
           const data = await response.json();
-          throw new Error(data.error || 'Failed to create conversation');
+          if (response.status === 401) {
+            // Session expired, redirect to sign-in
+            router.push(`/sign-in?returnTo=${encodeURIComponent('/omega')}`);
+            return;
+          }
+          throw new Error(data.error?.message || data.error || 'Failed to create conversation');
         }
 
         const data = await response.json();
@@ -91,16 +110,22 @@ export default function OmegaLandingPage(): React.ReactElement {
         setIsCreating(false);
       }
     },
-    [router]
+    [router, isAuthenticated]
   );
 
-  // Check for auth on mount
+  // Handle prompt query parameter (redirect from sign-in)
   useEffect(() => {
-    // Pre-warm the API by checking auth status
-    fetch('/api/auth/session').catch(() => {
-      // Silently fail - we'll handle auth errors when creating conversation
-    });
-  }, []);
+    if (isAuthenticated && typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const prompt = params.get('prompt');
+      if (prompt) {
+        // Clear the query parameter
+        window.history.replaceState({}, '', '/omega');
+        // Create conversation with the prompt
+        createConversation(prompt);
+      }
+    }
+  }, [isAuthenticated, createConversation]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -122,40 +147,55 @@ export default function OmegaLandingPage(): React.ReactElement {
 
           {/* Start New Conversation */}
           <div className="flex justify-center mb-12">
-            <Button
-              size="lg"
-              onClick={() => createConversation()}
-              disabled={isCreating}
-              className="px-8"
-            >
-              {isCreating ? (
-                <>
-                  <Icon icon="loader" size="sm" className="mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Icon icon="plus" size="sm" className="mr-2" />
-                  Start New Conversation
-                </>
-              )}
-            </Button>
+            {isSessionLoading ? (
+              <Button size="lg" disabled className="px-8">
+                <Icon icon="loader" size="sm" className="mr-2 animate-spin" />
+                Loading...
+              </Button>
+            ) : isAuthenticated ? (
+              <Button
+                size="lg"
+                onClick={() => createConversation()}
+                disabled={isCreating}
+                className="px-8"
+              >
+                {isCreating ? (
+                  <>
+                    <Icon icon="loader" size="sm" className="mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Icon icon="plus" size="sm" className="mr-2" />
+                    Start New Conversation
+                  </>
+                )}
+              </Button>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <Link
+                  href={`/sign-in?returnTo=${encodeURIComponent('/omega')}`}
+                  className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <Icon icon="user" size="sm" className="mr-2" />
+                  Sign In to Start
+                </Link>
+                <p className="text-sm text-foreground-tertiary">Sign in to start using Omega</p>
+              </div>
+            )}
           </div>
 
           {/* Error Message */}
           {error && (
             <div className="text-center mb-8">
               <p className="text-sm text-error">{error}</p>
-              <p className="text-xs text-foreground-tertiary mt-1">
-                Make sure you&apos;re signed in to use Omega
-              </p>
             </div>
           )}
 
           {/* Sample Prompts */}
           <div className="space-y-4">
             <h2 className="text-sm font-medium text-foreground-tertiary text-center mb-6">
-              Or try one of these examples
+              {isAuthenticated ? 'Or try one of these examples' : 'Explore what Omega can do'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {SAMPLE_PROMPTS.map((prompt) => (
@@ -163,7 +203,7 @@ export default function OmegaLandingPage(): React.ReactElement {
                   key={prompt.title}
                   type="button"
                   onClick={() => createConversation(prompt.prompt)}
-                  disabled={isCreating}
+                  disabled={isCreating || isSessionLoading}
                   className="p-4 bg-surface border border-border rounded-lg hover:border-foreground/20 hover:bg-surface-secondary/50 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex items-start gap-3">

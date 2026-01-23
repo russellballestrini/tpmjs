@@ -9,6 +9,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import { AppHeader } from '~/components/AppHeader';
+import { EnvVarWarningBanner } from '~/components/omega/EnvVarWarningBanner';
+
+interface ToolDiscoveryInfo {
+  staticTools?: string[];
+  dynamicToolsLoaded?: string[];
+  autoDiscoveredTools?: Array<{
+    toolId: string;
+    name: string;
+    packageName: string;
+    description: string;
+  }>;
+}
 
 interface Message {
   id: string;
@@ -22,6 +34,8 @@ interface Message {
   inputTokens?: number;
   outputTokens?: number;
   createdAt: string;
+  // Tool discovery info (populated from SSE events, per message)
+  toolDiscovery?: ToolDiscoveryInfo;
 }
 
 interface ToolCall {
@@ -31,6 +45,17 @@ interface ToolCall {
   output?: unknown;
   status: 'pending' | 'running' | 'success' | 'error';
   isError?: boolean;
+}
+
+interface EnvVarWarning {
+  toolId: string;
+  toolName: string;
+  packageName: string;
+  envVar: {
+    name: string;
+    description: string;
+    required: boolean;
+  };
 }
 
 interface Conversation {
@@ -174,15 +199,12 @@ export default function OmegaChatPage(): React.ReactElement {
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
   const [expandedToolCalls, setExpandedToolCalls] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'chat' | 'debug'>('chat');
-  const [lastRunInfo, setLastRunInfo] = useState<{
-    loadedToolNames?: string[];
-    bm25Results?: Array<{
-      toolId: string;
-      name: string;
-      packageName: string;
-      description: string;
-    }>;
-  } | null>(null);
+  // Map of message IDs to their tool discovery info (persisted in frontend state)
+  const [messageToolDiscovery, setMessageToolDiscovery] = useState<Map<string, ToolDiscoveryInfo>>(
+    new Map()
+  );
+  // Environment variable warnings for tools that need API keys
+  const [envWarnings, setEnvWarnings] = useState<EnvVarWarning[]>([]);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -311,6 +333,12 @@ export default function OmegaChatPage(): React.ReactElement {
             const data = JSON.parse(line.slice(6));
 
             switch (eventType) {
+              case 'env.warning':
+                // Set environment variable warnings
+                if (data.missingEnvVars && Array.isArray(data.missingEnvVars)) {
+                  setEnvWarnings(data.missingEnvVars);
+                }
+                break;
               case 'message.delta':
                 setStreamingContent((prev) => prev + data.content);
                 break;
@@ -344,17 +372,39 @@ export default function OmegaChatPage(): React.ReactElement {
                   )
                 );
                 break;
-              case 'run.completed':
-                // Capture tool info for debug view
-                setLastRunInfo({
-                  loadedToolNames: data.loadedToolNames,
-                  bm25Results: data.bm25Results,
-                });
-                // Refresh messages
-                await fetchConversation();
+              case 'run.completed': {
+                // Capture tool info for this message
+                const toolDiscovery: ToolDiscoveryInfo = {
+                  staticTools: data.staticTools,
+                  dynamicToolsLoaded: data.dynamicToolsLoaded,
+                  autoDiscoveredTools: data.autoDiscoveredTools,
+                };
+
+                // Refresh messages then attach tool discovery to the new assistant message
+                const refreshResponse = await fetch(`/api/omega/conversations/${conversationId}`);
+                if (refreshResponse.ok) {
+                  const respData = await refreshResponse.json();
+                  const { messages: messageList, ...conversationData } = respData.data;
+                  setConversation(conversationData);
+                  setMessages(messageList || []);
+
+                  // Find the newest assistant message and associate tool discovery with it
+                  const assistantMessages = (messageList || []).filter(
+                    (m: Message) => m.role === 'ASSISTANT'
+                  );
+                  if (assistantMessages.length > 0) {
+                    const newestAssistant = assistantMessages[assistantMessages.length - 1];
+                    setMessageToolDiscovery((prev) => {
+                      const next = new Map(prev);
+                      next.set(newestAssistant.id, toolDiscovery);
+                      return next;
+                    });
+                  }
+                }
                 setStreamingContent('');
                 setToolCalls([]);
                 break;
+              }
               case 'run.failed':
                 throw new Error(data.error);
             }
@@ -467,6 +517,12 @@ export default function OmegaChatPage(): React.ReactElement {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Link href="/omega/settings">
+                <Button variant="ghost" size="sm">
+                  <Icon icon="key" size="xs" className="mr-2" />
+                  Settings
+                </Button>
+              </Link>
               <Button variant="ghost" size="sm" onClick={startNewConversation}>
                 <Icon icon="plus" size="xs" className="mr-2" />
                 New Chat
@@ -496,80 +552,185 @@ export default function OmegaChatPage(): React.ReactElement {
         {viewMode === 'debug' && (
           <div className="flex-1 overflow-auto p-4 bg-background">
             <div className="max-w-4xl mx-auto space-y-6">
-              {/* BM25 Search Results */}
-              {lastRunInfo?.bm25Results && lastRunInfo.bm25Results.length > 0 && (
+              {/* Header with Copy Button */}
+              <div className="flex items-start justify-between">
                 <div>
                   <h2 className="text-sm font-medium text-foreground mb-2">
-                    BM25 Search Results ({lastRunInfo.bm25Results.length} tools found)
+                    Messages with Tool Discovery ({messages.length} messages)
                   </h2>
-                  <p className="text-xs text-foreground-tertiary mb-3">
-                    Tools discovered from the registry based on the user&apos;s message.
+                  <p className="text-xs text-foreground-tertiary">
+                    Each message shows the tools discovered and loaded during that response.
                   </p>
-                  <div className="bg-surface-secondary border border-border rounded-lg p-4 space-y-2">
-                    {lastRunInfo.bm25Results.map((tool, i) => (
-                      <div key={tool.toolId} className="text-xs font-mono">
-                        <span className="text-foreground-tertiary">{i + 1}.</span>{' '}
-                        <span className="text-primary">{tool.packageName}</span>
-                        <span className="text-foreground-tertiary">::</span>
-                        <span className="text-foreground">{tool.name}</span>
-                        <p className="ml-4 text-foreground-secondary">{tool.description}</p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // Merge tool discovery info into messages for export
+                    const messagesWithTools = messages.map((m) => ({
+                      ...m,
+                      toolDiscovery: messageToolDiscovery.get(m.id) || null,
+                    }));
+                    navigator.clipboard.writeText(JSON.stringify(messagesWithTools, null, 2));
+                  }}
+                >
+                  <Icon icon="copy" size="xs" className="mr-2" />
+                  Copy All JSON
+                </Button>
+              </div>
 
-              {/* Loaded Tool Names */}
-              {lastRunInfo?.loadedToolNames && lastRunInfo.loadedToolNames.length > 0 && (
-                <div>
-                  <h2 className="text-sm font-medium text-foreground mb-2">
-                    Loaded Tools ({lastRunInfo.loadedToolNames.length} tools)
-                  </h2>
-                  <p className="text-xs text-foreground-tertiary mb-3">
-                    Sanitized tool names available to the AI for this request.
-                  </p>
-                  <div className="bg-surface-secondary border border-border rounded-lg p-4">
-                    <div className="flex flex-wrap gap-2">
-                      {lastRunInfo.loadedToolNames.map((name) => (
-                        <span
-                          key={name}
-                          className="px-2 py-1 bg-primary/10 text-primary text-xs font-mono rounded"
-                        >
-                          {name}
+              {/* Per-Message View */}
+              {messages.map((message, index) => {
+                const discovery = messageToolDiscovery.get(message.id);
+                return (
+                  <div
+                    key={message.id}
+                    className="bg-surface-secondary border border-border rounded-lg overflow-hidden"
+                  >
+                    {/* Message Header */}
+                    <div className="px-4 py-3 border-b border-border/50 bg-surface/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-tertiary">#{index + 1}</span>
+                          <Badge
+                            variant={
+                              message.role === 'USER'
+                                ? 'secondary'
+                                : message.role === 'ASSISTANT'
+                                  ? 'default'
+                                  : 'outline'
+                            }
+                            size="sm"
+                          >
+                            {message.role}
+                          </Badge>
+                          <span className="text-xs text-foreground-tertiary font-mono">
+                            {message.id.slice(0, 8)}...
+                          </span>
+                        </div>
+                        <span className="text-xs text-foreground-tertiary">
+                          {new Date(message.createdAt).toLocaleTimeString()}
                         </span>
-                      ))}
+                      </div>
+                    </div>
+
+                    {/* Message Content */}
+                    <div className="p-4 space-y-4">
+                      {/* Content */}
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-foreground-tertiary mb-2">
+                          Content
+                        </div>
+                        <pre className="text-xs font-mono bg-background/50 rounded p-3 overflow-x-auto whitespace-pre-wrap max-h-48 overflow-y-auto">
+                          {message.content || '(empty)'}
+                        </pre>
+                      </div>
+
+                      {/* Tool Discovery (only for assistant messages) */}
+                      {message.role === 'ASSISTANT' && discovery && (
+                        <div className="space-y-3 pt-3 border-t border-border/50">
+                          <div className="text-[10px] uppercase tracking-wider text-foreground-tertiary">
+                            Tool Discovery for this Response
+                          </div>
+
+                          {/* Static Tools */}
+                          {discovery.staticTools && discovery.staticTools.length > 0 && (
+                            <div>
+                              <div className="text-xs text-foreground-secondary mb-1">
+                                Static Tools ({discovery.staticTools.length})
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {discovery.staticTools.map((name) => (
+                                  <span
+                                    key={name}
+                                    className="px-2 py-0.5 bg-blue-500/10 text-blue-500 text-[10px] font-mono rounded"
+                                  >
+                                    {name}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Auto-Discovered Tools */}
+                          {discovery.autoDiscoveredTools &&
+                            discovery.autoDiscoveredTools.length > 0 && (
+                              <div>
+                                <div className="text-xs text-foreground-secondary mb-1">
+                                  Auto-Discovered via BM25 ({discovery.autoDiscoveredTools.length})
+                                </div>
+                                <div className="space-y-1">
+                                  {discovery.autoDiscoveredTools.map((tool) => (
+                                    <div
+                                      key={tool.toolId}
+                                      className="text-[10px] font-mono bg-background/50 rounded px-2 py-1"
+                                    >
+                                      <span className="text-primary">{tool.packageName}</span>
+                                      <span className="text-foreground-tertiary">::</span>
+                                      <span className="text-foreground">{tool.name}</span>
+                                      <span className="text-foreground-tertiary ml-2">
+                                        - {tool.description?.slice(0, 60)}
+                                        {(tool.description?.length || 0) > 60 ? '...' : ''}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                          {/* Dynamically Loaded Tools */}
+                          {discovery.dynamicToolsLoaded &&
+                            discovery.dynamicToolsLoaded.length > 0 && (
+                              <div>
+                                <div className="text-xs text-foreground-secondary mb-1">
+                                  Dynamic Tools Loaded ({discovery.dynamicToolsLoaded.length})
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {discovery.dynamicToolsLoaded.map((name) => (
+                                    <span
+                                      key={name}
+                                      className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-mono rounded"
+                                    >
+                                      {name}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                        </div>
+                      )}
+
+                      {/* Tool Calls */}
+                      {message.toolCalls && message.toolCalls.length > 0 && (
+                        <div className="pt-3 border-t border-border/50">
+                          <div className="text-[10px] uppercase tracking-wider text-foreground-tertiary mb-2">
+                            Tool Calls ({message.toolCalls.length})
+                          </div>
+                          <pre className="text-xs font-mono bg-background/50 rounded p-3 overflow-x-auto whitespace-pre-wrap max-h-48 overflow-y-auto">
+                            {JSON.stringify(message.toolCalls, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+
+                      {/* Token Usage */}
+                      {(message.inputTokens || message.outputTokens) && (
+                        <div className="text-[10px] text-foreground-tertiary font-mono pt-2 border-t border-border/50">
+                          {message.inputTokens && <span>Input: {message.inputTokens}</span>}
+                          {message.inputTokens && message.outputTokens && <span> | </span>}
+                          {message.outputTokens && <span>Output: {message.outputTokens}</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
+                );
+              })}
+
+              {/* Empty state */}
+              {messages.length === 0 && (
+                <div className="text-center py-8 text-foreground-tertiary">
+                  No messages yet. Start a conversation to see debug data.
                 </div>
               )}
-
-              {/* Messages Array */}
-              <div>
-                <div className="mb-4 flex items-start justify-between">
-                  <div>
-                    <h2 className="text-sm font-medium text-foreground mb-2">
-                      Raw Messages Array ({messages.length} messages)
-                    </h2>
-                    <p className="text-xs text-foreground-tertiary">
-                      Messages are ordered by createdAt. Each message includes role, content, and
-                      tool call data.
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(messages, null, 2));
-                    }}
-                  >
-                    <Icon icon="copy" size="xs" className="mr-2" />
-                    Copy JSON
-                  </Button>
-                </div>
-                <pre className="text-xs font-mono bg-surface-secondary border border-border rounded-lg p-4 overflow-x-auto whitespace-pre-wrap">
-                  {JSON.stringify(messages, null, 2)}
-                </pre>
-              </div>
             </div>
           </div>
         )}
@@ -692,6 +853,13 @@ export default function OmegaChatPage(): React.ReactElement {
                 </div>
               )}
             </div>
+
+            {/* Environment Variable Warnings */}
+            {envWarnings.length > 0 && (
+              <div className="max-w-4xl mx-auto">
+                <EnvVarWarningBanner warnings={envWarnings} onDismiss={() => setEnvWarnings([])} />
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (
