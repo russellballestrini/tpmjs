@@ -33,8 +33,6 @@
     "@tpmjs/env": "workspace:*",
     "@tpmjs/npm-client": "workspace:*",
     "@tpmjs/package-executor": "workspace:*",
-    "@tpmjs/registry-execute": "workspace:*",
-    "@tpmjs/registry-search": "workspace:*",
     "@tpmjs/types": "workspace:*",
     "@tpmjs/ui": "workspace:*",
     "@tpmjs/utils": "workspace:*",

@@ -266,12 +266,6 @@ importers:
       '@tpmjs/package-executor':
         specifier: workspace:*
         version: link:../../packages/package-executor
-      '@tpmjs/registry-execute':
-        specifier: workspace:*
-        version: link:../../packages/tools/registryExecute
-      '@tpmjs/registry-search':
-        specifier: workspace:*
-        version: link:../../packages/tools/registrySearch
       '@tpmjs/types':
         specifier: workspace:*
         version: link:../../packages/types

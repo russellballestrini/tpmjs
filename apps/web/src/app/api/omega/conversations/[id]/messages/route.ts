@@ -4,15 +4,13 @@
  * POST: Send a message and stream the AI response via SSE
  *
  * This endpoint implements the core Omega chat functionality with:
- * - Registry search tool for discovering tools
- * - Tool executor for running discovered tools
+ * - Automatic BM25 search to find relevant tools based on user message
+ * - Dynamic tool loading - top 15 matching tools become available to the AI
  * - SSE streaming for real-time updates
  */
 
 import { Prisma, prisma } from '@tpmjs/db';
-import { registryExecuteTool } from '@tpmjs/registry-execute';
-import { registrySearchTool } from '@tpmjs/registry-search';
-import type { ModelMessage } from 'ai';
+import { jsonSchema, type ModelMessage } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
@@ -39,6 +37,126 @@ type RouteContext = {
 const SendMessageSchema = z.object({
   message: z.string().min(1).max(10000),
 });
+
+// Executor service URL
+const EXECUTOR_URL = process.env.TPMJS_EXECUTOR_URL || 'https://executor.tpmjs.com';
+
+/**
+ * Search for relevant tools based on user query
+ */
+async function searchRelevantTools(
+  query: string,
+  limit = 15
+): Promise<
+  Array<{
+    toolId: string;
+    packageName: string;
+    name: string;
+    description: string;
+    version: string;
+    importUrl: string;
+    inputSchema?: unknown;
+  }>
+> {
+  const params = new URLSearchParams({
+    q: query,
+    limit: String(limit),
+  });
+
+  // Use internal API (same server)
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
+
+  const response = await fetch(`${baseUrl}/api/tools/search?${params}`);
+
+  if (!response.ok) {
+    console.error(`Tool search failed: ${response.status} ${response.statusText}`);
+    return [];
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: API response types vary
+  const data = (await response.json()) as any;
+  const toolsArray = data.results?.tools || [];
+
+  // biome-ignore lint/suspicious/noExplicitAny: API response types vary
+  return toolsArray.map((tool: any) => ({
+    toolId: `${tool.package.npmPackageName}::${tool.name}`,
+    packageName: tool.package.npmPackageName,
+    name: tool.name,
+    description: tool.description || `Tool: ${tool.name}`,
+    version: tool.package.npmVersion,
+    importUrl: `https://esm.sh/${tool.package.npmPackageName}@${tool.package.npmVersion}`,
+    inputSchema: tool.inputSchema,
+  }));
+}
+
+/**
+ * Create a dynamic tool wrapper that executes via the sandbox executor
+ */
+function createDynamicTool(toolMeta: {
+  toolId: string;
+  packageName: string;
+  name: string;
+  description: string;
+  version: string;
+  importUrl: string;
+  inputSchema?: unknown;
+}) {
+  // Import tool() dynamically to avoid top-level await
+  const { tool } = require('ai');
+
+  return tool({
+    description: toolMeta.description,
+    inputSchema: toolMeta.inputSchema
+      ? jsonSchema(toolMeta.inputSchema as Parameters<typeof jsonSchema>[0])
+      : jsonSchema({
+          type: 'object',
+          properties: {},
+          additionalProperties: true,
+        }),
+    // biome-ignore lint/suspicious/noExplicitAny: Dynamic tool params
+    execute: async (params: any) => {
+      console.log(`🚀 Executing ${toolMeta.packageName}/${toolMeta.name} with params:`, params);
+
+      const response = await fetch(`${EXECUTOR_URL}/execute-tool`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          packageName: toolMeta.packageName,
+          name: toolMeta.name,
+          version: toolMeta.version,
+          importUrl: toolMeta.importUrl,
+          params,
+          env: {}, // TODO: Pass user's env vars if needed
+        }),
+      });
+
+      // biome-ignore lint/suspicious/noExplicitAny: API response types vary
+      const result = (await response.json()) as any;
+
+      if (!result.success) {
+        console.error(`❌ Tool execution failed: ${result.error}`);
+        throw new Error(result.error || 'Tool execution failed');
+      }
+
+      console.log(`✅ Tool executed in ${result.executionTimeMs}ms`);
+      return result.output;
+    },
+  });
+}
+
+/**
+ * Sanitize tool name to be a valid JS identifier
+ */
+function sanitizeToolName(name: string): string {
+  return name
+    .replace(/@/g, '')
+    .replace(/\//g, '_')
+    .replace(/-/g, '_')
+    .replace(/::/g, '_')
+    .replace(/[^a-zA-Z0-9_]/g, '');
+}
 
 /**
  * POST /api/omega/conversations/[id]/messages
@@ -126,6 +244,27 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
       },
     });
 
+    // 🔍 Search for relevant tools based on user's message
+    console.log(`🔍 Searching for tools matching: "${parsed.data.message}"`);
+    const relevantTools = await searchRelevantTools(parsed.data.message, 15);
+    console.log(`📦 Found ${relevantTools.length} relevant tools`);
+
+    // Create dynamic tool wrappers for each found tool
+    // biome-ignore lint/suspicious/noExplicitAny: Dynamic tool types
+    const tools: Record<string, any> = {};
+
+    for (const toolMeta of relevantTools) {
+      const sanitizedName = sanitizeToolName(toolMeta.toolId);
+      try {
+        tools[sanitizedName] = createDynamicTool(toolMeta);
+        console.log(`✅ Loaded tool: ${sanitizedName}`);
+      } catch (error) {
+        console.error(`❌ Failed to create tool wrapper for ${toolMeta.toolId}:`, error);
+      }
+    }
+
+    console.log(`🔧 ${Object.keys(tools).length} tools available for this request`);
+
     // Fetch recent messages for context
     const recentMessages = await prisma.omegaMessage.findMany({
       where: { conversationId },
@@ -137,11 +276,35 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
     // Build AI SDK messages
     const messages: ModelMessage[] = [];
 
-    // Add system prompt
-    const systemPrompt = buildSystemPrompt({
+    // Build tool list for system prompt
+    const toolsList = Object.entries(tools)
+      .map(([name, t]) => {
+        const tool = t as { description?: string };
+        return `- ${name}: ${tool.description || 'No description'}`;
+      })
+      .join('\n');
+
+    // Add system prompt with available tools
+    const baseSystemPrompt = buildSystemPrompt({
       customSystemPrompt: userSettings?.customSystemPrompt,
       pinnedToolIds: userSettings?.pinnedToolIds || [],
     });
+
+    const systemPrompt = `${baseSystemPrompt}
+
+## Available Tools
+
+The following tools have been automatically loaded based on the user's request. Use them directly to accomplish the task:
+
+${toolsList || 'No tools matched this query. Try to help the user with general knowledge.'}
+
+## Instructions
+
+1. If a tool is available that can help, USE IT immediately
+2. Don't describe what tools could do - actually call them
+3. After calling a tool, explain the results to the user
+4. If no tools match, help the user with general knowledge`;
+
     messages.push({ role: 'system', content: systemPrompt });
 
     // Add conversation history
@@ -204,12 +367,6 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
     // Add new user message
     messages.push({ role: 'user', content: parsed.data.message });
 
-    // Build Omega tools using published TPMJS packages
-    const tools = {
-      registrySearch: registrySearchTool,
-      registryExecute: registryExecuteTool,
-    };
-
     // Get the provider model (using OpenAI by default)
     const { createOpenAI } = await import('@ai-sdk/openai');
     const apiKey = process.env.OPENAI_API_KEY;
@@ -253,40 +410,34 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
           let inputTokens = 0;
           let outputTokens = 0;
 
-          // Stream the response with up to 10 tool call iterations
-          const result = await streamText({
+          const result = streamText({
             model,
             messages,
-            tools,
-            stopWhen: stepCountIs(10),
-            onChunk: async ({ chunk }) => {
-              if (chunk.type === 'tool-call') {
-                const input = 'args' in chunk ? chunk.args : chunk.input;
-
-                console.log('[Omega] Tool call:', {
-                  toolName: chunk.toolName,
-                  toolCallId: chunk.toolCallId,
-                });
-
-                toolCallsMap.set(chunk.toolCallId, {
-                  toolCallId: chunk.toolCallId,
-                  toolName: chunk.toolName,
-                  args: input,
-                });
+            tools: Object.keys(tools).length > 0 ? tools : undefined,
+            stopWhen: stepCountIs(5), // Allow up to 5 tool calls
+            onChunk: async (chunk) => {
+              // Handle tool call (complete tool call with args)
+              if (chunk.chunk.type === 'tool-call') {
+                const input =
+                  'input' in chunk.chunk
+                    ? chunk.chunk.input
+                    : 'args' in chunk.chunk
+                      ? (chunk.chunk as { args: unknown }).args
+                      : {};
 
                 // Create tool run record
                 await prisma.omegaToolRun.create({
                   data: {
                     conversationId,
-                    toolName: chunk.toolName,
+                    toolName: chunk.chunk.toolName,
                     input: input as Prisma.InputJsonValue,
                     status: 'running',
                   },
                 });
 
                 sendEvent('run.step.tool.started', {
-                  toolCallId: chunk.toolCallId,
-                  toolName: chunk.toolName,
+                  toolCallId: chunk.chunk.toolCallId,
+                  toolName: chunk.chunk.toolName,
                   input,
                 });
               }
@@ -404,37 +555,48 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
             });
           }
 
-          // Update conversation
-          const updateData: Prisma.OmegaConversationUpdateInput = {
-            executionState: 'idle',
-            inputTokensTotal: { increment: inputTokens },
-            outputTokensTotal: { increment: outputTokens },
-            updatedAt: new Date(),
-          };
-
-          // Auto-generate title from first message if not set
-          if (conversation.title === null) {
-            updateData.title = parsed.data.message.slice(0, 100);
-          }
-
+          // Update conversation token totals
           await prisma.omegaConversation.update({
             where: { id: conversationId },
-            data: updateData,
+            data: {
+              executionState: 'idle',
+              inputTokensTotal: { increment: inputTokens },
+              outputTokensTotal: { increment: outputTokens },
+            },
           });
 
-          const executionTimeMs = Date.now() - startTime;
+          // Update title if this is the first message pair
+          const messageCount = await prisma.omegaMessage.count({ where: { conversationId } });
+          if (messageCount <= 3 && !conversation.title) {
+            // Use first 50 chars of user message as title
+            const title =
+              parsed.data.message.slice(0, 50) + (parsed.data.message.length > 50 ? '...' : '');
+            await prisma.omegaConversation.update({
+              where: { id: conversationId },
+              data: { title },
+            });
+          }
 
           sendEvent('run.completed', {
             messageId: assistantMessage.id,
-            conversationId,
             inputTokens,
             outputTokens,
-            executionTimeMs,
+            toolCallCount: allToolCalls.length,
+            toolsLoaded: Object.keys(tools).length,
+            loadedToolNames: Object.keys(tools),
+            bm25Results: relevantTools.map((t) => ({
+              toolId: t.toolId,
+              name: t.name,
+              packageName: t.packageName,
+              description: t.description,
+            })),
           });
-        } catch (error) {
-          console.error('[Omega] Stream error:', error);
 
-          // Update conversation state
+          controller.close();
+        } catch (error) {
+          console.error('Stream error:', error);
+
+          // Update conversation state on error
           await prisma.omegaConversation.update({
             where: { id: conversationId },
             data: { executionState: 'idle' },
@@ -443,13 +605,12 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
           sendEvent('run.failed', {
             error: error instanceof Error ? error.message : 'Unknown error',
           });
-        } finally {
           controller.close();
         }
       },
     });
 
-    return new NextResponse(stream, {
+    return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -457,7 +618,7 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
       },
     });
   } catch (error) {
-    console.error('[Omega] Failed to process message:', error);
+    console.error('Message handler error:', error);
 
     // Reset conversation state
     await prisma.omegaConversation.update({
@@ -466,10 +627,7 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
     });
 
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to process message',
-      },
+      { success: false, error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

@@ -7,7 +7,6 @@ import { Textarea } from '@tpmjs/ui/Textarea/Textarea';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Virtuoso, type VirtuosoHandle } from 'react-virtuoso';
 import { Streamdown } from 'streamdown';
 import { AppHeader } from '~/components/AppHeader';
 
@@ -159,6 +158,7 @@ function ToolCallCard({
 /**
  * Omega Chat Page
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex chat page with multiple UI states and SSE handling
 export default function OmegaChatPage(): React.ReactElement {
   const params = useParams();
   const router = useRouter();
@@ -174,11 +174,17 @@ export default function OmegaChatPage(): React.ReactElement {
   const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
   const [expandedToolCalls, setExpandedToolCalls] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'chat' | 'debug'>('chat');
+  const [lastRunInfo, setLastRunInfo] = useState<{
+    loadedToolNames?: string[];
+    bm25Results?: Array<{
+      toolId: string;
+      name: string;
+      packageName: string;
+      description: string;
+    }>;
+  } | null>(null);
 
-  // Track first item index for prepending (Virtuoso pattern)
-  const [firstItemIndex, setFirstItemIndex] = useState(10000);
-
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const toggleToolCall = (toolCallId: string) => {
@@ -214,7 +220,6 @@ export default function OmegaChatPage(): React.ReactElement {
       const { messages: messageList, ...conversationData } = data.data;
       setConversation(conversationData);
       setMessages(messageList || []);
-      setFirstItemIndex(10000);
     } catch (err) {
       console.error('Failed to fetch conversation:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch conversation');
@@ -226,6 +231,14 @@ export default function OmegaChatPage(): React.ReactElement {
   useEffect(() => {
     fetchConversation();
   }, [fetchConversation]);
+
+  // Auto-scroll to bottom when messages change or streaming
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We intentionally trigger scroll when messages/streamingContent change
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages, streamingContent]);
 
   // Check for initial prompt from landing page
   // biome-ignore lint/correctness/useExhaustiveDependencies: Only run on mount and when messages load
@@ -332,6 +345,11 @@ export default function OmegaChatPage(): React.ReactElement {
                 );
                 break;
               case 'run.completed':
+                // Capture tool info for debug view
+                setLastRunInfo({
+                  loadedToolNames: data.loadedToolNames,
+                  bm25Results: data.bm25Results,
+                });
                 // Refresh messages
                 await fetchConversation();
                 setStreamingContent('');
@@ -477,31 +495,81 @@ export default function OmegaChatPage(): React.ReactElement {
         {/* Debug JSON View */}
         {viewMode === 'debug' && (
           <div className="flex-1 overflow-auto p-4 bg-background">
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-4 flex items-start justify-between">
+            <div className="max-w-4xl mx-auto space-y-6">
+              {/* BM25 Search Results */}
+              {lastRunInfo?.bm25Results && lastRunInfo.bm25Results.length > 0 && (
                 <div>
                   <h2 className="text-sm font-medium text-foreground mb-2">
-                    Raw Messages Array ({messages.length} messages)
+                    BM25 Search Results ({lastRunInfo.bm25Results.length} tools found)
                   </h2>
-                  <p className="text-xs text-foreground-tertiary">
-                    Messages are ordered by createdAt. Each message includes role, content, and tool
-                    call data.
+                  <p className="text-xs text-foreground-tertiary mb-3">
+                    Tools discovered from the registry based on the user&apos;s message.
                   </p>
+                  <div className="bg-surface-secondary border border-border rounded-lg p-4 space-y-2">
+                    {lastRunInfo.bm25Results.map((tool, i) => (
+                      <div key={tool.toolId} className="text-xs font-mono">
+                        <span className="text-foreground-tertiary">{i + 1}.</span>{' '}
+                        <span className="text-primary">{tool.packageName}</span>
+                        <span className="text-foreground-tertiary">::</span>
+                        <span className="text-foreground">{tool.name}</span>
+                        <p className="ml-4 text-foreground-secondary">{tool.description}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(JSON.stringify(messages, null, 2));
-                  }}
-                >
-                  <Icon icon="copy" size="xs" className="mr-2" />
-                  Copy JSON
-                </Button>
+              )}
+
+              {/* Loaded Tool Names */}
+              {lastRunInfo?.loadedToolNames && lastRunInfo.loadedToolNames.length > 0 && (
+                <div>
+                  <h2 className="text-sm font-medium text-foreground mb-2">
+                    Loaded Tools ({lastRunInfo.loadedToolNames.length} tools)
+                  </h2>
+                  <p className="text-xs text-foreground-tertiary mb-3">
+                    Sanitized tool names available to the AI for this request.
+                  </p>
+                  <div className="bg-surface-secondary border border-border rounded-lg p-4">
+                    <div className="flex flex-wrap gap-2">
+                      {lastRunInfo.loadedToolNames.map((name) => (
+                        <span
+                          key={name}
+                          className="px-2 py-1 bg-primary/10 text-primary text-xs font-mono rounded"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Messages Array */}
+              <div>
+                <div className="mb-4 flex items-start justify-between">
+                  <div>
+                    <h2 className="text-sm font-medium text-foreground mb-2">
+                      Raw Messages Array ({messages.length} messages)
+                    </h2>
+                    <p className="text-xs text-foreground-tertiary">
+                      Messages are ordered by createdAt. Each message includes role, content, and
+                      tool call data.
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(messages, null, 2));
+                    }}
+                  >
+                    <Icon icon="copy" size="xs" className="mr-2" />
+                    Copy JSON
+                  </Button>
+                </div>
+                <pre className="text-xs font-mono bg-surface-secondary border border-border rounded-lg p-4 overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(messages, null, 2)}
+                </pre>
               </div>
-              <pre className="text-xs font-mono bg-surface-secondary border border-border rounded-lg p-4 overflow-x-auto whitespace-pre-wrap">
-                {JSON.stringify(messages, null, 2)}
-              </pre>
             </div>
           </div>
         )}
@@ -527,103 +595,101 @@ export default function OmegaChatPage(): React.ReactElement {
                   </div>
                 </div>
               ) : (
-                <Virtuoso
-                  ref={virtuosoRef}
-                  className="h-full"
-                  data={messages}
-                  firstItemIndex={firstItemIndex}
-                  initialTopMostItemIndex={messages.length - 1}
-                  followOutput="smooth"
-                  components={{
-                    Footer: () => (
-                      <div className="px-4 pb-4 space-y-4 max-w-4xl mx-auto">
-                        {/* Live tool calls during streaming */}
-                        {toolCalls.length > 0 && (
-                          <div className="space-y-2">
-                            {toolCalls.map((tc) => (
-                              <div key={tc.toolCallId} className="flex justify-start">
-                                <div className="max-w-[80%]">
-                                  <ToolCallCard
-                                    toolCall={tc}
-                                    isExpanded={expandedToolCalls.has(tc.toolCallId)}
-                                    onToggle={() => toggleToolCall(tc.toolCallId)}
-                                  />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {streamingContent && (
-                          <div className="flex justify-start">
-                            <div className="max-w-[80%] rounded-lg p-4 bg-surface-secondary">
-                              <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
-                                <Streamdown>{streamingContent}</Streamdown>
-                              </div>
-                              <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-1" />
+                <div ref={messagesContainerRef} className="h-full overflow-y-auto">
+                  <div className="max-w-4xl mx-auto">
+                    {/* Messages */}
+                    {messages.map((message) => (
+                      <div key={message.id} className="px-4 py-2">
+                        {/* USER message */}
+                        {message.role === 'USER' && (
+                          <div className="flex justify-end">
+                            <div className="max-w-[80%] rounded-lg p-4 bg-primary text-primary-foreground">
+                              <div className="text-sm whitespace-pre-wrap">{message.content}</div>
                             </div>
                           </div>
                         )}
 
-                        {isSending && !streamingContent && toolCalls.length === 0 && (
+                        {/* ASSISTANT message */}
+                        {message.role === 'ASSISTANT' && message.content && (
                           <div className="flex justify-start">
-                            <div className="rounded-lg p-4 bg-surface-secondary">
-                              <div className="flex items-center gap-2 text-foreground-secondary">
-                                <Icon icon="loader" size="sm" className="animate-spin" />
-                                <span className="text-sm">Omega is thinking...</span>
+                            <div className="max-w-[80%] rounded-lg p-4 bg-surface-secondary">
+                              <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
+                                <Streamdown>{message.content}</Streamdown>
                               </div>
+                              {/* Token usage for debugging */}
+                              {(message.inputTokens || message.outputTokens) && (
+                                <div className="mt-2 pt-2 border-t border-border/50 text-[10px] text-foreground-tertiary font-mono">
+                                  {message.inputTokens && <span>In: {message.inputTokens}</span>}
+                                  {message.inputTokens && message.outputTokens && <span> | </span>}
+                                  {message.outputTokens && <span>Out: {message.outputTokens}</span>}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* TOOL message - show as collapsed tool result */}
+                        {message.role === 'TOOL' && (
+                          <div className="flex justify-start">
+                            <div className="max-w-[80%]">
+                              <div className="text-xs text-foreground-tertiary mb-1">
+                                Tool Results
+                              </div>
+                              <pre className="text-xs font-mono bg-surface-secondary border border-border rounded p-2 overflow-x-auto max-h-32 overflow-y-auto">
+                                {message.content}
+                              </pre>
                             </div>
                           </div>
                         )}
                       </div>
-                    ),
-                  }}
-                  itemContent={(_index, message) => (
-                    <div className="px-4 py-2 max-w-4xl mx-auto">
-                      {/* USER message */}
-                      {message.role === 'USER' && (
-                        <div className="flex justify-end">
-                          <div className="max-w-[80%] rounded-lg p-4 bg-primary text-primary-foreground">
-                            <div className="text-sm whitespace-pre-wrap">{message.content}</div>
-                          </div>
-                        </div>
-                      )}
+                    ))}
 
-                      {/* ASSISTANT message */}
-                      {message.role === 'ASSISTANT' && message.content && (
+                    {/* Live tool calls during streaming */}
+                    {toolCalls.length > 0 && (
+                      <div className="px-4 pb-4 space-y-2">
+                        {toolCalls.map((tc) => (
+                          <div key={tc.toolCallId} className="flex justify-start">
+                            <div className="max-w-[80%]">
+                              <ToolCallCard
+                                toolCall={tc}
+                                isExpanded={expandedToolCalls.has(tc.toolCallId)}
+                                onToggle={() => toggleToolCall(tc.toolCallId)}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Streaming content */}
+                    {streamingContent && (
+                      <div className="px-4 pb-4">
                         <div className="flex justify-start">
                           <div className="max-w-[80%] rounded-lg p-4 bg-surface-secondary">
                             <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
-                              <Streamdown>{message.content}</Streamdown>
+                              <Streamdown>{streamingContent}</Streamdown>
                             </div>
-                            {/* Token usage for debugging */}
-                            {(message.inputTokens || message.outputTokens) && (
-                              <div className="mt-2 pt-2 border-t border-border/50 text-[10px] text-foreground-tertiary font-mono">
-                                {message.inputTokens && <span>In: {message.inputTokens}</span>}
-                                {message.inputTokens && message.outputTokens && <span> | </span>}
-                                {message.outputTokens && <span>Out: {message.outputTokens}</span>}
-                              </div>
-                            )}
+                            <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-1" />
                           </div>
                         </div>
-                      )}
+                      </div>
+                    )}
 
-                      {/* TOOL message - show as collapsed tool result */}
-                      {message.role === 'TOOL' && (
+                    {/* Thinking indicator */}
+                    {isSending && !streamingContent && toolCalls.length === 0 && (
+                      <div className="px-4 pb-4">
                         <div className="flex justify-start">
-                          <div className="max-w-[80%]">
-                            <div className="text-xs text-foreground-tertiary mb-1">
-                              Tool Results
+                          <div className="rounded-lg p-4 bg-surface-secondary">
+                            <div className="flex items-center gap-2 text-foreground-secondary">
+                              <Icon icon="loader" size="sm" className="animate-spin" />
+                              <span className="text-sm">Omega is thinking...</span>
                             </div>
-                            <pre className="text-xs font-mono bg-surface-secondary border border-border rounded p-2 overflow-x-auto max-h-32 overflow-y-auto">
-                              {message.content}
-                            </pre>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  )}
-                />
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
