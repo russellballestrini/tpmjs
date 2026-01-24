@@ -10,23 +10,9 @@
  */
 
 import { Prisma, prisma } from '@tpmjs/db';
+import { registryExecuteTool } from '@tpmjs/registry-execute';
+import { registrySearchTool } from '@tpmjs/registry-search';
 import { jsonSchema, wrapLanguageModel, type ModelMessage } from 'ai';
-
-// Registry tools - lazy loaded to avoid module resolution issues in serverless
-let _registryExecuteTool: typeof import('@tpmjs/registry-execute').registryExecuteTool | null = null;
-let _registrySearchTool: typeof import('@tpmjs/registry-search').registrySearchTool | null = null;
-
-async function getRegistryTools() {
-  if (!_registryExecuteTool) {
-    const { registryExecuteTool } = await import('@tpmjs/registry-execute');
-    _registryExecuteTool = registryExecuteTool;
-  }
-  if (!_registrySearchTool) {
-    const { registrySearchTool } = await import('@tpmjs/registry-search');
-    _registrySearchTool = registrySearchTool;
-  }
-  return { registryExecuteTool: _registryExecuteTool, registrySearchTool: _registrySearchTool };
-}
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
@@ -430,9 +416,6 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
         missingEnvVars.map((w) => w.envVar.name)
       );
     }
-
-    // Load registry tools (lazy loaded to avoid module issues in serverless)
-    const { registrySearchTool, registryExecuteTool } = await getRegistryTools();
 
     // Build final tools object: static tools + dynamically loaded tools
     // biome-ignore lint/suspicious/noExplicitAny: Dynamic tool types
