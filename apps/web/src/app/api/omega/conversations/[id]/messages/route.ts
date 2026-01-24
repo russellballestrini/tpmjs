@@ -13,7 +13,6 @@ import { Prisma, prisma } from '@tpmjs/db';
 import { registryExecuteTool } from '@tpmjs/registry-execute';
 import { registrySearchTool } from '@tpmjs/registry-search';
 import { jsonSchema, wrapLanguageModel, type ModelMessage } from 'ai';
-import { devToolsMiddleware } from '@ai-sdk/devtools';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
@@ -21,10 +20,16 @@ import { decryptApiKey } from '~/lib/crypto/api-keys';
 import { buildSystemPrompt } from '~/lib/omega/system-prompt';
 import { checkRateLimit, type RateLimitConfig } from '~/lib/rate-limit';
 
-// Initialize devtools middleware once at module level (only used in development)
-const devtools = process.env.NODE_ENV === 'development' ? devToolsMiddleware() : null;
-if (devtools) {
-  console.log('[Omega] AI SDK DevTools middleware initialized');
+// Devtools middleware - lazy loaded only in development
+let devtools: ReturnType<typeof import('@ai-sdk/devtools').devToolsMiddleware> | null = null;
+async function getDevtools() {
+  if (process.env.NODE_ENV !== 'development') return null;
+  if (!devtools) {
+    const { devToolsMiddleware } = await import('@ai-sdk/devtools');
+    devtools = devToolsMiddleware();
+    console.log('[Omega] AI SDK DevTools middleware initialized');
+  }
+  return devtools;
 }
 
 /**
@@ -566,11 +571,12 @@ Remember: Your value is in EXECUTING tools to get real results, not just describ
     const baseModel = openai('gpt-4.1-mini');
 
     // Wrap with devtools middleware in development
-    const model = devtools
-      ? wrapLanguageModel({ model: baseModel, middleware: devtools })
+    const devtoolsMiddleware = await getDevtools();
+    const model = devtoolsMiddleware
+      ? wrapLanguageModel({ model: baseModel, middleware: devtoolsMiddleware })
       : baseModel;
 
-    if (devtools) {
+    if (devtoolsMiddleware) {
       console.log('[Omega] Model wrapped with DevTools middleware');
     }
 
