@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@tpmjs/ui/Card/Card';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
 import { useState } from 'react';
+import { Streamdown } from 'streamdown';
 import { AppHeader } from '~/components/AppHeader';
 
 function formatDate(dateString: string): string {
@@ -163,8 +164,8 @@ export function QuestionDetailClient({
                 </CardTitle>
               </CardHeader>
               <CardContent padding="md" className="pt-0">
-                <div className="prose prose-sm max-w-none text-foreground">
-                  <p className="whitespace-pre-wrap leading-relaxed">{question.answer}</p>
+                <div className="prose prose-sm max-w-none text-foreground leading-relaxed">
+                  <Streamdown isAnimating={false}>{question.answer}</Streamdown>
                 </div>
                 {question.answerTokens > 0 && (
                   <p className="mt-4 text-xs text-foreground-tertiary">
