@@ -60,21 +60,6 @@ async function getCollection(username: string, slug: string): Promise<PublicColl
     return null;
   }
 
-  // Parse useCases from Json field
-  const useCases = collection.useCases as
-    | {
-        id: string;
-        userPrompt: string;
-        description: string;
-        toolSequence: {
-          toolName: string;
-          packageName: string;
-          purpose: string;
-          order: number;
-        }[];
-      }[]
-    | null;
-
   return {
     id: collection.id,
     slug: collection.slug || '',
@@ -117,8 +102,6 @@ async function getCollection(username: string, slug: string): Promise<PublicColl
           },
         }
       : null,
-    useCases: useCases ?? null,
-    useCasesGeneratedAt: collection.useCasesGeneratedAt?.toISOString() ?? null,
   };
 }
 

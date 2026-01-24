@@ -5,7 +5,7 @@ import { Button } from '@tpmjs/ui/Button/Button';
 import { CodeBlock } from '@tpmjs/ui/CodeBlock/CodeBlock';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { AppHeader } from '~/components/AppHeader';
 import { ForkButton } from '~/components/ForkButton';
 import { ForkedFromBadge } from '~/components/ForkedFromBadge';
@@ -13,7 +13,6 @@ import { LikeButton } from '~/components/LikeButton';
 import { ScenariosSection } from '~/components/ScenariosSection';
 import { ShareButton } from '~/components/ShareButton';
 import { SkillsSection } from '~/components/skills/SkillsSection';
-import { UseCasesSection } from '~/components/UseCasesSection';
 import { useSession } from '~/lib/auth-client';
 
 export interface CollectionTool {
@@ -31,20 +30,6 @@ export interface CollectionTool {
       category: string;
     };
   };
-}
-
-export interface UseCaseToolStep {
-  toolName: string;
-  packageName: string;
-  purpose: string;
-  order: number;
-}
-
-export interface UseCase {
-  id: string;
-  userPrompt: string;
-  description: string;
-  toolSequence: UseCaseToolStep[];
 }
 
 export interface PublicCollection {
@@ -72,8 +57,6 @@ export interface PublicCollection {
       username: string;
     };
   } | null;
-  useCases: UseCase[] | null;
-  useCasesGeneratedAt: string | null;
 }
 
 function McpUrlSection({
@@ -257,27 +240,11 @@ interface CollectionDetailClientProps {
   username: string;
 }
 
-export function CollectionDetailClient({
-  collection: initialCollection,
-  username,
-}: CollectionDetailClientProps) {
+export function CollectionDetailClient({ collection, username }: CollectionDetailClientProps) {
   const { data: session } = useSession();
-  const [collection, setCollection] = useState(initialCollection);
 
   // Check if current user is the owner
   const isOwner = session?.user?.id && collection.createdBy?.id === session.user.id;
-
-  // Handler for when use cases are generated
-  const handleUseCasesGenerated = useCallback(
-    (useCases: UseCase[], generatedAt: string) => {
-      setCollection({
-        ...collection,
-        useCases,
-        useCasesGeneratedAt: generatedAt,
-      });
-    },
-    [collection]
-  );
 
   // Generate tweet text
   const tweetText = collection.description
@@ -392,16 +359,6 @@ export function CollectionDetailClient({
               <Icon icon="box" className="w-12 h-12 mx-auto text-foreground-secondary mb-4" />
               <p className="text-foreground-secondary">This collection is empty.</p>
             </div>
-          )}
-
-          {/* Use Cases Section */}
-          {collection.tools.length > 0 && (
-            <UseCasesSection
-              collectionId={collection.id}
-              useCases={collection.useCases}
-              generatedAt={collection.useCasesGeneratedAt}
-              onUseCasesGenerated={handleUseCasesGenerated}
-            />
           )}
 
           {/* Scenarios Section */}
