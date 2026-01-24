@@ -141,7 +141,7 @@ export default function PublicCollectionsPage(): React.ReactElement {
       <>
         <td className="px-4 py-3">
           <Link
-            href={`/collections/${collection.id}`}
+            href={collection.createdBy.username ? `/${collection.createdBy.username}/collections/${collection.slug}` : `/collections/${collection.id}`}
             className="font-semibold text-foreground hover:text-primary group-hover:text-primary transition-colors"
           >
             {collection.name}
