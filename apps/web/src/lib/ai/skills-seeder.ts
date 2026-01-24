@@ -14,11 +14,8 @@ import { prisma } from '@tpmjs/db';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { embedQuestion } from './skills-embedding';
-import {
-  generateSkillResponse,
-  type CollectionContext,
-} from './skills-response-generator';
 import { updateSkillGraph } from './skills-graph-updater';
+import { type CollectionContext, generateSkillResponse } from './skills-response-generator';
 
 const SEED_BATCH_SIZE = 5;
 const SEEDING_LOCK_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
@@ -151,9 +148,7 @@ async function isSeeding(collectionId: string): Promise<boolean> {
  * Seed a collection with synthetic questions
  * Returns true if seeding was performed, false if skipped
  */
-export async function seedCollectionSkills(
-  collection: CollectionWithTools
-): Promise<{
+export async function seedCollectionSkills(collection: CollectionWithTools): Promise<{
   seeded: boolean;
   questionsCreated: number;
   reason?: string;
@@ -189,10 +184,7 @@ export async function seedCollectionSkills(
 
     // 2. Generate from tool descriptions
     if (collection.tools.length > 0) {
-      const toolQuestions = await generateQuestionsFromTools(
-        collection.tools,
-        5
-      );
+      const toolQuestions = await generateQuestionsFromTools(collection.tools, 5);
       allQuestions.push(...toolQuestions);
     }
 

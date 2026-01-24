@@ -55,6 +55,9 @@ secrets.json
 # turbo
 .turbo
 
+# ai sdk devtools
+.devtools
+
 # typescript
 *.tsbuildinfo
 

@@ -1,15 +1,10 @@
 'use client';
 
 import { Badge } from '@tpmjs/ui/Badge/Badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@tpmjs/ui/Card/Card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tpmjs/ui/Card/Card';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Skeleton } from '@tpmjs/ui/Skeleton/Skeleton';
+
 // Simple relative time formatter
 function formatRelativeTime(date: Date): string {
   const now = Date.now();
@@ -24,6 +19,7 @@ function formatRelativeTime(date: Date): string {
   if (minutes > 0) return `${minutes}m ago`;
   return 'just now';
 }
+
 import { useEffect, useState } from 'react';
 
 interface SkillQuestion {
@@ -104,11 +100,7 @@ export function SkillsActivityFeed({
     return (
       <Card variant="default" className="border-dashed">
         <CardContent padding="lg" className="text-center">
-          <Icon
-            icon="message"
-            size="lg"
-            className="mx-auto text-foreground-tertiary mb-2"
-          />
+          <Icon icon="message" size="lg" className="mx-auto text-foreground-tertiary mb-2" />
           <p className="text-foreground-secondary text-sm">
             No questions yet. Be the first to ask!
           </p>
@@ -127,10 +119,7 @@ export function SkillsActivityFeed({
                 {q.question}
               </CardTitle>
               <div className="flex items-center gap-1 flex-shrink-0">
-                <Badge
-                  variant={q.confidence >= 0.7 ? 'success' : 'secondary'}
-                  size="sm"
-                >
+                <Badge variant={q.confidence >= 0.7 ? 'success' : 'secondary'} size="sm">
                   {Math.round(q.confidence * 100)}%
                 </Badge>
               </div>

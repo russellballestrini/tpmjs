@@ -1,12 +1,7 @@
 'use client';
 
 import { Badge } from '@tpmjs/ui/Badge/Badge';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@tpmjs/ui/Card/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@tpmjs/ui/Card/Card';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Skeleton } from '@tpmjs/ui/Skeleton/Skeleton';
 import { useEffect, useState } from 'react';
@@ -25,9 +20,7 @@ interface SkillsStatsProps {
   collectionId: string;
 }
 
-export function SkillsStats({
-  collectionId,
-}: SkillsStatsProps): React.ReactElement | null {
+export function SkillsStats({ collectionId }: SkillsStatsProps): React.ReactElement | null {
   const [stats, setStats] = useState<SkillStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,9 +28,7 @@ export function SkillsStats({
   useEffect(() => {
     async function fetchStats() {
       try {
-        const response = await fetch(
-          `/api/skills/stats?collectionId=${collectionId}`
-        );
+        const response = await fetch(`/api/skills/stats?collectionId=${collectionId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch stats');
         }

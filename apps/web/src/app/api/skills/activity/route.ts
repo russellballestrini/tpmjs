@@ -5,7 +5,7 @@
  */
 
 import { prisma } from '@tpmjs/db';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,10 +17,7 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(50, Math.max(1, parseInt(limitParam || '10', 10)));
 
   if (!collectionId) {
-    return NextResponse.json(
-      { error: 'collectionId is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'collectionId is required' }, { status: 400 });
   }
 
   try {
@@ -31,17 +28,11 @@ export async function GET(request: NextRequest) {
     });
 
     if (!collection) {
-      return NextResponse.json(
-        { error: 'Collection not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
     }
 
     if (!collection.isPublic) {
-      return NextResponse.json(
-        { error: 'Collection is not public' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Collection is not public' }, { status: 403 });
     }
 
     // Fetch recent questions with skill links (anonymized - no agent info)
@@ -73,9 +64,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ questions });
   } catch (error) {
     console.error('[Skills Activity Error]:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch activity' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch activity' }, { status: 500 });
   }
 }

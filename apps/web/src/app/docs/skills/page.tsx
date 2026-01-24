@@ -251,11 +251,7 @@ export default function SkillsPage(): React.ReactElement {
           />
 
           <h4 className="font-semibold mt-4">Example Response</h4>
-          <CodeBlock
-            code={exampleResponseJson}
-            language="json"
-            showCopy={true}
-          />
+          <CodeBlock code={exampleResponseJson} language="json" showCopy={true} />
         </CardContent>
       </Card>
 
@@ -353,7 +349,9 @@ const followUp = await askSkills(
             <h4 className="font-semibold text-sm mb-2">Tips for Better Responses</h4>
             <ul className="text-foreground-secondary text-sm space-y-1">
               <li>• Be specific about what you&apos;re trying to accomplish</li>
-              <li>• Include relevant context in the <code>context</code> field</li>
+              <li>
+                • Include relevant context in the <code>context</code> field
+              </li>
               <li>• Use tags to hint at the problem domain</li>
               <li>• Use sessions for related follow-up questions</li>
             </ul>
@@ -413,8 +411,8 @@ const followUp = await askSkills(
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-foreground-secondary">
-            When a collection&apos;s skills endpoint is accessed for the first time, it automatically
-            seeds with synthetic questions generated from:
+            When a collection&apos;s skills endpoint is accessed for the first time, it
+            automatically seeds with synthetic questions generated from:
           </p>
 
           <ul className="list-disc list-inside space-y-2 text-foreground-secondary">
@@ -424,8 +422,8 @@ const followUp = await askSkills(
           </ul>
 
           <p className="text-foreground-secondary mt-4">
-            This ensures the endpoint is useful immediately, even before any real agent interactions.
-            Seeding typically adds 10-15 synthetic Q&amp;A pairs.
+            This ensures the endpoint is useful immediately, even before any real agent
+            interactions. Seeding typically adds 10-15 synthetic Q&amp;A pairs.
           </p>
 
           <div className="bg-background-secondary p-4 rounded-lg mt-4">
@@ -490,7 +488,10 @@ const followUp = await askSkills(
               </p>
             </li>
             <li>
-              <Link href="/docs/api/collections" className="text-primary hover:underline font-medium">
+              <Link
+                href="/docs/api/collections"
+                className="text-primary hover:underline font-medium"
+              >
                 Collections API →
               </Link>
               <p className="text-foreground-secondary text-sm">

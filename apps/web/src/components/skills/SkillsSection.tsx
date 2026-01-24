@@ -67,11 +67,7 @@ curl -X POST "${skillsUrl}" \\
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowApiDocs(!showApiDocs)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setShowApiDocs(!showApiDocs)}>
             <Icon icon="terminal" className="w-4 h-4 mr-1" />
             API
           </Button>
@@ -122,9 +118,7 @@ curl -X POST "${skillsUrl}" \\
         {/* Activity Feed Column */}
         <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-foreground-secondary">
-              Recent Questions
-            </h3>
+            <h3 className="text-sm font-medium text-foreground-secondary">Recent Questions</h3>
           </div>
           <SkillsActivityFeed collectionId={collectionId} limit={5} />
         </div>
@@ -144,11 +138,7 @@ curl -X POST "${skillsUrl}" \\
               Every question helps improve future responses for all agents.
             </p>
           </div>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => setShowApiDocs(!showApiDocs)}
-          >
+          <Button variant="default" size="sm" onClick={() => setShowApiDocs(!showApiDocs)}>
             Get Started
           </Button>
         </div>

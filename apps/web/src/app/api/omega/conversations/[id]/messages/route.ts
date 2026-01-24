@@ -12,13 +12,20 @@
 import { Prisma, prisma } from '@tpmjs/db';
 import { registryExecuteTool } from '@tpmjs/registry-execute';
 import { registrySearchTool } from '@tpmjs/registry-search';
-import { jsonSchema, type ModelMessage } from 'ai';
+import { jsonSchema, wrapLanguageModel, type ModelMessage } from 'ai';
+import { devToolsMiddleware } from '@ai-sdk/devtools';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
 import { decryptApiKey } from '~/lib/crypto/api-keys';
 import { buildSystemPrompt } from '~/lib/omega/system-prompt';
 import { checkRateLimit, type RateLimitConfig } from '~/lib/rate-limit';
+
+// Initialize devtools middleware once at module level (only used in development)
+const devtools = process.env.NODE_ENV === 'development' ? devToolsMiddleware() : null;
+if (devtools) {
+  console.log('[Omega] AI SDK DevTools middleware initialized');
+}
 
 /**
  * Warning about missing environment variables
@@ -556,7 +563,16 @@ Remember: Your value is in EXECUTING tools to get real results, not just describ
     }
 
     const openai = createOpenAI({ apiKey });
-    const model = openai('gpt-4.1-mini');
+    const baseModel = openai('gpt-4.1-mini');
+
+    // Wrap with devtools middleware in development
+    const model = devtools
+      ? wrapLanguageModel({ model: baseModel, middleware: devtools })
+      : baseModel;
+
+    if (devtools) {
+      console.log('[Omega] Model wrapped with DevTools middleware');
+    }
 
     // Create SSE stream
     const stream = new ReadableStream({

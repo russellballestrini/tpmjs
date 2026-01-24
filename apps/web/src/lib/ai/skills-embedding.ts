@@ -30,9 +30,7 @@ export async function embedQuestion(text: string): Promise<number[]> {
  */
 export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) {
-    throw new Error(
-      `Vector dimension mismatch: ${a.length} vs ${b.length}`
-    );
+    throw new Error(`Vector dimension mismatch: ${a.length} vs ${b.length}`);
   }
 
   let dotProduct = 0;
@@ -73,11 +71,7 @@ export async function findSimilarQuestions(
     excludeId?: string;
   } = {}
 ): Promise<SimilarQuestion[]> {
-  const {
-    threshold = DEFAULT_SIMILARITY_THRESHOLD,
-    limit = 5,
-    excludeId,
-  } = options;
+  const { threshold = DEFAULT_SIMILARITY_THRESHOLD, limit = 5, excludeId } = options;
 
   // Fetch all questions for this collection
   const questions = await prisma.skillQuestion.findMany({
@@ -115,9 +109,7 @@ export async function findSimilarQuestions(
   }
 
   // Sort by similarity descending and limit results
-  return similar
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, limit);
+  return similar.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
 }
 
 /**
@@ -191,11 +183,10 @@ export async function checkQuestionSimilarity(
   }
 
   // Find similar questions for RAG context
-  const similarQuestions = await findSimilarQuestions(
-    embedding,
-    collectionId,
-    { threshold: DEFAULT_SIMILARITY_THRESHOLD, limit: 5 }
-  );
+  const similarQuestions = await findSimilarQuestions(embedding, collectionId, {
+    threshold: DEFAULT_SIMILARITY_THRESHOLD,
+    limit: 5,
+  });
 
   return {
     isCacheHit: false,

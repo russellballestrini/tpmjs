@@ -8,23 +8,23 @@
  * POST - Ask a question (RAG + LLM response)
  */
 
-import { createHash } from 'crypto';
 import { prisma } from '@tpmjs/db';
-import { NextResponse, type NextRequest } from 'next/server';
+import { createHash } from 'crypto';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { checkQuestionSimilarity } from '~/lib/ai/skills-embedding';
-import { updateSkillGraph, getCollectionSkillsSummary } from '~/lib/ai/skills-graph-updater';
+import { getCollectionSkillsSummary, updateSkillGraph } from '~/lib/ai/skills-graph-updater';
 import {
-  generateSkillResponse,
-  generateFollowupSuggestions,
-  calculateConfidence,
   type CollectionContext,
+  calculateConfidence,
+  generateFollowupSuggestions,
+  generateSkillResponse,
 } from '~/lib/ai/skills-response-generator';
 import {
-  seedCollectionSkills,
-  getSeedingStatus,
   type CollectionWithTools,
+  getSeedingStatus,
+  seedCollectionSkills,
 } from '~/lib/ai/skills-seeder';
 
 export const runtime = 'nodejs';
@@ -51,10 +51,7 @@ const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000;
  * Hash agent identity for anonymization
  */
 function hashAgentIdentity(ip: string, userAgent: string): string {
-  return createHash('sha256')
-    .update(`${ip}:${userAgent}`)
-    .digest('hex')
-    .slice(0, 16);
+  return createHash('sha256').update(`${ip}:${userAgent}`).digest('hex').slice(0, 16);
 }
 
 /**
@@ -70,10 +67,7 @@ async function loadCollection(
   });
 
   if (!user || !user.username) {
-    return NextResponse.json(
-      { success: false, error: 'User not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
   }
 
   const collection = await prisma.collection.findFirst({
@@ -96,10 +90,7 @@ async function loadCollection(
   });
 
   if (!collection) {
-    return NextResponse.json(
-      { success: false, error: 'Collection not found' },
-      { status: 404 }
-    );
+    return NextResponse.json({ success: false, error: 'Collection not found' }, { status: 404 });
   }
 
   if (!collection.isPublic) {
@@ -160,9 +151,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
   try {
     const { username: rawUsername, slug } = await context.params;
-    const username = rawUsername.startsWith('@')
-      ? rawUsername.slice(1)
-      : rawUsername;
+    const username = rawUsername.startsWith('@') ? rawUsername.slice(1) : rawUsername;
 
     // Load collection
     const result = await loadCollection(username, slug);
@@ -225,19 +214,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   try {
     const { username: rawUsername, slug } = await context.params;
-    const username = rawUsername.startsWith('@')
-      ? rawUsername.slice(1)
-      : rawUsername;
+    const username = rawUsername.startsWith('@') ? rawUsername.slice(1) : rawUsername;
 
     // Parse and validate request body
     let body: unknown;
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid JSON body' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 });
     }
 
     const parseResult = PostRequestSchema.safeParse(body);
@@ -252,8 +236,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       );
     }
 
-    const { question, sessionId, agentName, context: questionContext, tags } =
-      parseResult.data;
+    const { question, sessionId, agentName, context: questionContext, tags } = parseResult.data;
 
     // Load collection
     const result = await loadCollection(username, slug);
@@ -269,10 +252,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const agentHash = hashAgentIdentity(ip, userAgent);
 
     // Check for similarity / cache hit
-    const similarityResult = await checkQuestionSimilarity(
-      question,
-      collection.id
-    );
+    const similarityResult = await checkQuestionSimilarity(question, collection.id);
 
     // If very similar question exists (>95%), return cached answer
     if (similarityResult.isCacheHit && similarityResult.cachedAnswer) {
@@ -302,8 +282,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     };
 
     // Get session history if session exists
-    let sessionHistory: Array<{ role: 'user' | 'assistant'; content: string }> =
-      [];
+    let sessionHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [];
     let activeSessionId = sessionId;
 
     if (sessionId) {
@@ -319,9 +298,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     // Generate response
-    const fullQuestion = questionContext
-      ? `${question}\n\nContext: ${questionContext}`
-      : question;
+    const fullQuestion = questionContext ? `${question}\n\nContext: ${questionContext}` : question;
 
     const { answer, tokensUsed } = await generateSkillResponse({
       question: fullQuestion,
@@ -401,11 +378,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Generate follow-up suggestions (optional, don't block)
     let suggestedFollowups: string[] = [];
     try {
-      suggestedFollowups = await generateFollowupSuggestions(
-        question,
-        answer,
-        collection.name
-      );
+      suggestedFollowups = await generateFollowupSuggestions(question, answer, collection.name);
     } catch {
       // Ignore errors for followups
     }

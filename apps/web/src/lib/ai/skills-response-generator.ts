@@ -65,9 +65,7 @@ function buildSystemPrompt(params: GenerateResponseParams): string {
 
   // Optional tag hints
   const tagHints =
-    tags && tags.length > 0
-      ? `\nThe user has tagged this question with: ${tags.join(', ')}`
-      : '';
+    tags && tags.length > 0 ? `\nThe user has tagged this question with: ${tags.join(', ')}` : '';
 
   return `You are a helpful assistant that answers questions about using the tools in the "${collection.name}" collection.
 
@@ -202,8 +200,7 @@ export function calculateConfidence(
   // Boost for similar questions (RAG context)
   if (similarQuestions.length > 0) {
     const avgSimilarity =
-      similarQuestions.reduce((sum, q) => sum + q.similarity, 0) /
-      similarQuestions.length;
+      similarQuestions.reduce((sum, q) => sum + q.similarity, 0) / similarQuestions.length;
     confidence += avgSimilarity * 0.4; // Up to 0.4 boost
   }
 

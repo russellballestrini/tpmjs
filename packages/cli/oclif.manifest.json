@@ -4,7 +4,9 @@
       "aliases": [],
       "args": {},
       "description": "Run diagnostic checks for TPMJS CLI",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
+      "examples": [
+        "<%= config.bin %> <%= command.id %>"
+      ],
       "flags": {
         "json": {
           "description": "Output in JSON format",
@@ -29,7 +31,11 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "doctor.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "doctor.js"
+      ]
     },
     "playground": {
       "aliases": [],
@@ -73,18 +79,37 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "playground.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "playground.js"
+      ]
     },
     "run": {
       "aliases": [],
       "args": {},
       "description": "Execute a tool from a collection via MCP",
       "examples": [
-        "<%= config.bin %> run -c ajax/unsandbox -t execute --args '{\"code\":\"print(1)\",\"language\":\"python\"}'",
-        "<%= config.bin %> run --collection ajax/ajax-collection --tool base64Encode --args '{\"data\":\"hello\"}'",
-        "OPENAI_API_KEY=xxx <%= config.bin %> run -c ajax/my-collection -t myTool",
-        "<%= config.bin %> run -c ajax/tools -t search --args '{\"query\":\"test\"}' --json",
-        "<%= config.bin %> run -c ajax/tools -t search --env API_KEY=xxx --env DEBUG=true"
+        {
+          "description": "First, list all tools in a collection",
+          "command": "<%= config.bin %> collection info ajax/unsandbox"
+        },
+        {
+          "description": "Execute Python code in the unsandbox collection",
+          "command": "<%= config.bin %> run -c ajax/unsandbox -t unsandbox--execute --args '{\"language\":\"python\",\"code\":\"print(42)\"}'"
+        },
+        {
+          "description": "Pass environment variables for tool authentication",
+          "command": "<%= config.bin %> run -c ajax/unsandbox -t unsandbox--execute -e UNSANDBOX_PUBLIC_KEY=xxx -e UNSANDBOX_SECRET_KEY=xxx --args '{\"language\":\"python\",\"code\":\"print(1)\"}'"
+        },
+        {
+          "description": "Output result as JSON",
+          "command": "<%= config.bin %> run -c ajax/tools -t search --args '{\"query\":\"test\"}' --json"
+        },
+        {
+          "description": "Show verbose output for debugging",
+          "command": "<%= config.bin %> run -c ajax/unsandbox -t unsandbox--healthCheck --args '{}' -v"
+        }
       ],
       "flags": {
         "collection": {
@@ -153,13 +178,19 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "run.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "run.js"
+      ]
     },
     "update": {
       "aliases": [],
       "args": {},
       "description": "Update the TPMJS CLI to the latest version",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
+      "examples": [
+        "<%= config.bin %> <%= command.id %>"
+      ],
       "flags": {
         "json": {
           "description": "Output in JSON format",
@@ -190,7 +221,178 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "update.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "update.js"
+      ]
+    },
+    "auth:login": {
+      "aliases": [],
+      "args": {
+        "key": {
+          "description": "API key (alternative to --api-key flag)",
+          "name": "key",
+          "required": false
+        }
+      },
+      "description": "Authenticate with TPMJS",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> --api-key tpm_xxxxx",
+        "<%= config.bin %> <%= command.id %> --browser"
+      ],
+      "flags": {
+        "api-key": {
+          "char": "k",
+          "description": "API key (or set TPMJS_API_KEY environment variable)",
+          "name": "api-key",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "browser": {
+          "char": "b",
+          "description": "Open browser for OAuth authentication",
+          "name": "browser",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:login",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "login.js"
+      ]
+    },
+    "auth:logout": {
+      "aliases": [],
+      "args": {},
+      "description": "Log out from TPMJS",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:logout",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "logout.js"
+      ]
+    },
+    "auth:status": {
+      "aliases": [],
+      "args": {},
+      "description": "Show authentication status",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:status",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "status.js"
+      ]
+    },
+    "auth:whoami": {
+      "aliases": [],
+      "args": {},
+      "description": "Show current user information",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:whoami",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "auth",
+        "whoami.js"
+      ]
     },
     "agent:chat": {
       "aliases": [],
@@ -250,7 +452,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "agent", "chat.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "agent",
+        "chat.js"
+      ]
     },
     "agent:create": {
       "aliases": [],
@@ -292,7 +499,13 @@
           "required": true,
           "hasDynamicHelp": false,
           "multiple": false,
-          "options": ["ANTHROPIC", "OPENAI", "GOOGLE", "GROQ", "MISTRAL"],
+          "options": [
+            "ANTHROPIC",
+            "OPENAI",
+            "GOOGLE",
+            "GROQ",
+            "MISTRAL"
+          ],
           "type": "option"
         },
         "model": {
@@ -350,7 +563,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "agent", "create.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "agent",
+        "create.js"
+      ]
     },
     "agent:delete": {
       "aliases": [],
@@ -397,7 +615,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "agent", "delete.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "agent",
+        "delete.js"
+      ]
     },
     "agent:list": {
       "aliases": [],
@@ -449,7 +672,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "agent", "list.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "agent",
+        "list.js"
+      ]
     },
     "agent:update": {
       "aliases": [],
@@ -495,7 +723,13 @@
           "name": "provider",
           "hasDynamicHelp": false,
           "multiple": false,
-          "options": ["ANTHROPIC", "OPENAI", "GOOGLE", "GROQ", "MISTRAL"],
+          "options": [
+            "ANTHROPIC",
+            "OPENAI",
+            "GOOGLE",
+            "GROQ",
+            "MISTRAL"
+          ],
           "type": "option"
         },
         "model": {
@@ -551,269 +785,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "agent", "update.js"]
-    },
-    "auth:login": {
-      "aliases": [],
-      "args": {
-        "key": {
-          "description": "API key (alternative to --api-key flag)",
-          "name": "key",
-          "required": false
-        }
-      },
-      "description": "Authenticate with TPMJS",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> --api-key tpm_xxxxx",
-        "<%= config.bin %> <%= command.id %> --browser"
-      ],
-      "flags": {
-        "api-key": {
-          "char": "k",
-          "description": "API key (or set TPMJS_API_KEY environment variable)",
-          "name": "api-key",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "browser": {
-          "char": "b",
-          "description": "Open browser for OAuth authentication",
-          "name": "browser",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:login",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "login.js"]
-    },
-    "auth:logout": {
-      "aliases": [],
-      "args": {},
-      "description": "Log out from TPMJS",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:logout",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "logout.js"]
-    },
-    "auth:status": {
-      "aliases": [],
-      "args": {},
-      "description": "Show authentication status",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:status",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "status.js"]
-    },
-    "auth:whoami": {
-      "aliases": [],
-      "args": {},
-      "description": "Show current user information",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:whoami",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "whoami.js"]
-    },
-    "mcp:config": {
-      "aliases": [],
-      "args": {
-        "collection": {
-          "description": "Collection path (username/slug)",
-          "name": "collection",
-          "required": true
-        }
-      },
-      "description": "Generate MCP configuration for AI clients",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection",
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --client cursor",
-        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --output ~/Library/Application\\ Support/Claude/claude_desktop_config.json"
-      ],
-      "flags": {
-        "client": {
-          "char": "c",
-          "description": "Target client (claude, cursor, windsurf, generic)",
-          "name": "client",
-          "default": "claude",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "options": ["claude", "cursor", "windsurf", "generic"],
-          "type": "option"
-        },
-        "output": {
-          "char": "o",
-          "description": "Output file path (will merge with existing config)",
-          "name": "output",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "api-key": {
-          "char": "k",
-          "description": "API key to include in config (optional)",
-          "name": "api-key",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "mcp:config",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "mcp", "config.js"]
-    },
-    "mcp:serve": {
-      "aliases": [],
-      "args": {},
-      "description": "Run as a local MCP server",
-      "examples": [
-        "<%= config.bin %> <%= command.id %>",
-        "<%= config.bin %> <%= command.id %> --port 8080",
-        "<%= config.bin %> <%= command.id %> --stdio",
-        "<%= config.bin %> <%= command.id %> --collection my-collection"
-      ],
-      "flags": {
-        "port": {
-          "char": "p",
-          "description": "Port to run the server on (HTTP mode)",
-          "name": "port",
-          "default": 3333,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "stdio": {
-          "description": "Use stdio transport instead of HTTP",
-          "name": "stdio",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "collection": {
-          "char": "c",
-          "description": "Serve tools from a specific collection",
-          "name": "collection",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "tool": {
-          "char": "t",
-          "description": "Serve specific tools (comma-separated)",
-          "name": "tool",
-          "hasDynamicHelp": false,
-          "multiple": true,
-          "type": "option"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "mcp:serve",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "mcp", "serve.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "agent",
+        "update.js"
+      ]
     },
     "collection:add": {
       "aliases": [],
@@ -853,7 +830,12 @@
       "strict": false,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "add.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "add.js"
+      ]
     },
     "collection:create": {
       "aliases": [],
@@ -910,7 +892,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "create.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "create.js"
+      ]
     },
     "collection:delete": {
       "aliases": [],
@@ -957,7 +944,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "delete.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "delete.js"
+      ]
     },
     "collection:import": {
       "aliases": [],
@@ -1006,7 +998,58 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "import.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "import.js"
+      ]
+    },
+    "collection:info": {
+      "aliases": [],
+      "args": {
+        "collection": {
+          "description": "Collection identifier (username/slug)",
+          "name": "collection",
+          "required": true
+        }
+      },
+      "description": "Show collection details and list all available tools",
+      "examples": [
+        "<%= config.bin %> collection info ajax/unsandbox",
+        "<%= config.bin %> collection info ajax/unsandbox --json",
+        "<%= config.bin %> collection info ajax/unsandbox --verbose"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show tool input schemas",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "collection:info",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "info.js"
+      ]
     },
     "collection:list": {
       "aliases": [],
@@ -1058,7 +1101,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "list.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "list.js"
+      ]
     },
     "collection:remove": {
       "aliases": [],
@@ -1075,7 +1123,9 @@
         }
       },
       "description": "Remove a tool from a collection",
-      "examples": ["<%= config.bin %> <%= command.id %> my-collection tool-id-1"],
+      "examples": [
+        "<%= config.bin %> <%= command.id %> my-collection tool-id-1"
+      ],
       "flags": {
         "json": {
           "description": "Output in JSON format",
@@ -1100,7 +1150,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "remove.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "remove.js"
+      ]
     },
     "collection:update": {
       "aliases": [],
@@ -1162,7 +1217,148 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "collection", "update.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "collection",
+        "update.js"
+      ]
+    },
+    "mcp:config": {
+      "aliases": [],
+      "args": {
+        "collection": {
+          "description": "Collection path (username/slug)",
+          "name": "collection",
+          "required": true
+        }
+      },
+      "description": "Generate MCP configuration for AI clients",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection",
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --client cursor",
+        "<%= config.bin %> <%= command.id %> ajax/ajax-collection --output ~/Library/Application\\ Support/Claude/claude_desktop_config.json"
+      ],
+      "flags": {
+        "client": {
+          "char": "c",
+          "description": "Target client (claude, cursor, windsurf, generic)",
+          "name": "client",
+          "default": "claude",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "options": [
+            "claude",
+            "cursor",
+            "windsurf",
+            "generic"
+          ],
+          "type": "option"
+        },
+        "output": {
+          "char": "o",
+          "description": "Output file path (will merge with existing config)",
+          "name": "output",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "api-key": {
+          "char": "k",
+          "description": "API key to include in config (optional)",
+          "name": "api-key",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "mcp:config",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "mcp",
+        "config.js"
+      ]
+    },
+    "mcp:serve": {
+      "aliases": [],
+      "args": {},
+      "description": "Run as a local MCP server",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --port 8080",
+        "<%= config.bin %> <%= command.id %> --stdio",
+        "<%= config.bin %> <%= command.id %> --collection my-collection"
+      ],
+      "flags": {
+        "port": {
+          "char": "p",
+          "description": "Port to run the server on (HTTP mode)",
+          "name": "port",
+          "default": 3333,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "stdio": {
+          "description": "Use stdio transport instead of HTTP",
+          "name": "stdio",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "collection": {
+          "char": "c",
+          "description": "Serve tools from a specific collection",
+          "name": "collection",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "tool": {
+          "char": "t",
+          "description": "Serve specific tools (comma-separated)",
+          "name": "tool",
+          "hasDynamicHelp": false,
+          "multiple": true,
+          "type": "option"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "mcp:serve",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": [
+        "dist",
+        "commands",
+        "mcp",
+        "serve.js"
+      ]
     },
     "publish:check": {
       "aliases": [],
@@ -1202,7 +1398,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "check.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "publish",
+        "check.js"
+      ]
     },
     "publish:preview": {
       "aliases": [],
@@ -1245,7 +1446,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "preview.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "publish",
+        "preview.js"
+      ]
     },
     "scenario:generate": {
       "aliases": [],
@@ -1301,7 +1507,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "generate.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "scenario",
+        "generate.js"
+      ]
     },
     "scenario:info": {
       "aliases": [],
@@ -1351,7 +1562,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "info.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "scenario",
+        "info.js"
+      ]
     },
     "scenario:list": {
       "aliases": [],
@@ -1418,7 +1634,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "list.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "scenario",
+        "list.js"
+      ]
     },
     "scenario:run": {
       "aliases": [],
@@ -1468,7 +1689,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "run.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "scenario",
+        "run.js"
+      ]
     },
     "scenario:test": {
       "aliases": [],
@@ -1509,7 +1735,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "test.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "scenario",
+        "test.js"
+      ]
     },
     "tool:execute": {
       "aliases": [],
@@ -1582,7 +1813,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "execute.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "execute.js"
+      ]
     },
     "tool:info": {
       "aliases": [],
@@ -1627,7 +1863,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "info.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "info.js"
+      ]
     },
     "tool:init": {
       "aliases": [],
@@ -1652,7 +1893,10 @@
           "default": "minimal",
           "hasDynamicHelp": false,
           "multiple": false,
-          "options": ["minimal", "rich"],
+          "options": [
+            "minimal",
+            "rich"
+          ],
           "type": "option"
         },
         "category": {
@@ -1709,7 +1953,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "init.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "init.js"
+      ]
     },
     "tool:search": {
       "aliases": [],
@@ -1776,7 +2025,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "search.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "search.js"
+      ]
     },
     "tool:trending": {
       "aliases": [],
@@ -1819,7 +2073,12 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "trending.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "trending.js"
+      ]
     },
     "tool:validate": {
       "aliases": [],
@@ -1862,8 +2121,13 @@
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "tool", "validate.js"]
+      "relativePath": [
+        "dist",
+        "commands",
+        "tool",
+        "validate.js"
+      ]
     }
   },
-  "version": "0.1.4"
+  "version": "0.1.5"
 }

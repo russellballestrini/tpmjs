@@ -5,7 +5,7 @@
  */
 
 import { prisma } from '@tpmjs/db';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,10 +15,7 @@ export async function GET(request: NextRequest) {
   const collectionId = searchParams.get('collectionId');
 
   if (!collectionId) {
-    return NextResponse.json(
-      { error: 'collectionId is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'collectionId is required' }, { status: 400 });
   }
 
   try {
@@ -29,17 +26,11 @@ export async function GET(request: NextRequest) {
     });
 
     if (!collection) {
-      return NextResponse.json(
-        { error: 'Collection not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
     }
 
     if (!collection.isPublic) {
-      return NextResponse.json(
-        { error: 'Collection is not public' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Collection is not public' }, { status: 403 });
     }
 
     // Fetch stats in parallel
@@ -65,9 +56,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Skills Stats Error]:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }

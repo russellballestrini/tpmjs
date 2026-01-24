@@ -13,10 +13,7 @@ import type { Skill, Tool } from '@prisma/client';
 import { prisma } from '@tpmjs/db';
 import { generateObject } from 'ai';
 import { z } from 'zod';
-import {
-  cosineSimilarity,
-  embedQuestion,
-} from './skills-embedding';
+import { cosineSimilarity, embedQuestion } from './skills-embedding';
 
 const SKILL_MATCH_THRESHOLD = 0.75;
 
@@ -50,12 +47,8 @@ export async function extractSkillsFromQuestion(
     schema: z.object({
       skills: z.array(
         z.object({
-          name: z
-            .string()
-            .describe('Short skill name (2-5 words), e.g., "API error handling"'),
-          description: z
-            .string()
-            .describe('One sentence describing what this skill enables'),
+          name: z.string().describe('Short skill name (2-5 words), e.g., "API error handling"'),
+          description: z.string().describe('One sentence describing what this skill enables'),
         })
       ),
     }),
@@ -228,11 +221,7 @@ export async function updateSkillGraph(params: {
   // 2. Get or create skill nodes and link to question
   for (const extracted of extractedSkills) {
     try {
-      const skill = await getOrCreateSkill(
-        collectionId,
-        extracted.name,
-        extracted.description
-      );
+      const skill = await getOrCreateSkill(collectionId, extracted.name, extracted.description);
 
       // Link question to skill
       await prisma.skillQuestionSkill.upsert({
@@ -314,9 +303,7 @@ export async function updateSkillGraph(params: {
 /**
  * Get skill summary for a collection
  */
-export async function getCollectionSkillsSummary(
-  collectionId: string
-): Promise<{
+export async function getCollectionSkillsSummary(collectionId: string): Promise<{
   totalQuestions: number;
   totalSkills: number;
   topSkills: Array<{
@@ -351,9 +338,7 @@ export async function getCollectionSkillsSummary(
  * Recalculate confidence scores for all skills in a collection
  * (Useful for batch updates or maintenance)
  */
-export async function recalculateSkillConfidence(
-  collectionId: string
-): Promise<void> {
+export async function recalculateSkillConfidence(collectionId: string): Promise<void> {
   const skills = await prisma.skill.findMany({
     where: { collectionId },
     include: {
