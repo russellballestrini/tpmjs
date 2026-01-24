@@ -2,6 +2,7 @@
 
 import { Badge } from '@tpmjs/ui/Badge/Badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tpmjs/ui/Card/Card';
+import { EmptyState } from '@tpmjs/ui/EmptyState/EmptyState';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Skeleton } from '@tpmjs/ui/Skeleton/Skeleton';
 
@@ -88,9 +89,12 @@ export function SkillsActivityFeed({
 
   if (error) {
     return (
-      <Card variant="default" className="border-red-200 bg-red-50">
+      <Card variant="default" className="border-error/20 bg-error/5">
         <CardContent padding="md">
-          <p className="text-sm text-red-600">{error}</p>
+          <div className="flex items-center gap-2">
+            <Icon icon="alertCircle" size="sm" className="text-error" />
+            <p className="text-sm text-error">{error}</p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -99,11 +103,13 @@ export function SkillsActivityFeed({
   if (questions.length === 0) {
     return (
       <Card variant="default" className="border-dashed">
-        <CardContent padding="lg" className="text-center">
-          <Icon icon="message" size="lg" className="mx-auto text-foreground-tertiary mb-2" />
-          <p className="text-foreground-secondary text-sm">
-            No questions yet. Be the first to ask!
-          </p>
+        <CardContent padding="lg">
+          <EmptyState
+            icon="message"
+            title="No questions yet"
+            description="Be the first to ask a question about this collection's tools."
+            size="sm"
+          />
         </CardContent>
       </Card>
     );
@@ -112,7 +118,7 @@ export function SkillsActivityFeed({
   return (
     <div className="space-y-3">
       {questions.map((q) => (
-        <Card key={q.id} variant="default" className="hover:border-foreground/20 transition-colors">
+        <Card key={q.id} variant="default" className="hover:border-primary/20 transition-colors">
           <CardHeader padding="sm" className="pb-2">
             <div className="flex items-start justify-between gap-2">
               <CardTitle as="h4" className="text-sm font-medium line-clamp-2">
@@ -127,13 +133,13 @@ export function SkillsActivityFeed({
           </CardHeader>
 
           <CardContent padding="sm" className="pt-0">
-            <CardDescription className="line-clamp-2 text-xs mb-2">
+            <CardDescription className="line-clamp-2 text-xs mb-3">
               {q.answer.slice(0, 150)}
               {q.answer.length > 150 ? '...' : ''}
             </CardDescription>
 
             <div className="flex items-center justify-between">
-              <div className="flex gap-1 flex-wrap">
+              <div className="flex gap-1.5 flex-wrap">
                 {q.skillNodes.slice(0, 2).map((sn, i) => (
                   <Badge key={i} variant="outline" size="sm">
                     {sn.skill.name}
@@ -145,11 +151,11 @@ export function SkillsActivityFeed({
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-foreground-tertiary">
+              <div className="flex items-center gap-3 text-xs text-foreground-tertiary">
                 {q.similarCount > 0 && (
                   <span className="flex items-center gap-1">
                     <Icon icon="user" size="sm" />
-                    {q.similarCount} similar
+                    {q.similarCount}
                   </span>
                 )}
                 <span>{formatRelativeTime(new Date(q.createdAt))}</span>

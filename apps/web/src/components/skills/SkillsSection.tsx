@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@tpmjs/ui/Button/Button';
+import { Card, CardContent } from '@tpmjs/ui/Card/Card';
 import { CodeBlock } from '@tpmjs/ui/CodeBlock/CodeBlock';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
@@ -52,29 +53,29 @@ curl -X POST "${skillsUrl}" \\
 }`;
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-purple-100 rounded-lg">
-            <Icon icon="star" className="w-4 h-4 text-purple-600" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-none bg-primary/10 flex items-center justify-center">
+            <Icon icon="star" className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-foreground">Skills</h2>
-            <p className="text-xs text-foreground-tertiary">
+            <p className="text-sm text-foreground-secondary">
               Proven in the wild — not declared on paper
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => setShowApiDocs(!showApiDocs)}>
-            <Icon icon="terminal" className="w-4 h-4 mr-1" />
+            <Icon icon="terminal" className="w-4 h-4 mr-1.5" />
             API
           </Button>
           <Link href={`/${username}/collections/${slug}/skills`}>
             <Button variant="secondary" size="sm">
-              <Icon icon="externalLink" className="w-4 h-4 mr-1" />
-              Full Docs
+              <Icon icon="externalLink" className="w-4 h-4 mr-1.5" />
+              Docs
             </Button>
           </Link>
         </div>
@@ -82,34 +83,36 @@ curl -X POST "${skillsUrl}" \\
 
       {/* API Documentation Toggle */}
       {showApiDocs && (
-        <div className="p-4 bg-surface border border-border rounded-lg space-y-4">
-          <div>
-            <h4 className="text-sm font-medium mb-2">API Endpoint</h4>
-            <div className="px-3 py-2 bg-background border border-border rounded-lg font-mono text-sm text-foreground-secondary overflow-x-auto">
-              POST {skillsUrl}
+        <Card variant="default">
+          <CardContent padding="lg" className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium text-foreground mb-2">API Endpoint</h4>
+              <div className="px-3 py-2 bg-muted border border-border font-mono text-sm text-foreground-secondary overflow-x-auto">
+                POST {skillsUrl}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h4 className="text-sm font-medium mb-2">Example Request</h4>
-            <CodeBlock language="bash" code={apiExample} />
-          </div>
+            <div>
+              <h4 className="text-sm font-medium text-foreground mb-2">Example Request</h4>
+              <CodeBlock language="bash" code={apiExample} />
+            </div>
 
-          <div>
-            <h4 className="text-sm font-medium mb-2">Example Response</h4>
-            <CodeBlock language="json" code={responseExample} />
-          </div>
+            <div>
+              <h4 className="text-sm font-medium text-foreground mb-2">Example Response</h4>
+              <CodeBlock language="json" code={responseExample} />
+            </div>
 
-          <div className="text-xs text-foreground-tertiary">
-            <Link href="/docs/skills" className="text-primary hover:underline">
-              View full API documentation
-            </Link>
-          </div>
-        </div>
+            <div className="pt-2 border-t border-border">
+              <Link href="/docs/skills" className="text-sm text-primary hover:underline">
+                View full API documentation →
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Main Content */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-6">
         {/* Stats Column */}
         <div className="md:col-span-1">
           <SkillsStats collectionId={collectionId} />
@@ -117,32 +120,34 @@ curl -X POST "${skillsUrl}" \\
 
         {/* Activity Feed Column */}
         <div className="md:col-span-2">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-foreground-secondary">Recent Questions</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium text-foreground">Recent Questions</h3>
           </div>
           <SkillsActivityFeed collectionId={collectionId} limit={5} />
         </div>
       </div>
 
-      {/* CTA for empty state */}
-      <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-100 rounded-lg">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-white rounded-lg shadow-sm">
-            <Icon icon="message" className="w-5 h-5 text-purple-600" />
+      {/* CTA */}
+      <Card variant="default" className="border-primary/20 bg-primary/5">
+        <CardContent padding="md">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-none bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Icon icon="message" className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground">
+                Ask questions to build the skill graph
+              </p>
+              <p className="text-sm text-foreground-secondary">
+                Every question helps improve future responses for all agents.
+              </p>
+            </div>
+            <Button variant="default" size="sm" onClick={() => setShowApiDocs(!showApiDocs)}>
+              Get Started
+            </Button>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">
-              Ask questions to build the skill graph
-            </p>
-            <p className="text-xs text-foreground-secondary">
-              Every question helps improve future responses for all agents.
-            </p>
-          </div>
-          <Button variant="default" size="sm" onClick={() => setShowApiDocs(!showApiDocs)}>
-            Get Started
-          </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </section>
   );
 }

@@ -30,7 +30,7 @@ async function isServerAvailable(): Promise<boolean> {
 
 describe.skipIf(!INTEGRATION_TESTS_ENABLED)('Scenario Execution Integration', () => {
   let serverAvailable = false;
-  let testScenario: { id: string; name: string; collectionId: string } | null = null;
+  let testScenario: { id: string; name: string | null; collectionId: string | null } | null = null;
 
   beforeAll(async () => {
     serverAvailable = await isServerAvailable();
