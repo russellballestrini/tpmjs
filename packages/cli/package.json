@@ -73,6 +73,7 @@
   "scripts": {
     "build": "tsup && oclif manifest",
     "dev": "tsup --watch",
+    "test": "vitest",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist .turbo oclif.manifest.json",
     "postpack": "rm -f oclif.manifest.json",
@@ -91,11 +92,13 @@
     "cli-table3": "^0.6.5"
   },
   "devDependencies": {
+    "@tpmjs/test": "workspace:*",
     "@tpmjs/tsconfig": "workspace:*",
     "@types/node": "^22.15.29",
     "oclif": "^4.17.35",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
   },
   "publishConfig": {
     "access": "public"
