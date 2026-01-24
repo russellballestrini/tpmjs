@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tpmj
 import { EmptyState } from '@tpmjs/ui/EmptyState/EmptyState';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import { Skeleton } from '@tpmjs/ui/Skeleton/Skeleton';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 // Simple relative time formatter
 function formatRelativeTime(date: Date): string {
@@ -20,8 +22,6 @@ function formatRelativeTime(date: Date): string {
   if (minutes > 0) return `${minutes}m ago`;
   return 'just now';
 }
-
-import { useEffect, useState } from 'react';
 
 interface SkillQuestion {
   id: string;
@@ -40,13 +40,18 @@ interface SkillQuestion {
 
 interface SkillsActivityFeedProps {
   collectionId: string;
+  username: string;
+  slug: string;
   limit?: number;
 }
 
 export function SkillsActivityFeed({
   collectionId,
+  username,
+  slug,
   limit = 10,
 }: SkillsActivityFeedProps): React.ReactElement {
+  const basePath = `/${username}/collections/${slug}`;
   const [questions, setQuestions] = useState<SkillQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -118,51 +123,53 @@ export function SkillsActivityFeed({
   return (
     <div className="space-y-3">
       {questions.map((q) => (
-        <Card key={q.id} variant="default" className="hover:border-primary/20 transition-colors">
-          <CardHeader padding="sm" className="pb-2">
-            <div className="flex items-start justify-between gap-2">
-              <CardTitle as="h4" className="text-sm font-medium line-clamp-2">
-                {q.question}
-              </CardTitle>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <Badge variant={q.confidence >= 0.7 ? 'success' : 'secondary'} size="sm">
-                  {Math.round(q.confidence * 100)}%
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent padding="sm" className="pt-0">
-            <CardDescription className="line-clamp-2 text-xs mb-3">
-              {q.answer.slice(0, 150)}
-              {q.answer.length > 150 ? '...' : ''}
-            </CardDescription>
-
-            <div className="flex items-center justify-between">
-              <div className="flex gap-1.5 flex-wrap">
-                {q.skillNodes.slice(0, 2).map((sn, i) => (
-                  <Badge key={i} variant="outline" size="sm">
-                    {sn.skill.name}
+        <Link key={q.id} href={`${basePath}/skills/questions/${q.id}`} className="block">
+          <Card variant="default" className="hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer">
+            <CardHeader padding="sm" className="pb-2">
+              <div className="flex items-start justify-between gap-2">
+                <CardTitle as="h4" className="text-sm font-medium line-clamp-2">
+                  {q.question}
+                </CardTitle>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Badge variant={q.confidence >= 0.7 ? 'success' : 'secondary'} size="sm">
+                    {Math.round(q.confidence * 100)}%
                   </Badge>
-                ))}
-                {q.skillNodes.length > 2 && (
-                  <Badge variant="outline" size="sm">
-                    +{q.skillNodes.length - 2}
-                  </Badge>
-                )}
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-xs text-foreground-tertiary">
-                {q.similarCount > 0 && (
-                  <span className="flex items-center gap-1">
-                    <Icon icon="user" size="sm" />
-                    {q.similarCount}
-                  </span>
-                )}
-                <span>{formatRelativeTime(new Date(q.createdAt))}</span>
+            </CardHeader>
+
+            <CardContent padding="sm" className="pt-0">
+              <CardDescription className="line-clamp-2 text-xs mb-3">
+                {q.answer.slice(0, 150)}
+                {q.answer.length > 150 ? '...' : ''}
+              </CardDescription>
+
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1.5 flex-wrap">
+                  {q.skillNodes.slice(0, 2).map((sn, i) => (
+                    <Badge key={i} variant="outline" size="sm">
+                      {sn.skill.name}
+                    </Badge>
+                  ))}
+                  {q.skillNodes.length > 2 && (
+                    <Badge variant="outline" size="sm">
+                      +{q.skillNodes.length - 2}
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-xs text-foreground-tertiary">
+                  {q.similarCount > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Icon icon="user" size="sm" />
+                      {q.similarCount}
+                    </span>
+                  )}
+                  <span>{formatRelativeTime(new Date(q.createdAt))}</span>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   );

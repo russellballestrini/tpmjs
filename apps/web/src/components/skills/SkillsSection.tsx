@@ -122,8 +122,20 @@ curl -X POST "${skillsUrl}" \\
         <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-foreground">Recent Questions</h3>
+            <Link
+              href={`/${username}/collections/${slug}/skills/questions`}
+              className="text-sm text-primary hover:underline flex items-center gap-1"
+            >
+              View all
+              <Icon icon="arrowRight" className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <SkillsActivityFeed collectionId={collectionId} limit={5} />
+          <SkillsActivityFeed
+            collectionId={collectionId}
+            username={username}
+            slug={slug}
+            limit={5}
+          />
         </div>
       </div>
 
