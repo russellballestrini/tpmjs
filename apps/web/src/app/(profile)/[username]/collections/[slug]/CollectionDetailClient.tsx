@@ -12,6 +12,7 @@ import { ForkedFromBadge } from '~/components/ForkedFromBadge';
 import { LikeButton } from '~/components/LikeButton';
 import { ScenariosSection } from '~/components/ScenariosSection';
 import { ShareButton } from '~/components/ShareButton';
+import { SkillsSection } from '~/components/skills/SkillsSection';
 import { UseCasesSection } from '~/components/UseCasesSection';
 import { useSession } from '~/lib/auth-client';
 
@@ -408,6 +409,15 @@ export function CollectionDetailClient({
             <ScenariosSection
               collectionId={collection.id}
               collectionOwnerId={collection.createdBy.id}
+              username={username}
+              slug={collection.slug}
+            />
+          )}
+
+          {/* Skills Section */}
+          {collection.tools.length > 0 && (
+            <SkillsSection
+              collectionId={collection.id}
               username={username}
               slug={collection.slug}
             />

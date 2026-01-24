@@ -101,14 +101,15 @@ model Tool {
   reviewCount   Int      @default(0) @map("review_count")
 
   // Relations
-  simulations  Simulation[]
-  healthChecks HealthCheck[]
-  collections  CollectionTool[]
-  agents       AgentTool[]
-  likes        ToolLike[]
-  ratings      ToolRating[]
-  reviews      ToolReview[]
-  skillsCache  ToolSkillsCache?
+  simulations     Simulation[]
+  healthChecks    HealthCheck[]
+  collections     CollectionTool[]
+  agents          AgentTool[]
+  likes           ToolLike[]
+  ratings         ToolRating[]
+  reviews         ToolReview[]
+  skillsCache     ToolSkillsCache?
+  skillQuestions  SkillQuestionTool[]
 
   @@unique([packageId, name])
   @@index([qualityScore])
@@ -463,6 +464,10 @@ model Collection {
   skillsMarkdown      String?   @map("skills_markdown") @db.Text
   skillsGeneratedAt   DateTime? @map("skills_generated_at")
 
+  // RealSkills lazy seeding state
+  skillsSeeded        Boolean   @default(false) @map("skills_seeded")
+  skillsSeedingAt     DateTime? @map("skills_seeding_at")
+
   // Timestamps
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -474,6 +479,9 @@ model Collection {
   bridgeTools            CollectionBridgeTool[]
   scenarios              Scenario[]
   skillsGenerationJobs   SkillsGenerationJob[]
+  skillQuestions         SkillQuestion[]
+  skills                 Skill[]
+  skillSessions          SkillSession[]
 
   // Unique constraint: user can't have duplicate collection slugs
   @@unique([userId, slug])
@@ -1614,4 +1622,133 @@ model OmegaUserSettings {
   updatedAt          DateTime @updatedAt @map("updated_at")
 
   @@map("omega_user_settings")
+}
+
+// ============================================================================
+// RealSkills Models (Living Skills Endpoint - Question-Driven Evolution)
+// ============================================================================
+
+/// SkillQuestion - Agent questions stored with embeddings for RAG
+model SkillQuestion {
+  id           String     @id @default(cuid())
+
+  // Collection relationship
+  collectionId String     @map("collection_id")
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Question content
+  question     String     @db.Text
+  embedding    Json       @db.JsonB // Array of floats (3072 dims for text-embedding-3-large)
+
+  // Response
+  answer       String     @db.Text
+  answerTokens Int        @default(0) @map("answer_tokens")
+
+  // Agent identity (anonymized in UI)
+  agentHash    String?    @map("agent_hash") @db.VarChar(64) // Hash of IP + user-agent for deduplication
+  agentName    String?    @map("agent_name") @db.VarChar(100) // Self-reported agent name
+  sessionId    String?    @map("session_id") // Optional session for multi-turn
+
+  // Metadata
+  tags         String[]   @default([]) @db.Text
+  confidence   Float      @default(0)
+  similarCount Int        @default(0) @map("similar_count") // Times similar question asked
+
+  // Graph relationships
+  skillNodes   SkillQuestionSkill[]
+  toolNodes    SkillQuestionTool[]
+
+  // Timestamps
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@index([collectionId])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("skill_questions")
+}
+
+/// Skill - Emergent skill nodes identified from question patterns
+model Skill {
+  id           String     @id @default(cuid())
+
+  // Collection relationship
+  collectionId String     @map("collection_id")
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Skill identity
+  name         String     @db.VarChar(200) // e.g., "React useEffect debugging"
+  slug         String     @db.VarChar(200) // URL-safe version
+  description  String     @db.Text
+  embedding    Json       @db.JsonB // Array of floats (3072 dims for text-embedding-3-large)
+
+  // Stats
+  questionCount Int       @default(0) @map("question_count")
+  confidence    Float     @default(0) // Aggregate confidence
+
+  // Graph relationships
+  questions     SkillQuestionSkill[]
+  parentSkill   Skill?    @relation("SkillHierarchy", fields: [parentSkillId], references: [id])
+  parentSkillId String?   @map("parent_skill_id")
+  childSkills   Skill[]   @relation("SkillHierarchy")
+
+  // Timestamps
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@unique([collectionId, slug])
+  @@index([collectionId])
+  @@index([questionCount])
+  @@map("skills")
+}
+
+/// SkillQuestionSkill - Junction table linking questions to skills
+model SkillQuestionSkill {
+  questionId String        @map("question_id")
+  question   SkillQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  skillId    String        @map("skill_id")
+  skill      Skill         @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  relevance  Float         @default(1.0)
+
+  @@id([questionId, skillId])
+  @@index([questionId])
+  @@index([skillId])
+  @@map("skill_question_skills")
+}
+
+/// SkillQuestionTool - Junction table linking questions to tools mentioned
+model SkillQuestionTool {
+  questionId String        @map("question_id")
+  question   SkillQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  toolId     String        @map("tool_id")
+  tool       Tool          @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  relevance  Float         @default(1.0)
+
+  @@id([questionId, toolId])
+  @@index([questionId])
+  @@index([toolId])
+  @@map("skill_question_tools")
+}
+
+/// SkillSession - Optional multi-turn conversation sessions
+model SkillSession {
+  id           String     @id @default(cuid())
+
+  // Collection relationship
+  collectionId String     @map("collection_id")
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  // Session state
+  context      Json       @default("[]") @db.JsonB // Message history
+  agentHash    String?    @map("agent_hash") @db.VarChar(64)
+  agentName    String?    @map("agent_name") @db.VarChar(100)
+
+  // Timestamps
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  expiresAt    DateTime   @map("expires_at") // Auto-expire sessions
+
+  @@index([collectionId])
+  @@index([expiresAt])
+  @@map("skill_sessions")
 }
