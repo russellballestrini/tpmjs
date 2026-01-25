@@ -145,7 +145,8 @@ const conversationStates = new Map<string, { loadedTools: Record<string, any> }>
  */
 async function searchRelevantTools(
   query: string,
-  limit = 15
+  limit = 15,
+  requestUrl?: string
 ): Promise<
   Array<{
     toolId: string;
@@ -163,11 +164,21 @@ async function searchRelevantTools(
     limit: String(limit),
   });
 
-  // Use internal API (same server)
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000';
+  // Determine base URL from request or environment
+  let baseUrl: string;
+  if (process.env.VERCEL_URL) {
+    baseUrl = `https://${process.env.VERCEL_URL}`;
+  } else if (requestUrl) {
+    // Extract origin from the incoming request URL
+    const url = new URL(requestUrl);
+    baseUrl = url.origin;
+  } else {
+    // Fallback to PORT env var or default
+    const port = process.env.PORT || '3000';
+    baseUrl = `http://localhost:${port}`;
+  }
 
+  console.log(`🔍 Tool search using baseUrl: ${baseUrl}`);
   const response = await fetch(`${baseUrl}/api/tools/search?${params}`);
 
   if (!response.ok) {
@@ -265,15 +276,29 @@ async function createDynamicTool(
 }
 
 /**
- * Sanitize tool name to be a valid JS identifier
+ * Sanitize tool name to be a valid JS identifier.
+ * OpenAI has a 64-character limit for tool names.
  */
 function sanitizeToolName(name: string): string {
-  return name
+  const sanitized = name
     .replace(/@/g, '')
     .replace(/\//g, '_')
     .replace(/-/g, '_')
     .replace(/::/g, '_')
     .replace(/[^a-zA-Z0-9_]/g, '');
+
+  // OpenAI API requires tool names <= 64 characters
+  if (sanitized.length <= 64) {
+    return sanitized;
+  }
+
+  // Truncate but try to keep the meaningful part (tool name at the end)
+  // Use last 64 chars if it starts with a letter, otherwise use first 64
+  const last64 = sanitized.slice(-64);
+  if (/^[a-zA-Z]/.test(last64)) {
+    return last64;
+  }
+  return sanitized.slice(0, 64);
 }
 
 /**
@@ -415,7 +440,7 @@ export async function POST(request: NextRequest, context: RouteContext): Promise
 
     // 🔍 Auto-search for relevant tools based on user's message (BM25)
     console.log(`🔍 Auto-searching for tools matching: "${parsed.data.message}"`);
-    const relevantTools = await searchRelevantTools(parsed.data.message, 10);
+    const relevantTools = await searchRelevantTools(parsed.data.message, 10, request.url);
     console.log(`📦 Found ${relevantTools.length} relevant tools via BM25`);
 
     // Add auto-discovered tools to conversation state
