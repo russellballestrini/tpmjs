@@ -1,0 +1,8 @@
+# Rendered video outputs
+out/
+*.mp4
+*.webm
+*.mov
+
+# Remotion cache
+.remotion/
