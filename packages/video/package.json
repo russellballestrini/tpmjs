@@ -5,8 +5,7 @@
   "description": "Marketing videos for TPMJS",
   "scripts": {
     "dev": "remotion studio",
-    "build": "remotion render MarketingVideo out/marketing-video.mp4",
-    "render": "remotion render",
+    "render": "remotion render MarketingVideo out/marketing-video.mp4",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {
