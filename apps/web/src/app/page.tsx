@@ -5,8 +5,7 @@ import { Container } from '@tpmjs/ui/Container/Container';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
 import { AppHeader } from '../components/AppHeader';
-// import { ArchitectureDiagramWrapper } from '../components/home/ArchitectureDiagramWrapper';
-// import { FeaturesSection } from '../components/home/FeaturesSection';
+import { FeaturesSection } from '../components/home/FeaturesSection';
 import { HeroSection } from '../components/home/HeroSection';
 
 export const dynamic = 'force-dynamic';
@@ -136,9 +135,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
         {/* Hero Section - Dithered Design */}
         <HeroSection stats={data.stats} />
 
-        {/* Features Section - Interactive & Animated - temporarily disabled
+        {/* Features Section */}
         <FeaturesSection />
-        */}
 
         {/* Architecture Diagram Section - temporarily disabled
         <section className="py-16 bg-background border-b border-border">
