@@ -7,6 +7,7 @@ settings:
 overrides:
   cheerio: 1.0.0-rc.12
   tailwindcss: 3.4.17
+  ai: 6.0.23
 
 importers:
 
@@ -271,10 +272,10 @@ importers:
         version: link:../../packages/package-executor
       '@tpmjs/registry-execute':
         specifier: ^0.1.3
-        version: 0.1.3(effect@3.18.4)(zod@4.3.5)
+        version: 0.1.3(zod@4.3.5)
       '@tpmjs/registry-search':
         specifier: ^0.1.2
-        version: 0.1.2(effect@3.18.4)(zod@4.3.5)
+        version: 0.1.2(zod@4.3.5)
       '@tpmjs/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -752,7 +753,7 @@ importers:
         specifier: ^3.0.7
         version: 3.0.7(zod@4.3.5)
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
       better-sqlite3:
         specifier: ^12.5.0
@@ -1069,7 +1070,7 @@ importers:
   packages/tools/official/campaign-brief:
     dependencies:
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
@@ -1190,7 +1191,7 @@ importers:
   packages/tools/official/competitor-brief:
     dependencies:
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
@@ -2082,7 +2083,7 @@ importers:
   packages/tools/official/lead-score:
     dependencies:
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
@@ -2334,7 +2335,7 @@ importers:
   packages/tools/official/objection-response:
     dependencies:
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
@@ -2605,7 +2606,7 @@ importers:
   packages/tools/official/proposal-outline:
     dependencies:
       ai:
-        specifier: ^6.0.23
+        specifier: 6.0.23
         version: 6.0.23(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
@@ -3939,7 +3940,7 @@ importers:
     dependencies:
       '@thomasdavis/unsandbox':
         specifier: ^0.0.3
-        version: 0.0.3(effect@3.18.4)(zod@4.3.5)
+        version: 0.0.3(zod@4.3.5)
     devDependencies:
       '@tpmjs/tsconfig':
         specifier: workspace:*
@@ -4102,24 +4103,6 @@ packages:
     resolution: {integrity: sha512-oJXCdZ0svdQiC50FAw39uIp26qhl7zo56C9KHoN67LQZkCFNzgYyhS8ZxuUOWTQJGB4DKx4WpOyFGbzNT2VSyw==}
     hasBin: true
 
-  '@ai-sdk/gateway@2.0.0-beta.68':
-    resolution: {integrity: sha512-eYv3hBfu/M+0XmxE1RoH4X7uhYplNbSDvRClzirKzTY+ZM5yQwP86L3DqLR7Y9/vH7yrQaSIwsBT3OMmcBnGaw==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/gateway@2.0.0-beta.71':
-    resolution: {integrity: sha512-Mn5WShiC0BUVOtO6C65FKdeQxfrIaM0QeZjYcQej6+4hRgSKWlySVDWr88ZZjXGpviB7q0zINTuc6YWV6TqfvQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/gateway@2.0.24':
-    resolution: {integrity: sha512-mflk80YF8hj8vrF9e1IHhovGKC1ubX+sY88pesSk3pUiXfH5VPO8dgzNnxjwsqsCZrnkHcztxS5cSl4TzSiEuA==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
   '@ai-sdk/gateway@3.0.10':
     resolution: {integrity: sha512-sRlPMKd38+fdp2y11USW44c0o8tsIsT6T/pgyY04VXC3URjIRnkxugxd9AkU2ogfpPDMz50cBAGPnMxj+6663Q==}
     engines: {node: '>=18'}
@@ -4150,61 +4133,11 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@3.0.20':
-    resolution: {integrity: sha512-iXHVe0apM2zUEzauqJwqmpC37A5rihrStAih5Ks+JE32iTe4LZ58y17UGBjpQQTCRw9YxMeo2UFLxLpBluyvLQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/provider-utils@4.0.0-beta.40':
-    resolution: {integrity: sha512-5345iQxWV1coKbs85vkrThsEmiFcIkgqMZUKFrVDM7E4FRqgsnWtn4394/RnShOKRun5K7TWIYCLz3GfRGy/Ig==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@valibot/to-json-schema': ^1.3.0
-      arktype: ^2.1.22
-      effect: ^3.18.4
-      zod: ^3.25.76 || ^4.1.8
-    peerDependenciesMeta:
-      '@valibot/to-json-schema':
-        optional: true
-      arktype:
-        optional: true
-      effect:
-        optional: true
-
-  '@ai-sdk/provider-utils@4.0.0-beta.42':
-    resolution: {integrity: sha512-VY+aQzlbLT4R+n3AgsRrpaeHQRhBAxBPkfXnS8PdIFKY85/W1d4emA/40j++2N0yBDBeEW4I7xAPv1t43YkjbQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@valibot/to-json-schema': ^1.3.0
-      arktype: ^2.1.22
-      effect: ^3.18.4
-      zod: ^3.25.76 || ^4.1.8
-    peerDependenciesMeta:
-      '@valibot/to-json-schema':
-        optional: true
-      arktype:
-        optional: true
-      effect:
-        optional: true
-
   '@ai-sdk/provider-utils@4.0.4':
     resolution: {integrity: sha512-VxhX0B/dWGbpNHxrKCWUAJKXIXV015J4e7qYjdIU9lLWeptk0KMLGcqkB4wFxff5Njqur8dt8wRi1MN9lZtDqg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/provider@2.0.1':
-    resolution: {integrity: sha512-KCUwswvsC5VsW2PWFqF8eJgSCu5Ysj7m1TxiHTVA6g7k360bk0RNQENT8KTMAYEs+8fWPD3Uu4dEmzGHc+jGng==}
-    engines: {node: '>=18'}
-
-  '@ai-sdk/provider@3.0.0-beta.22':
-    resolution: {integrity: sha512-Ss0tgCZwzccS6MREhjAI28lkAV5PfJnoBFbv8mas74Cs5OseFKqxg3dEd1lRL8mf4Qapu1xpBLkV4/ldSShSdA==}
-    engines: {node: '>=18'}
-
-  '@ai-sdk/provider@3.0.0-beta.23':
-    resolution: {integrity: sha512-C8X5urwwxCM8GzdMiEnI5ZtRSv+rs17smwubTy0S+dFm9aSVui92ED5U42TJvDivEpDsHbMhuNI8sxRbtFQduQ==}
-    engines: {node: '>=18'}
 
   '@ai-sdk/provider@3.0.2':
     resolution: {integrity: sha512-HrEmNt/BH/hkQ7zpi2o6N3k1ZR1QTb7z85WYhYygiTxOQuaml4CMtHCWRbric5WPU+RNsYI7r1EpyVQMKO1pYw==}
@@ -7481,10 +7414,6 @@ packages:
     resolution: {integrity: sha512-pKT8fRnfyYk2MgvyB6fn6ipJPCdfZwiKDdw7vB+HL50rjboEBHDVBEcnwfkEpVSp2AjNtoaOUH7zG+bVC/rvSg==}
     engines: {node: '>=14.6'}
 
-  '@vercel/oidc@3.0.5':
-    resolution: {integrity: sha512-fnYhv671l+eTTp48gB4zEsTW/YtRgRPnkI2nT7x6qw5rkI1Lq2hTmQIpHPgyThI0znLK+vX2n9XxKdXZ7BUbbw==}
-    engines: {node: '>= 20'}
-
   '@vercel/oidc@3.1.0':
     resolution: {integrity: sha512-Fw28YZpRnA3cAHHDlkt7xQHiJ0fcL+NRcIqsocZQUSmbzeIKRpwttJjik5ZGanXP+vlA4SbTg+AbA3bP363l+w==}
     engines: {node: '>= 20'}
@@ -7624,24 +7553,6 @@ packages:
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
-
-  ai@5.0.118:
-    resolution: {integrity: sha512-sKJHfhJkvAyq5NC3yJJ4R8Z3tn4pSHF760/jInKAtmLwPLWTHfGo293DSO4un8QUAgJOagHd09VSXOXv+STMNQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  ai@6.0.0-beta.124:
-    resolution: {integrity: sha512-Apl4uNZLzc4sAUtu4W77DpM9o+bJJB46A/ayVLDck3MBv+rw4/qGBY9H6/gY9Xpc/CeVogyyEr1DxBMv47olCw==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  ai@6.0.0-beta.131:
-    resolution: {integrity: sha512-hoe+I4pPWjyP1CQHtftC5p7z/EEAx8nGTzzxG0Ka+cAKQW+3lQZsO3dBZ9kB2McYrLd2xntJl7V1tgqqnkfvYw==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
 
   ai@6.0.23:
     resolution: {integrity: sha512-IV8hqp6sQvZ0XVlu8bCnFlwG7+2d40ff26RZ1k4yw/zVuk2F6SXlONURtTo9vwPOPYeF7auXvyPA+dMDoepWxg==}
@@ -13301,35 +13212,6 @@ snapshots:
       '@hono/node-server': 1.19.8(hono@4.10.6)
       hono: 4.10.6
 
-  '@ai-sdk/gateway@2.0.0-beta.68(effect@3.18.4)(zod@4.3.5)':
-    dependencies:
-      '@ai-sdk/provider': 3.0.0-beta.22
-      '@ai-sdk/provider-utils': 4.0.0-beta.40(effect@3.18.4)(zod@4.3.5)
-      '@vercel/oidc': 3.0.5
-      zod: 4.3.5
-    transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
-
-  '@ai-sdk/gateway@2.0.0-beta.71(effect@3.18.4)(zod@4.3.5)':
-    dependencies:
-      '@ai-sdk/provider': 3.0.0-beta.23
-      '@ai-sdk/provider-utils': 4.0.0-beta.42(effect@3.18.4)(zod@4.3.5)
-      '@vercel/oidc': 3.0.5
-      zod: 4.3.5
-    transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
-
-  '@ai-sdk/gateway@2.0.24(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.20(zod@3.25.76)
-      '@vercel/oidc': 3.0.5
-      zod: 3.25.76
-
   '@ai-sdk/gateway@3.0.10(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 3.0.2
@@ -13380,31 +13262,6 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.4(zod@4.3.5)
       zod: 4.3.5
 
-  '@ai-sdk/provider-utils@3.0.20(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
-      zod: 3.25.76
-
-  '@ai-sdk/provider-utils@4.0.0-beta.40(effect@3.18.4)(zod@4.3.5)':
-    dependencies:
-      '@ai-sdk/provider': 3.0.0-beta.22
-      '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
-      zod: 4.3.5
-    optionalDependencies:
-      effect: 3.18.4
-
-  '@ai-sdk/provider-utils@4.0.0-beta.42(effect@3.18.4)(zod@4.3.5)':
-    dependencies:
-      '@ai-sdk/provider': 3.0.0-beta.23
-      '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
-      zod: 4.3.5
-    optionalDependencies:
-      effect: 3.18.4
-
   '@ai-sdk/provider-utils@4.0.4(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 3.0.2
@@ -13418,18 +13275,6 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.6
       zod: 4.3.5
-
-  '@ai-sdk/provider@2.0.1':
-    dependencies:
-      json-schema: 0.4.0
-
-  '@ai-sdk/provider@3.0.0-beta.22':
-    dependencies:
-      json-schema: 0.4.0
-
-  '@ai-sdk/provider@3.0.0-beta.23':
-    dependencies:
-      json-schema: 0.4.0
 
   '@ai-sdk/provider@3.0.2':
     dependencies:
@@ -15724,14 +15569,14 @@ snapshots:
       '@remotion/media-parser': 4.0.409
       '@remotion/studio': 4.0.409(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@remotion/studio-shared': 4.0.409(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      css-loader: 5.2.7(webpack@5.96.1)
+      css-loader: 5.2.7(webpack@5.96.1(esbuild@0.25.0))
       esbuild: 0.25.0
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       react-refresh: 0.9.0
       remotion: 4.0.409(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.96.1)
+      style-loader: 4.0.0(webpack@5.96.1(esbuild@0.25.0))
       webpack: 5.96.1(esbuild@0.25.0)
     transitivePeerDependencies:
       - '@swc/core'
@@ -16696,33 +16541,24 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@thomasdavis/unsandbox@0.0.3(effect@3.18.4)(zod@4.3.5)':
+  '@thomasdavis/unsandbox@0.0.3(zod@4.3.5)':
     dependencies:
-      ai: 6.0.0-beta.131(effect@3.18.4)(zod@4.3.5)
+      ai: 6.0.23(zod@4.3.5)
     transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
       - zod
 
   '@total-typescript/ts-reset@0.6.1': {}
 
-  '@tpmjs/registry-execute@0.1.3(effect@3.18.4)(zod@4.3.5)':
+  '@tpmjs/registry-execute@0.1.3(zod@4.3.5)':
     dependencies:
-      ai: 6.0.0-beta.124(effect@3.18.4)(zod@4.3.5)
+      ai: 6.0.23(zod@4.3.5)
     transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
       - zod
 
-  '@tpmjs/registry-search@0.1.2(effect@3.18.4)(zod@4.3.5)':
+  '@tpmjs/registry-search@0.1.2(zod@4.3.5)':
     dependencies:
-      ai: 6.0.0-beta.124(effect@3.18.4)(zod@4.3.5)
+      ai: 6.0.23(zod@4.3.5)
     transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
       - zod
 
   '@tweenjs/tween.js@23.1.3': {}
@@ -17239,8 +17075,6 @@ snapshots:
     dependencies:
       '@upstash/redis': 1.36.1
 
-  '@vercel/oidc@3.0.5': {}
-
   '@vercel/oidc@3.1.0': {}
 
   '@vitest/expect@2.0.5':
@@ -17432,38 +17266,6 @@ snapshots:
   afinn-165@1.0.4: {}
 
   agent-base@7.1.4: {}
-
-  ai@5.0.118(zod@3.25.76):
-    dependencies:
-      '@ai-sdk/gateway': 2.0.24(zod@3.25.76)
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.20(zod@3.25.76)
-      '@opentelemetry/api': 1.9.0
-      zod: 3.25.76
-
-  ai@6.0.0-beta.124(effect@3.18.4)(zod@4.3.5):
-    dependencies:
-      '@ai-sdk/gateway': 2.0.0-beta.68(effect@3.18.4)(zod@4.3.5)
-      '@ai-sdk/provider': 3.0.0-beta.22
-      '@ai-sdk/provider-utils': 4.0.0-beta.40(effect@3.18.4)(zod@4.3.5)
-      '@opentelemetry/api': 1.9.0
-      zod: 4.3.5
-    transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
-
-  ai@6.0.0-beta.131(effect@3.18.4)(zod@4.3.5):
-    dependencies:
-      '@ai-sdk/gateway': 2.0.0-beta.71(effect@3.18.4)(zod@4.3.5)
-      '@ai-sdk/provider': 3.0.0-beta.23
-      '@ai-sdk/provider-utils': 4.0.0-beta.42(effect@3.18.4)(zod@4.3.5)
-      '@opentelemetry/api': 1.9.0
-      zod: 4.3.5
-    transitivePeerDependencies:
-      - '@valibot/to-json-schema'
-      - arktype
-      - effect
 
   ai@6.0.23(zod@3.25.76):
     dependencies:
@@ -18164,7 +17966,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  css-loader@5.2.7(webpack@5.96.1):
+  css-loader@5.2.7(webpack@5.96.1(esbuild@0.25.0)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.6)
       loader-utils: 2.0.4
@@ -19386,7 +19188,7 @@ snapshots:
   firecrawl-aisdk@0.7.2:
     dependencies:
       '@mendable/firecrawl-js': 4.10.0
-      ai: 5.0.118(zod@3.25.76)
+      ai: 6.0.23(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
       - debug
@@ -22998,7 +22800,7 @@ snapshots:
 
   stubborn-utils@1.0.2: {}
 
-  style-loader@4.0.0(webpack@5.96.1):
+  style-loader@4.0.0(webpack@5.96.1(esbuild@0.25.0)):
     dependencies:
       webpack: 5.96.1(esbuild@0.25.0)
 

@@ -55,7 +55,8 @@
     ],
     "overrides": {
       "cheerio": "1.0.0-rc.12",
-      "tailwindcss": "3.4.17"
+      "tailwindcss": "3.4.17",
+      "ai": "6.0.23"
     }
   },
   "devDependencies": {
