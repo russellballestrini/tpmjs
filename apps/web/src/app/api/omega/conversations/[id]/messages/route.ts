@@ -12,7 +12,7 @@
 import { Prisma, prisma } from '@tpmjs/db';
 import { registryExecuteTool } from '@tpmjs/registry-execute';
 import { registrySearchTool } from '@tpmjs/registry-search';
-import { jsonSchema, wrapLanguageModel, type ModelMessage } from 'ai';
+import { jsonSchema, type ModelMessage, wrapLanguageModel } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authenticateRequest } from '~/lib/api-keys/middleware';
@@ -223,29 +223,43 @@ async function createDynamicTool(
     execute: async (params: any) => {
       console.log(`🚀 Executing ${toolMeta.packageName}/${toolMeta.name} with params:`, params);
 
-      const response = await fetch(`${EXECUTOR_URL}/execute-tool`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          packageName: toolMeta.packageName,
-          name: toolMeta.name,
-          version: toolMeta.version,
-          importUrl: toolMeta.importUrl,
-          params,
-          env: userEnvVars,
-        }),
-      });
+      try {
+        const response = await fetch(`${EXECUTOR_URL}/execute-tool`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            packageName: toolMeta.packageName,
+            name: toolMeta.name,
+            version: toolMeta.version,
+            importUrl: toolMeta.importUrl,
+            params,
+            env: userEnvVars,
+          }),
+        });
 
-      // biome-ignore lint/suspicious/noExplicitAny: API response types vary
-      const result = (await response.json()) as any;
+        // biome-ignore lint/suspicious/noExplicitAny: API response types vary
+        const result = (await response.json()) as any;
 
-      if (!result.success) {
-        console.error(`❌ Tool execution failed: ${result.error}`);
-        throw new Error(result.error || 'Tool execution failed');
+        if (!result.success) {
+          console.error(`❌ Tool execution failed: ${result.error}`);
+          // Return error as result instead of throwing so AI can see it
+          return {
+            error: true,
+            message: result.error || 'Tool execution failed',
+            toolId: toolMeta.toolId,
+          };
+        }
+
+        console.log(`✅ Tool executed in ${result.executionTimeMs}ms`);
+        return result.output;
+      } catch (error) {
+        console.error(`❌ Tool execution error:`, error);
+        return {
+          error: true,
+          message: error instanceof Error ? error.message : 'Unknown error during tool execution',
+          toolId: toolMeta.toolId,
+        };
       }
-
-      console.log(`✅ Tool executed in ${result.executionTimeMs}ms`);
-      return result.output;
     },
   });
 }
