@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-checkpoint-restore",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Restore a sprite to a previous checkpoint state",
   "type": "module",
   "keywords": [
@@ -68,6 +68,13 @@
           "type": "{ restored: boolean, checkpointId: string, sprite: Sprite }",
           "description": "Restoration result with sprite status"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },

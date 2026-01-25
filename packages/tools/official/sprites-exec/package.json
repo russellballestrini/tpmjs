@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-exec",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Execute a command inside a sprite and return the output with exit code",
   "type": "module",
   "keywords": [
@@ -79,6 +79,13 @@
           "type": "ExecResult",
           "description": "Command output with exitCode, stdout, stderr, and duration"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },

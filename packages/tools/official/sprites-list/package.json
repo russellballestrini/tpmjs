@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-list",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "List all sprites in the account with their current status and metadata",
   "type": "module",
   "keywords": [
@@ -54,6 +54,13 @@
           "type": "{ sprites: Sprite[], count: number }",
           "description": "Array of sprites with count"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },

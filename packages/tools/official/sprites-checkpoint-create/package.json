@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-checkpoint-create",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Create a point-in-time snapshot of a sprite's filesystem state for later restoration",
   "type": "module",
   "keywords": [
@@ -68,6 +68,13 @@
           "type": "Checkpoint",
           "description": "Created checkpoint with ID and metadata"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },

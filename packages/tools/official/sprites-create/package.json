@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-create",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Create a new isolated Linux sandbox environment (sprite) with persistent filesystem using the Sprites API",
   "type": "module",
   "keywords": [
@@ -61,6 +61,13 @@
           "type": "Sprite",
           "description": "Created sprite with name, status, and metadata"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },

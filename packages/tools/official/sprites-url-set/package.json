@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-sprites-url-set",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Set the access settings for a sprite URL (public or private)",
   "type": "module",
   "keywords": [
@@ -67,6 +67,13 @@
           "type": "SpriteUrlResult",
           "description": "Updated sprite URL and settings"
         }
+      }
+    ],
+    "env": [
+      {
+        "name": "SPRITES_TOKEN",
+        "description": "API token from sprites.dev",
+        "required": true
       }
     ]
   },
