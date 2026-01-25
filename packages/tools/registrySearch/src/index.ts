@@ -58,45 +58,61 @@ export const registrySearchTool = tool({
     additionalProperties: false,
   }),
   async execute({ query, category, limit = 5 }) {
-    const params = new URLSearchParams({
-      q: query,
-      limit: String(limit),
-      ...(category && { category }),
-    });
+    try {
+      const params = new URLSearchParams({
+        q: query,
+        limit: String(limit),
+        ...(category && { category }),
+      });
 
-    const url = `${TPMJS_API_URL}/api/tools/search?${params}`;
-    const response = await fetch(url);
+      const url = `${TPMJS_API_URL}/api/tools/search?${params}`;
+      const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(`Search failed: ${response.statusText}`);
+      if (!response.ok) {
+        return {
+          error: true,
+          message: `Search failed: ${response.statusText}`,
+          query,
+          matchCount: 0,
+          tools: [],
+        };
+      }
+
+      // biome-ignore lint/suspicious/noExplicitAny: API response types vary
+      const data = (await response.json()) as any;
+      const toolsArray = data.results?.tools || [];
+
+      return {
+        query,
+        matchCount: toolsArray.length,
+        // biome-ignore lint/suspicious/noExplicitAny: Tool types from API vary
+        tools: toolsArray.map((t: any) => ({
+          // Unique identifier for registryExecuteTool
+          toolId: `${t.package.npmPackageName}::${t.name}`,
+
+          // Human-readable info
+          name: t.name,
+          package: t.package.npmPackageName,
+          description: t.description,
+          category: t.package.category,
+
+          // Execution requirements
+          requiredEnvVars:
+            t.package.env?.filter((e: any) => e.required).map((e: any) => e.name) || [],
+
+          // Quality indicators
+          healthStatus: t.executionHealth,
+          qualityScore: t.qualityScore,
+        })),
+      };
+    } catch (error) {
+      return {
+        error: true,
+        message: error instanceof Error ? error.message : 'Unknown search error',
+        query,
+        matchCount: 0,
+        tools: [],
+      };
     }
-
-    // biome-ignore lint/suspicious/noExplicitAny: API response types vary
-    const data = (await response.json()) as any;
-    const toolsArray = data.results?.tools || [];
-
-    return {
-      query,
-      matchCount: toolsArray.length,
-      // biome-ignore lint/suspicious/noExplicitAny: Tool types from API vary
-      tools: toolsArray.map((t: any) => ({
-        // Unique identifier for registryExecuteTool
-        toolId: `${t.package.npmPackageName}::${t.name}`,
-
-        // Human-readable info
-        name: t.name,
-        package: t.package.npmPackageName,
-        description: t.description,
-        category: t.package.category,
-
-        // Execution requirements
-        requiredEnvVars:
-          t.package.env?.filter((e: any) => e.required).map((e: any) => e.name) || [],
-
-        // Quality indicators
-        healthStatus: t.executionHealth,
-        qualityScore: t.qualityScore,
-      })),
-    };
   },
 });
