@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/discord-read",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI SDK tool to read messages from a Discord server",
   "type": "module",
   "main": "dist/index.js",

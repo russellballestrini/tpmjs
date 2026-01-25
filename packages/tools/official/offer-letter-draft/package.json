@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-offer-letter-draft",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generates offer letter content from compensation and role details",
   "type": "module",
   "keywords": [

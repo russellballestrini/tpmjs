@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/feedback-themes",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extracts themes and sentiment from customer feedback text",
   "type": "module",
   "keywords": [

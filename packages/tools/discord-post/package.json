@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/discord-post",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI SDK tool to post messages to a Discord channel",
   "type": "module",
   "main": "dist/index.js",

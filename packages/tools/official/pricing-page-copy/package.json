@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/pricing-page-copy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate pricing page copy with tier names, feature lists, and CTAs",
   "type": "module",
   "keywords": [

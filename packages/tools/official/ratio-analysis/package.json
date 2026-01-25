@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-ratio-analysis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Calculates key financial ratios from balance sheet and income statement data",
   "type": "module",
   "keywords": [

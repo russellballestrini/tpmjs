@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/churn-risk-score",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scores customer churn risk based on usage, engagement, and support signals",
   "type": "module",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-risk-clause-highlight",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Identifies and highlights potentially risky clauses in contracts",
   "type": "module",
   "keywords": [

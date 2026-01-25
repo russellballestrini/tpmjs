@@ -271,11 +271,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/package-executor
       '@tpmjs/registry-execute':
-        specifier: ^0.1.3
-        version: 0.1.3(zod@4.3.5)
+        specifier: workspace:*
+        version: link:../../packages/tools/registryExecute
       '@tpmjs/registry-search':
-        specifier: ^0.1.2
-        version: 0.1.2(zod@4.3.5)
+        specifier: workspace:*
+        version: link:../../packages/tools/registrySearch
       '@tpmjs/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -6909,12 +6909,6 @@ packages:
 
   '@total-typescript/ts-reset@0.6.1':
     resolution: {integrity: sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg==}
-
-  '@tpmjs/registry-execute@0.1.3':
-    resolution: {integrity: sha512-EOmPjtzJM4dNaQSR0KgMk9Gv+ugaYH7kqK+q26Ah+eM67CsdH8Wm62CRLXj7+f8EouoILj2JgAvCcrF701HvuA==}
-
-  '@tpmjs/registry-search@0.1.2':
-    resolution: {integrity: sha512-usjMeDtKnSO6txL5dmNI571MiDZnimT9fwTOQILi56Y/yiIrcQn3WdeZl0kXpK9Kran7f2+SSL1o7rYlHrU1gA==}
 
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
@@ -16568,18 +16562,6 @@ snapshots:
       - zod
 
   '@total-typescript/ts-reset@0.6.1': {}
-
-  '@tpmjs/registry-execute@0.1.3(zod@4.3.5)':
-    dependencies:
-      ai: 6.0.49(zod@4.3.5)
-    transitivePeerDependencies:
-      - zod
-
-  '@tpmjs/registry-search@0.1.2(zod@4.3.5)':
-    dependencies:
-      ai: 6.0.49(zod@4.3.5)
-    transitivePeerDependencies:
-      - zod
 
   '@tweenjs/tween.js@23.1.3': {}
 

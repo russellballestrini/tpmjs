@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-tax-deduction-scan",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scans expense data for potential tax deductions by category",
   "type": "module",
   "keywords": [

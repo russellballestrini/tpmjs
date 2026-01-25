@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-cash-flow-project",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Projects cash flow based on receivables, payables, and recurring items",
   "type": "module",
   "keywords": [

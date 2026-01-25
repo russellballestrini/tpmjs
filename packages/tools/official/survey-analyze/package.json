@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-survey-analyze",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Analyzes employee survey responses to extract themes, sentiment, and action items",
   "type": "module",
   "keywords": [

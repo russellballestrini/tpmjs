@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-org-chart-format",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Formats organizational hierarchy data into structured org chart representation",
   "type": "module",
   "keywords": [

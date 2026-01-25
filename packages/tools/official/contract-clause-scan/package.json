@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-contract-clause-scan",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scans contract text to identify and categorize key clauses (termination, liability, IP, etc.)",
   "type": "module",
   "keywords": [

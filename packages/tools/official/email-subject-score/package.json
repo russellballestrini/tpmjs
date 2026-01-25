@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/email-subject-score",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Score email subject lines for open rate potential based on length, urgency, personalization",
   "type": "module",
   "keywords": [

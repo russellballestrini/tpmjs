@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-invoice-terms-extract",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Extracts payment terms, due dates, and late fees from invoice text",
   "type": "module",
   "keywords": [

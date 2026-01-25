@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-budget-variance",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Calculates budget vs actual variance with percentage and trend analysis",
   "type": "module",
   "keywords": [

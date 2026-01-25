@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-revenue-breakdown",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Breaks down revenue by segment, product, or period with growth rates",
   "type": "module",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/official-nda-template-draft",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generates NDA template with customizable terms for mutual or unilateral agreements",
   "type": "module",
   "keywords": [
