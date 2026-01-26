@@ -3,13 +3,20 @@
  *
  * Tests for the evaluation logic including:
  * - Regex assertion matching
+ * - JSON Schema validation
+ * - JSON extraction from various formats
  * - Final verdict determination
  * - Assertion result handling
  */
 
 import { describe, expect, it } from 'vitest';
 
-import { determineFinalVerdict, runAssertions } from './evaluate';
+import {
+  determineFinalVerdict,
+  extractJsonFromOutput,
+  runAssertions,
+  validateJsonSchema,
+} from './evaluate';
 
 describe('runAssertions', () => {
   describe('regex assertions', () => {
@@ -93,29 +100,262 @@ describe('runAssertions', () => {
   });
 
   describe('schema assertions', () => {
-    it('should note when schema is provided', () => {
-      const output = '{"name": "test"}';
-      const assertions = { schema: { type: 'object' } };
+    it('should pass when JSON validates against schema', () => {
+      const output = '{"name": "test", "age": 25}';
+      const assertions = {
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'number' },
+          },
+          required: ['name'],
+        },
+      };
 
       const result = runAssertions(output, assertions);
 
-      expect(result.passed).toContain('schema:provided (validation pending)');
+      expect(result.passed).toContain('schema: JSON validates against schema');
+      expect(result.failed).toHaveLength(0);
     });
-  });
 
-  describe('combined assertions', () => {
-    it('should handle both regex and schema assertions', () => {
-      const output = '{"status": "success"}';
+    it('should fail when JSON does not validate against schema', () => {
+      const output = '{"name": 123}';
       const assertions = {
-        regex: ['success'],
+        schema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+        },
+      };
+
+      const result = runAssertions(output, assertions);
+
+      expect(result.failed.length).toBeGreaterThan(0);
+      expect(result.failed[0]).toContain('schema:');
+      expect(result.passed).toHaveLength(0);
+    });
+
+    it('should fail when output is not valid JSON', () => {
+      const output = 'This is not JSON at all';
+      const assertions = {
         schema: { type: 'object' },
       };
 
       const result = runAssertions(output, assertions);
 
-      expect(result.passed).toContain('regex:success');
-      expect(result.passed).toContain('schema:provided (validation pending)');
+      expect(result.failed).toContain('schema: Output does not contain valid JSON');
     });
+
+    it('should handle schema with required fields', () => {
+      const output = '{"name": "test"}';
+      const assertions = {
+        schema: {
+          type: 'object',
+          required: ['name', 'email'],
+        },
+      };
+
+      const result = runAssertions(output, assertions);
+
+      expect(result.failed.length).toBeGreaterThan(0);
+      expect(result.failed[0]).toContain('schema:');
+    });
+
+    it('should handle empty schema object', () => {
+      const output = '{"anything": "goes"}';
+      const assertions = { schema: {} };
+
+      const result = runAssertions(output, assertions);
+
+      // Empty schema should not run validation
+      expect(result.passed).toHaveLength(0);
+      expect(result.failed).toHaveLength(0);
+    });
+  });
+
+  describe('combined assertions', () => {
+    it('should handle both regex and schema assertions passing', () => {
+      const output = '{"status": "success", "count": 42}';
+      const assertions = {
+        regex: ['success', '42'],
+        schema: {
+          type: 'object',
+          properties: {
+            status: { type: 'string' },
+            count: { type: 'number' },
+          },
+        },
+      };
+
+      const result = runAssertions(output, assertions);
+
+      expect(result.passed).toContain('regex:success');
+      expect(result.passed).toContain('regex:42');
+      expect(result.passed).toContain('schema: JSON validates against schema');
+      expect(result.failed).toHaveLength(0);
+    });
+
+    it('should handle regex passing but schema failing', () => {
+      const output = '{"status": "success", "count": "not a number"}';
+      const assertions = {
+        regex: ['success'],
+        schema: {
+          type: 'object',
+          properties: {
+            count: { type: 'number' },
+          },
+        },
+      };
+
+      const result = runAssertions(output, assertions);
+
+      expect(result.passed).toContain('regex:success');
+      expect(result.failed.length).toBeGreaterThan(0);
+      expect(result.failed[0]).toContain('schema:');
+    });
+  });
+});
+
+describe('extractJsonFromOutput', () => {
+  it('should extract direct JSON object', () => {
+    const output = '{"name": "test"}';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ name: 'test' });
+  });
+
+  it('should extract direct JSON array', () => {
+    const output = '[1, 2, 3]';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  it('should extract JSON from markdown code block with json tag', () => {
+    const output = 'Here is the result:\n```json\n{"status": "ok"}\n```';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ status: 'ok' });
+  });
+
+  it('should extract JSON from markdown code block without tag', () => {
+    const output = 'Result:\n```\n{"value": 42}\n```\nDone.';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ value: 42 });
+  });
+
+  it('should extract JSON embedded in text', () => {
+    const output = 'The response is {"data": "found"} as expected.';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ data: 'found' });
+  });
+
+  it('should return null for non-JSON output', () => {
+    const output = 'This is just plain text with no JSON.';
+    const result = extractJsonFromOutput(output);
+    expect(result).toBeNull();
+  });
+
+  it('should handle whitespace around JSON', () => {
+    const output = '   \n  {"trimmed": true}  \n   ';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ trimmed: true });
+  });
+
+  it('should handle nested JSON objects', () => {
+    const output = '{"outer": {"inner": {"deep": "value"}}}';
+    const result = extractJsonFromOutput(output);
+    expect(result).toEqual({ outer: { inner: { deep: 'value' } } });
+  });
+});
+
+describe('validateJsonSchema', () => {
+  it('should validate simple object schema', () => {
+    const data = { name: 'test', age: 25 };
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        age: { type: 'number' },
+      },
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('should return errors for invalid data', () => {
+    const data = { name: 123 };
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it('should validate required fields', () => {
+    const data = { name: 'test' };
+    const schema = {
+      type: 'object',
+      required: ['name', 'email'],
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('email'))).toBe(true);
+  });
+
+  it('should validate array schemas', () => {
+    const data = [1, 2, 3];
+    const schema = {
+      type: 'array',
+      items: { type: 'number' },
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(true);
+  });
+
+  it('should handle format validation (email)', () => {
+    const data = { email: 'invalid-email' };
+    const schema = {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+      },
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(false);
+  });
+
+  it('should pass format validation for valid email', () => {
+    const data = { email: 'test@example.com' };
+    const schema = {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+      },
+    };
+
+    const result = validateJsonSchema(data, schema);
+    expect(result.valid).toBe(true);
+  });
+
+  it('should handle invalid schema gracefully', () => {
+    const data = { test: true };
+    const schema = {
+      type: 'invalid-type-that-does-not-exist',
+    };
+
+    const result = validateJsonSchema(data, schema as Record<string, unknown>);
+    // Ajv with strict: false will still try to validate
+    expect(result.valid).toBe(false);
   });
 });
 

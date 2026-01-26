@@ -15,6 +15,7 @@ import { createToolDefinition } from '../ai-agent/tool-executor-agent';
 import { parseExecutorConfig, resolveExecutorConfig } from '../executors';
 import {
   determineFinalVerdict,
+  type EvaluationResult,
   type EvaluatorModelId,
   evaluateScenarioRun,
   runAssertions,
@@ -24,6 +25,55 @@ const DEFAULT_EVALUATOR: EvaluatorModelId = 'gpt-4.1-mini';
 const DEFAULT_MODEL = 'gpt-4.1-mini';
 const MAX_RETRIES = 1;
 const MAX_TOOL_STEPS = 10;
+
+/**
+ * Error categories for scenario execution
+ */
+export type ScenarioErrorCategory =
+  | 'COLLECTION_NOT_FOUND'
+  | 'NO_COLLECTION'
+  | 'NO_TOOLS'
+  | 'TOOL_BUILD_ERROR'
+  | 'EXECUTION_ERROR'
+  | 'EVALUATION_ERROR'
+  | 'QUOTA_EXCEEDED'
+  | 'UNKNOWN_ERROR';
+
+/**
+ * Structured error for scenario execution
+ */
+export class ScenarioExecutionError extends Error {
+  constructor(
+    message: string,
+    public readonly category: ScenarioErrorCategory,
+    public readonly context?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'ScenarioExecutionError';
+  }
+}
+
+/**
+ * Structured logging for scenario execution
+ */
+function logScenarioEvent(
+  event: 'start' | 'tools_built' | 'execution_complete' | 'evaluation_complete' | 'error' | 'retry',
+  scenarioId: string,
+  data?: Record<string, unknown>
+): void {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    event: `scenario.${event}`,
+    scenarioId,
+    ...data,
+  };
+
+  // In production, this could be sent to a logging service
+  // For now, we use structured console logging that can be parsed
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Scenario]', JSON.stringify(logEntry, null, 2));
+  }
+}
 
 /**
  * Collection type with full tool relations
@@ -156,6 +206,12 @@ export async function executeScenario(
 ): Promise<ExecutionResult> {
   const { evaluatorModel = DEFAULT_EVALUATOR } = options;
 
+  logScenarioEvent('start', scenario.id, {
+    userId,
+    collectionId: scenario.collectionId,
+    evaluatorModel,
+  });
+
   // Create run record
   const run = await prisma.scenarioRun.create({
     data: {
@@ -172,6 +228,13 @@ export async function executeScenario(
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     retryCount = attempt;
 
+    if (attempt > 0) {
+      logScenarioEvent('retry', scenario.id, {
+        attempt,
+        previousError: lastError?.message,
+      });
+    }
+
     try {
       // Update status to running
       await prisma.scenarioRun.update({
@@ -187,12 +250,21 @@ export async function executeScenario(
       const executionResult = await executeWithAgent(scenario);
 
       // Evaluate with LLM
-      const evaluation = await evaluateScenarioRun(
-        scenario.prompt,
-        executionResult.output,
-        executionResult.conversation,
-        evaluatorModel
-      );
+      let evaluation: EvaluationResult;
+      try {
+        evaluation = await evaluateScenarioRun(
+          scenario.prompt,
+          executionResult.output,
+          executionResult.conversation,
+          evaluatorModel
+        );
+      } catch (evalError) {
+        throw new ScenarioExecutionError(
+          `Evaluation failed: ${evalError instanceof Error ? evalError.message : 'Unknown error'}`,
+          'EVALUATION_ERROR',
+          { scenarioId: scenario.id, evaluatorModel, error: String(evalError) }
+        );
+      }
 
       // Run assertions if defined
       const assertions = scenario.assertions as {
@@ -205,6 +277,14 @@ export async function executeScenario(
 
       // Determine final verdict
       const finalStatus = determineFinalVerdict(evaluation, assertionResults);
+
+      logScenarioEvent('evaluation_complete', scenario.id, {
+        verdict: finalStatus,
+        evaluatorVerdict: evaluation.verdict,
+        evaluatorConfidence: evaluation.confidence,
+        assertionsPassed: assertionResults?.passed.length ?? 0,
+        assertionsFailed: assertionResults?.failed.length ?? 0,
+      });
 
       // Update run record
       const updatedRun = await prisma.scenarioRun.update({
@@ -234,12 +314,29 @@ export async function executeScenario(
 
       // If this is the last attempt, mark as error
       if (attempt === MAX_RETRIES) {
+        // Extract error category if it's a ScenarioExecutionError
+        const errorCategory =
+          error instanceof ScenarioExecutionError ? error.category : 'UNKNOWN_ERROR';
+        const errorContext = error instanceof ScenarioExecutionError ? error.context : undefined;
+
+        logScenarioEvent('error', scenario.id, {
+          category: errorCategory,
+          message: lastError.message,
+          context: errorContext,
+          retryCount,
+        });
+
         const errorRun = await prisma.scenarioRun.update({
           where: { id: run.id },
           data: {
             status: 'error',
             retryCount,
-            errorLog: (error as Error).stack || (error as Error).message,
+            errorLog: JSON.stringify({
+              message: lastError.message,
+              category: errorCategory,
+              context: errorContext,
+              stack: lastError.stack,
+            }),
             completedAt: new Date(),
           },
         });
@@ -353,23 +450,45 @@ async function executeWithAgent(scenario: Scenario): Promise<{
 
   // Verify scenario has a collection
   if (!scenario.collectionId) {
-    throw new Error('Scenario has no associated collection');
+    throw new ScenarioExecutionError('Scenario has no associated collection', 'NO_COLLECTION', {
+      scenarioId: scenario.id,
+    });
   }
 
   // Fetch collection with tools
   const collection = await fetchCollectionWithTools(scenario.collectionId);
   if (!collection) {
-    throw new Error(`Collection not found: ${scenario.collectionId}`);
+    throw new ScenarioExecutionError(
+      `Collection not found: ${scenario.collectionId}`,
+      'COLLECTION_NOT_FOUND',
+      { scenarioId: scenario.id, collectionId: scenario.collectionId }
+    );
   }
 
   if (collection.tools.length === 0) {
-    throw new Error('Collection has no tools configured');
+    throw new ScenarioExecutionError('Collection has no tools configured', 'NO_TOOLS', {
+      scenarioId: scenario.id,
+      collectionId: collection.id,
+      collectionName: collection.name,
+    });
   }
 
   // Build tools from collection
-  const tools = buildCollectionTools(collection);
+  let tools: Record<string, ReturnType<typeof createToolDefinition>>;
+  try {
+    tools = buildCollectionTools(collection);
+  } catch (err) {
+    throw new ScenarioExecutionError(
+      `Failed to build tools: ${err instanceof Error ? err.message : 'Unknown error'}`,
+      'TOOL_BUILD_ERROR',
+      { scenarioId: scenario.id, collectionId: collection.id, error: String(err) }
+    );
+  }
 
-  console.log('[executeWithAgent] Executing scenario with tools:', Object.keys(tools));
+  logScenarioEvent('tools_built', scenario.id, {
+    toolCount: Object.keys(tools).length,
+    toolNames: Object.keys(tools),
+  });
 
   // Build system prompt for scenario execution
   const systemPrompt = `You are an AI assistant tasked with completing the following scenario using the available tools.
@@ -381,15 +500,30 @@ Available tools: ${Object.keys(tools).join(', ')}
 Complete the user's task to the best of your ability using the tools provided.`;
 
   // Execute with generateText and multi-step tool loop
-  const result = await generateText({
-    model: openai(DEFAULT_MODEL),
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: scenario.prompt },
-    ],
-    tools,
-    stopWhen: stepCountIs(MAX_TOOL_STEPS),
-  });
+  const result = await (async () => {
+    try {
+      return await generateText({
+        model: openai(DEFAULT_MODEL),
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: scenario.prompt },
+        ],
+        tools,
+        stopWhen: stepCountIs(MAX_TOOL_STEPS),
+      });
+    } catch (err) {
+      throw new ScenarioExecutionError(
+        `AI execution failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        'EXECUTION_ERROR',
+        {
+          scenarioId: scenario.id,
+          error: String(err),
+          model: DEFAULT_MODEL,
+          maxSteps: MAX_TOOL_STEPS,
+        }
+      );
+    }
+  })();
 
   // Build conversation history from response
   const conversation: unknown[] = [{ role: 'user', content: scenario.prompt }];
@@ -435,13 +569,13 @@ Complete the user's task to the best of your ability using the tools provided.`;
   // Get token usage
   const usage = result.usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
 
-  console.log(
-    '[executeWithAgent] Completed in',
+  logScenarioEvent('execution_complete', scenario.id, {
     durationMs,
-    'ms with',
-    result.steps?.length || 0,
-    'steps'
-  );
+    stepCount: result.steps?.length || 0,
+    inputTokens: usage.inputTokens ?? 0,
+    outputTokens: usage.outputTokens ?? 0,
+    hasOutput: !!result.text,
+  });
 
   return {
     output: result.text || '[No output generated]',

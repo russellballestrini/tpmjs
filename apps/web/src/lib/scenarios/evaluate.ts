@@ -2,12 +2,19 @@
  * Scenario Evaluation Service
  *
  * Uses LLM judgment to evaluate if a scenario execution was successful.
+ * Supports both regex pattern matching and JSON Schema validation for assertions.
  */
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { z } from 'zod';
+
+// Initialize Ajv with common formats (email, uri, date-time, etc.)
+const ajv = new Ajv({ allErrors: true, strict: false });
+addFormats(ajv);
 
 const EvaluationSchema = z.object({
   verdict: z.enum(['pass', 'fail']).describe('Whether the scenario was completed successfully'),
@@ -95,7 +102,88 @@ Provide your verdict, a brief reason, and your confidence level.`,
 }
 
 /**
+ * Extract JSON from text output
+ *
+ * Attempts to find and parse JSON from various formats:
+ * - Direct JSON
+ * - JSON wrapped in markdown code blocks
+ * - JSON embedded in text
+ *
+ * @param output The text to extract JSON from
+ * @returns Parsed JSON or null if not found
+ */
+export function extractJsonFromOutput(output: string): unknown | null {
+  // Try direct parse first
+  try {
+    return JSON.parse(output.trim());
+  } catch {
+    // Continue to other strategies
+  }
+
+  // Try extracting from markdown code blocks (```json ... ``` or ``` ... ```)
+  const codeBlockMatch = output.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (codeBlockMatch?.[1]) {
+    try {
+      return JSON.parse(codeBlockMatch[1].trim());
+    } catch {
+      // Continue to other strategies
+    }
+  }
+
+  // Try finding JSON object or array in the text
+  const jsonMatch = output.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+  if (jsonMatch?.[1]) {
+    try {
+      return JSON.parse(jsonMatch[1]);
+    } catch {
+      // Could not parse as JSON
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Validate data against a JSON Schema
+ *
+ * @param data The data to validate
+ * @param schema The JSON Schema to validate against
+ * @returns Validation result with errors if any
+ */
+export function validateJsonSchema(
+  data: unknown,
+  schema: Record<string, unknown>
+): { valid: boolean; errors: string[] } {
+  try {
+    const validate = ajv.compile(schema);
+    const valid = validate(data);
+
+    if (valid) {
+      return { valid: true, errors: [] };
+    }
+
+    // Format errors into readable strings
+    const errors = (validate.errors || []).map((err) => {
+      const path = err.instancePath || 'root';
+      const message = err.message || 'Unknown error';
+      return `${path}: ${message}`;
+    });
+
+    return { valid: false, errors };
+  } catch (err) {
+    return {
+      valid: false,
+      errors: [`Schema compilation error: ${err instanceof Error ? err.message : 'Unknown error'}`],
+    };
+  }
+}
+
+/**
  * Run assertions against the output
+ *
+ * Supports two types of assertions:
+ * - regex: Array of regex patterns that must match the output
+ * - schema: JSON Schema that the output (parsed as JSON) must validate against
  *
  * @param output The agent output to check
  * @param assertions The assertions to run
@@ -123,11 +211,25 @@ export function runAssertions(
     }
   }
 
-  // Schema assertions would require more complex validation
-  // For now, we'll just note if schema was provided
-  if (assertions.schema) {
-    // TODO: Implement JSON schema validation against parsed output
-    passed.push('schema:provided (validation pending)');
+  // Validate against JSON Schema if provided
+  if (assertions.schema && Object.keys(assertions.schema).length > 0) {
+    const extractedJson = extractJsonFromOutput(output);
+
+    if (extractedJson === null) {
+      failed.push('schema: Output does not contain valid JSON');
+    } else {
+      const validation = validateJsonSchema(extractedJson, assertions.schema);
+
+      if (validation.valid) {
+        passed.push('schema: JSON validates against schema');
+      } else {
+        // Include first 3 errors for clarity
+        const errorSummary = validation.errors.slice(0, 3).join('; ');
+        const moreErrors =
+          validation.errors.length > 3 ? ` (+${validation.errors.length - 3} more)` : '';
+        failed.push(`schema: ${errorSummary}${moreErrors}`);
+      }
+    }
   }
 
   return { passed, failed };
