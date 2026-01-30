@@ -116,13 +116,12 @@ export default function SDKPage(): React.ReactElement {
                 <CodeBlock
                   language="typescript"
                   code={`import { streamText } from 'ai';
-// Import AI SDK provider for your selected model (OpenAI, Anthropic, Google, etc.)
-import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
 import { registrySearchTool } from '@tpmjs/registry-search';
 import { registryExecuteTool } from '@tpmjs/registry-execute';
 
 const result = streamText({
-  model: anthropic('claude-sonnet-4-20250514'),
+  model: openai('gpt-4.1-mini'),
   tools: {
     // Your existing tools
     weather: weatherTool,
@@ -524,13 +523,12 @@ export const registryExecute = tool({
                 <CodeBlock
                   language="typescript"
                   code={`import { streamText } from 'ai';
-// Import AI SDK provider for your selected model (OpenAI, Anthropic, Google, etc.)
-import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
 import { registrySearchTool } from '@tpmjs/registry-search';
 import { registryExecute } from './tools';  // Your wrapped version
 
 const result = streamText({
-  model: anthropic('claude-sonnet-4-20250514'),
+  model: openai('gpt-4.1-mini'),
   tools: {
     registrySearch: registrySearchTool,
     registryExecute,  // Keys are auto-injected
@@ -1158,7 +1156,7 @@ async function runAgent(userMessage: string) {
 
   // Step 3: Run the agent with tool access
   const result = await streamText({
-    model: openai('gpt-4.1'),
+    model: openai('gpt-4.1-mini'),
     tools: {
       registrySearch: registrySearchTool,
       registryExecute,
@@ -1206,7 +1204,7 @@ export async function POST(request: Request) {
 
       // Run agent and stream events
       const result = await streamText({
-        model: openai('gpt-4.1'),
+        model: openai('gpt-4.1-mini'),
         tools: { registrySearch: registrySearchTool, registryExecute },
         maxSteps: 10,
         prompt: message,
