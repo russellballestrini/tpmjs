@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/registry-search",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Search the TPMJS tool registry from any AI SDK agent",
   "type": "module",
   "main": "dist/index.js",

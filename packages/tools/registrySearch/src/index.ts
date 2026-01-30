@@ -7,7 +7,6 @@ const TPMJS_API_URL = process.env.TPMJS_API_URL || 'https://tpmjs.com';
  */
 type RegistrySearchInput = {
   query: string;
-  category?: string;
   limit?: number;
 };
 
@@ -29,24 +28,6 @@ export const registrySearchTool = tool({
         type: 'string',
         description: 'Search query (keywords, tool names, descriptions)',
       },
-      category: {
-        type: 'string',
-        description: 'Filter by tool category (optional)',
-        enum: [
-          'web-scraping',
-          'data-processing',
-          'file-operations',
-          'communication',
-          'database',
-          'api-integration',
-          'image-processing',
-          'text-analysis',
-          'automation',
-          'ai-ml',
-          'security',
-          'monitoring',
-        ],
-      },
       limit: {
         type: 'number',
         description: 'Maximum number of results (1-20, default 5)',
@@ -57,12 +38,11 @@ export const registrySearchTool = tool({
     required: ['query'],
     additionalProperties: false,
   }),
-  async execute({ query, category, limit = 5 }) {
+  async execute({ query, limit = 5 }) {
     try {
       const params = new URLSearchParams({
         q: query,
         limit: String(limit),
-        ...(category && { category }),
       });
 
       const url = `${TPMJS_API_URL}/api/tools/search?${params}`;
