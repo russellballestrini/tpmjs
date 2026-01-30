@@ -72,3 +72,4 @@ storybook-static
 !.changeset/README.md
 .vercel
 packages/tool-ideas/data/tools-export.json
+.env*.local

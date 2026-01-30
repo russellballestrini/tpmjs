@@ -199,7 +199,12 @@ Use registrySearch to find tools, then registryExecute to run them.\`,
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-red-500/10 text-red-500 rounded-md hover:bg-red-500/20 transition-colors"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
                     <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                   </svg>
                   npm
@@ -325,7 +330,12 @@ Use registrySearch to find tools, then registryExecute to run them.\`,
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-red-500/10 text-red-500 rounded-md hover:bg-red-500/20 transition-colors"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
                     <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                   </svg>
                   npm
@@ -698,6 +708,542 @@ const tools = await tpmjs.loadCollection('my-company/internal-tools');`}
             </div>
           </section>
 
+          {/* MCP Server Integration */}
+          <section className="mb-16">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
+              MCP Server Integration
+            </h2>
+            <p className="text-lg text-foreground-secondary mb-6">
+              TPMJS supports the{' '}
+              <a
+                href="https://modelcontextprotocol.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Model Context Protocol (MCP)
+              </a>
+              , allowing you to use your tool collections directly in Claude Desktop, Cursor, VS
+              Code, and other MCP-compatible clients.
+            </p>
+
+            <div className="space-y-6">
+              {/* Create a Collection */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                    1
+                  </span>
+                  <h3 className="text-xl font-semibold text-foreground">Create a Collection</h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  Sign in to{' '}
+                  <a href="https://tpmjs.com" className="text-primary hover:underline">
+                    tpmjs.com
+                  </a>{' '}
+                  and create a collection of tools. Add the tools you want your agent to have access
+                  to, and configure any required API keys.
+                </p>
+              </div>
+
+              {/* Get Your MCP URL */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                    2
+                  </span>
+                  <h3 className="text-xl font-semibold text-foreground">Get Your MCP URL</h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  Your collection has a unique MCP endpoint URL:
+                </p>
+                <CodeBlock
+                  language="text"
+                  code="https://tpmjs.com/api/mcp/{username}/{collection-slug}/http"
+                />
+                <p className="text-foreground-secondary mt-4 text-sm">
+                  Replace <code className="text-primary">{'{username}'}</code> with your username
+                  and <code className="text-primary">{'{collection-slug}'}</code> with your
+                  collection&apos;s slug.
+                </p>
+              </div>
+
+              {/* Configure Your Client */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                    3
+                  </span>
+                  <h3 className="text-xl font-semibold text-foreground">Configure Your Client</h3>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 text-foreground">Claude Desktop</h4>
+                    <p className="text-foreground-secondary text-sm mb-2">
+                      Add to your <code>claude_desktop_config.json</code>:
+                    </p>
+                    <CodeBlock
+                      language="json"
+                      code={`{
+  "mcpServers": {
+    "tpmjs": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://tpmjs.com/api/mcp/username/my-tools/http",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}`}
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2 text-foreground">Cursor / VS Code</h4>
+                    <p className="text-foreground-secondary text-sm mb-2">
+                      Add to your <code>.cursor/mcp.json</code> or VS Code MCP settings:
+                    </p>
+                    <CodeBlock
+                      language="json"
+                      code={`{
+  "mcpServers": {
+    "tpmjs": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://tpmjs.com/api/mcp/username/my-tools/http",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}`}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Get an API Key */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                    4
+                  </span>
+                  <h3 className="text-xl font-semibold text-foreground">Get an API Key</h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  Generate an API key from your{' '}
+                  <a
+                    href="https://tpmjs.com/settings/api-keys"
+                    className="text-primary hover:underline"
+                  >
+                    account settings
+                  </a>
+                  . API keys authenticate your MCP requests and enable access to your private
+                  collections.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* REST API Reference */}
+          <section className="mb-16">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
+              REST API Reference
+            </h2>
+            <p className="text-lg text-foreground-secondary mb-6">
+              For advanced integrations, you can use the TPMJS REST API directly. All endpoints are
+              available at <code className="text-primary">https://tpmjs.com/api</code>.
+            </p>
+
+            <div className="space-y-6">
+              {/* List Tools */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-500 rounded">
+                    GET
+                  </span>
+                  <h3 className="text-lg font-semibold text-foreground font-mono">/api/tools</h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  List all tools with filtering, sorting, and pagination.
+                </p>
+
+                <h4 className="font-semibold mb-2 text-foreground">Query Parameters</h4>
+                <div className="overflow-x-auto mb-4">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 pr-4 text-foreground">Parameter</th>
+                        <th className="text-left py-2 pr-4 text-foreground">Type</th>
+                        <th className="text-left py-2 text-foreground">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-foreground-secondary">
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">q</td>
+                        <td className="py-2 pr-4">string</td>
+                        <td className="py-2">Search query (package name, description)</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">category</td>
+                        <td className="py-2 pr-4">string</td>
+                        <td className="py-2">Filter by category</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">official</td>
+                        <td className="py-2 pr-4">boolean</td>
+                        <td className="py-2">Filter by official status</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">limit</td>
+                        <td className="py-2 pr-4">number</td>
+                        <td className="py-2">Results per page (1-1000, default 20)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 pr-4 font-mono text-primary">offset</td>
+                        <td className="py-2 pr-4">number</td>
+                        <td className="py-2">Pagination offset (default 0)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h4 className="font-semibold mb-2 text-foreground">Example</h4>
+                <CodeBlock
+                  language="bash"
+                  code={`curl "https://tpmjs.com/api/tools?category=web-scraping&limit=10"`}
+                />
+              </div>
+
+              {/* Search Tools */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-500 rounded">
+                    GET
+                  </span>
+                  <h3 className="text-lg font-semibold text-foreground font-mono">
+                    /api/tools/search
+                  </h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  Semantic search using BM25 algorithm. Better for natural language queries.
+                </p>
+
+                <h4 className="font-semibold mb-2 text-foreground">Query Parameters</h4>
+                <div className="overflow-x-auto mb-4">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 pr-4 text-foreground">Parameter</th>
+                        <th className="text-left py-2 pr-4 text-foreground">Type</th>
+                        <th className="text-left py-2 text-foreground">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-foreground-secondary">
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">q</td>
+                        <td className="py-2 pr-4">string</td>
+                        <td className="py-2">Search query (natural language)</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4 font-mono text-primary">category</td>
+                        <td className="py-2 pr-4">string</td>
+                        <td className="py-2">Filter by category</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 pr-4 font-mono text-primary">limit</td>
+                        <td className="py-2 pr-4">number</td>
+                        <td className="py-2">Max results (1-100, default 10)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h4 className="font-semibold mb-2 text-foreground">Example</h4>
+                <CodeBlock
+                  language="bash"
+                  code={`curl "https://tpmjs.com/api/tools/search?q=scrape%20website%20to%20markdown"`}
+                />
+
+                <h4 className="font-semibold mb-2 mt-4 text-foreground">Response</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "success": true,
+  "query": "scrape website to markdown",
+  "results": {
+    "total": 5,
+    "tools": [
+      {
+        "id": "clx...",
+        "name": "scrapeTool",
+        "description": "Scrape any website into clean markdown",
+        "package": {
+          "npmPackageName": "@firecrawl/ai-sdk",
+          "category": "web-scraping",
+          "env": ["FIRECRAWL_API_KEY"]
+        }
+      }
+    ]
+  }
+}`}
+                />
+              </div>
+
+              {/* Execute Tool */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="px-2 py-1 text-xs font-bold bg-yellow-500/20 text-yellow-500 rounded">
+                    POST
+                  </span>
+                  <h3 className="text-lg font-semibold text-foreground font-mono">
+                    /api/tools/execute/{'{package}'}/{'{tool}'}
+                  </h3>
+                </div>
+                <p className="text-foreground-secondary mb-4">
+                  Execute a tool in the secure sandbox. Returns the tool output.
+                </p>
+
+                <h4 className="font-semibold mb-2 text-foreground">Request Body</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "params": {
+    "url": "https://example.com"
+  },
+  "env": {
+    "FIRECRAWL_API_KEY": "your-api-key"
+  }
+}`}
+                />
+
+                <h4 className="font-semibold mb-2 mt-4 text-foreground">Example</h4>
+                <CodeBlock
+                  language="bash"
+                  code={`curl -X POST "https://tpmjs.com/api/tools/execute/@firecrawl/ai-sdk/scrapeTool" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "params": { "url": "https://example.com" },
+    "env": { "FIRECRAWL_API_KEY": "your-key" }
+  }'`}
+                />
+
+                <h4 className="font-semibold mb-2 mt-4 text-foreground">Response</h4>
+                <CodeBlock
+                  language="json"
+                  code={`{
+  "success": true,
+  "result": {
+    "markdown": "# Example Domain\\n\\nThis domain is for use...",
+    "metadata": {
+      "title": "Example Domain",
+      "url": "https://example.com"
+    }
+  },
+  "executionTimeMs": 1234
+}`}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Building an Agent Like Omega */}
+          <section className="mb-16">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
+              Building an Agent Like Omega
+            </h2>
+            <p className="text-lg text-foreground-secondary mb-6">
+              <a href="/omega" className="text-primary hover:underline">
+                Omega
+              </a>{' '}
+              is our flagship AI agent that demonstrates dynamic tool discovery at scale.
+              Here&apos;s how to build something similar.
+            </p>
+
+            <div className="space-y-6">
+              {/* Architecture Overview */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <h3 className="text-xl font-semibold mb-4 text-foreground">
+                  Architecture Overview
+                </h3>
+                <p className="text-foreground-secondary mb-4">
+                  Omega uses a two-tier tool discovery pattern:
+                </p>
+                <ol className="list-decimal list-inside space-y-2 text-foreground-secondary">
+                  <li>
+                    <strong>Automatic discovery</strong> — Every message triggers a BM25 search to
+                    find relevant tools
+                  </li>
+                  <li>
+                    <strong>Agent-driven search</strong> — The agent can explicitly search for more
+                    tools using <code className="text-primary">registrySearchTool</code>
+                  </li>
+                </ol>
+              </div>
+
+              {/* Complete Implementation */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <h3 className="text-xl font-semibold mb-4 text-foreground">
+                  Complete Implementation
+                </h3>
+                <CodeBlock
+                  language="typescript"
+                  code={`import { streamText, tool } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { registrySearchTool } from '@tpmjs/registry-search';
+import { registryExecuteTool } from '@tpmjs/registry-execute';
+
+// Pre-configure API keys for tool execution
+const API_KEYS: Record<string, string> = {
+  FIRECRAWL_API_KEY: process.env.FIRECRAWL_API_KEY!,
+  EXA_API_KEY: process.env.EXA_API_KEY!,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
+};
+
+// Wrapped execute tool with pre-configured keys
+const registryExecute = tool({
+  description: registryExecuteTool.description,
+  parameters: registryExecuteTool.parameters,
+  execute: async ({ toolId, params }) => {
+    return registryExecuteTool.execute({ toolId, params, env: API_KEYS });
+  },
+});
+
+// System prompt for Omega-like behavior
+const SYSTEM_PROMPT = \`You are an AI assistant with access to thousands of tools via the TPMJS registry.
+
+## Available Tools
+- registrySearch: Search the registry to find tools for any task
+- registryExecute: Execute any tool by its toolId
+
+## Workflow
+1. When given a task, first search for relevant tools
+2. Review the results - each tool has: toolId, name, description, requiredEnvVars
+3. Execute tools with appropriate parameters
+4. Synthesize results into a helpful response
+
+## Best Practices
+- Search first when unsure what tools exist
+- Execute tools to get real results (not just descriptions)
+- Handle errors gracefully - suggest alternatives if a tool fails
+- Be efficient - don't search repeatedly for the same thing\`;
+
+// Auto-discover tools based on user message
+async function discoverTools(message: string) {
+  const response = await fetch(
+    \`https://tpmjs.com/api/tools/search?q=\${encodeURIComponent(message)}&limit=10\`
+  );
+  const data = await response.json();
+  return data.results?.tools || [];
+}
+
+// Main agent function
+async function runAgent(userMessage: string) {
+  // Step 1: Auto-discover relevant tools
+  const discoveredTools = await discoverTools(userMessage);
+  console.log(\`Found \${discoveredTools.length} relevant tools\`);
+
+  // Step 2: Create dynamic tool context for the prompt
+  const toolContext = discoveredTools.length > 0
+    ? \`\\n\\n## Pre-discovered Tools\\nBased on your request, these tools may be helpful:\\n\${
+        discoveredTools.map((t: { toolId: string; description: string }) =>
+          \`- \${t.toolId}: \${t.description}\`
+        ).join('\\n')
+      }\`
+    : '';
+
+  // Step 3: Run the agent with tool access
+  const result = await streamText({
+    model: openai('gpt-4.1'),
+    tools: {
+      registrySearch: registrySearchTool,
+      registryExecute,
+    },
+    maxSteps: 10,
+    system: SYSTEM_PROMPT + toolContext,
+    prompt: userMessage,
+  });
+
+  // Step 4: Stream the response
+  for await (const chunk of result.textStream) {
+    process.stdout.write(chunk);
+  }
+
+  return result;
+}
+
+// Usage
+await runAgent('Scrape https://example.com and summarize the content');`}
+                />
+              </div>
+
+              {/* Streaming with SSE */}
+              <div className="p-6 border border-border rounded-lg bg-surface">
+                <h3 className="text-xl font-semibold mb-4 text-foreground">
+                  Streaming with Server-Sent Events
+                </h3>
+                <p className="text-foreground-secondary mb-4">
+                  For real-time UI updates, stream tool execution status via SSE:
+                </p>
+                <CodeBlock
+                  language="typescript"
+                  code={`// API Route: POST /api/chat
+export async function POST(request: Request) {
+  const { message } = await request.json();
+
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      // Emit tool discovery event
+      const tools = await discoverTools(message);
+      controller.enqueue(encoder.encode(
+        \`event: tools.discovered\\ndata: \${JSON.stringify({ tools })}\\n\\n\`
+      ));
+
+      // Run agent and stream events
+      const result = await streamText({
+        model: openai('gpt-4.1'),
+        tools: { registrySearch: registrySearchTool, registryExecute },
+        maxSteps: 10,
+        prompt: message,
+        onStepFinish: ({ stepType, toolCalls, toolResults }) => {
+          if (stepType === 'tool-result') {
+            controller.enqueue(encoder.encode(
+              \`event: tool.completed\\ndata: \${JSON.stringify({ toolCalls, toolResults })}\\n\\n\`
+            ));
+          }
+        },
+      });
+
+      // Stream text chunks
+      for await (const chunk of result.textStream) {
+        controller.enqueue(encoder.encode(
+          \`event: message.delta\\ndata: \${JSON.stringify({ content: chunk })}\\n\\n\`
+        ));
+      }
+
+      controller.enqueue(encoder.encode(\`event: done\\ndata: {}\\n\\n\`));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
+  });
+}`}
+                />
+              </div>
+            </div>
+          </section>
+
           {/* CTA */}
           <section className="text-center py-12 border border-border rounded-lg bg-surface">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 text-foreground">
@@ -725,7 +1271,7 @@ const tools = await tpmjs.loadCollection('my-company/internal-tools');`}
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 font-medium bg-red-500/10 text-red-500 rounded-md hover:bg-red-500/20 transition-colors"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                 </svg>
                 @tpmjs/registry-search
@@ -736,7 +1282,7 @@ const tools = await tpmjs.loadCollection('my-company/internal-tools');`}
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 font-medium bg-red-500/10 text-red-500 rounded-md hover:bg-red-500/20 transition-colors"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z" />
                 </svg>
                 @tpmjs/registry-execute
