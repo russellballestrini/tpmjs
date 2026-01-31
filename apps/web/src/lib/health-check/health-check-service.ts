@@ -4,6 +4,7 @@
  */
 
 import { type HealthStatus, type Package, type Prisma, prisma, type Tool } from '@tpmjs/db';
+import type { ToolHealthCheckConfig } from '@tpmjs/types/tpmjs';
 import { env } from '~/env';
 
 const RAILWAY_EXECUTOR_URL = env.RAILWAY_EXECUTOR_URL;
@@ -17,6 +18,82 @@ interface HealthCheckResult {
   executionError: string | null;
   executionTimeMs: number | null;
   overallStatus: HealthStatus;
+}
+
+/**
+ * Parse healthCheckConfig from DB JSON to typed config.
+ * Returns null if not present or invalid.
+ */
+function parseHealthCheckConfig(tool: Tool): ToolHealthCheckConfig | null {
+  if (!tool.healthCheckConfig || typeof tool.healthCheckConfig !== 'object') return null;
+  return tool.healthCheckConfig as ToolHealthCheckConfig;
+}
+
+/**
+ * Process template variables in test parameters.
+ * Supported: {{timestamp}} - replaced with Date.now()
+ */
+function processTestParams(params: Record<string, unknown>): Record<string, unknown> {
+  const processed: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') {
+      processed[key] = value.replace(/\{\{timestamp\}\}/g, String(Date.now()));
+    } else {
+      processed[key] = value;
+    }
+  }
+  return processed;
+}
+
+/**
+ * Execute cleanup steps after a health check execution to undo side effects.
+ * Each step calls a tool from the same package with params mapped from the execution result.
+ * Best-effort: failures are logged but don't fail the health check.
+ */
+async function executeCleanup(
+  tool: Tool & { package: Package },
+  cleanupSteps: NonNullable<ToolHealthCheckConfig['cleanup']>,
+  executionResult: Record<string, unknown>
+): Promise<void> {
+  for (const step of cleanupSteps) {
+    try {
+      // Map params from execution result using the mapping config
+      const cleanupParams: Record<string, unknown> = {};
+      for (const [paramName, resultField] of Object.entries(step.mapping)) {
+        cleanupParams[paramName] = executionResult[resultField];
+      }
+
+      console.log(
+        `  Cleanup: calling ${step.tool} with params ${JSON.stringify(cleanupParams)}`
+      );
+
+      const response = await fetch(`${RAILWAY_EXECUTOR_URL}/execute-tool`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          packageName: tool.package.npmPackageName,
+          name: step.tool,
+          version: tool.package.npmVersion,
+          params: cleanupParams,
+          env: tool.package.env || {},
+        }),
+        signal: AbortSignal.timeout(30000),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        console.warn(
+          `  Cleanup warning: ${step.tool} returned ${response.status}: ${data.error || 'unknown error'}`
+        );
+      } else {
+        console.log(`  Cleanup: ${step.tool} succeeded`);
+      }
+    } catch (error) {
+      console.warn(
+        `  Cleanup warning: ${step.tool} failed: ${error instanceof Error ? error.message : 'unknown error'}`
+      );
+    }
+  }
 }
 
 /**
@@ -100,6 +177,11 @@ async function checkImportHealth(tool: Tool & { package: Package }): Promise<{
  * IMPORTANT: If the tool executes at all (even with errors), it's HEALTHY.
  * We only mark as BROKEN for infrastructure failures (timeouts, network errors).
  * Validation errors mean the tool IS working - it's correctly rejecting bad input.
+ *
+ * Respects healthCheckConfig from the tool's tpmjs spec:
+ * - skipExecution: skip execution entirely, only verify import
+ * - testParams: use author-provided params instead of auto-generated
+ * - cleanup: run cleanup steps after execution to undo side effects
  */
 async function checkExecutionHealth(tool: Tool & { package: Package }): Promise<{
   status: HealthStatus;
@@ -108,9 +190,19 @@ async function checkExecutionHealth(tool: Tool & { package: Package }): Promise<
   testParams: Record<string, unknown>;
 }> {
   const startTime = Date.now();
+  const healthCheckConfig = parseHealthCheckConfig(tool);
 
-  // Generate test parameters based on tool schema
-  const testParams = generateTestParameters(tool);
+  // If tool declares skipExecution, skip execution health check entirely.
+  // This is for tools that require existing external resources (would 404 with fake IDs).
+  if (healthCheckConfig?.skipExecution) {
+    console.log(`  Execution: skipped (healthCheck.skipExecution=true)`);
+    return { status: 'HEALTHY', error: null, timeMs: 0, testParams: {} };
+  }
+
+  // Use author-provided test params if available, otherwise auto-generate
+  const testParams = healthCheckConfig?.testParams
+    ? processTestParams(healthCheckConfig.testParams)
+    : generateTestParameters(tool);
 
   try {
     const response = await fetch(`${RAILWAY_EXECUTOR_URL}/execute-tool`, {
@@ -132,7 +224,12 @@ async function checkExecutionHealth(tool: Tool & { package: Package }): Promise<
     // Any error in the response is from the tool itself (validation, env, etc.)
     // which means the tool IS working - it's correctly processing/rejecting input
     if (response.ok) {
-      // Executor responded - tool executed (success or tool-level error)
+      // Run cleanup steps if defined (undo side effects from execution)
+      if (healthCheckConfig?.cleanup?.length) {
+        const data = await response.json().catch(() => ({}));
+        const executionResult = data.result ?? data;
+        await executeCleanup(tool, healthCheckConfig.cleanup, executionResult);
+      }
       return { status: 'HEALTHY', error: null, timeMs, testParams };
     }
 

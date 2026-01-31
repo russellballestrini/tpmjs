@@ -48,23 +48,38 @@
     "tools": [
       {
         "name": "executeCodeAsync",
-        "description": "Execute code asynchronously in a secure sandbox. Returns a job_id immediately. Use getJob to check status and retrieve results. Supports 42+ languages."
+        "description": "Execute code asynchronously in a secure sandbox. Returns a job_id immediately. Use getJob to check status and retrieve results. Supports 42+ languages.",
+        "healthCheck": {
+          "testParams": { "language": "python", "code": "print('healthcheck')" },
+          "cleanup": [{ "tool": "deleteJob", "mapping": { "job_id": "job_id" } }]
+        }
       },
       {
         "name": "execute",
-        "description": "Execute code synchronously in a secure sandbox. Waits for completion and returns results directly. Best for quick scripts."
+        "description": "Execute code synchronously in a secure sandbox. Waits for completion and returns results directly. Best for quick scripts.",
+        "healthCheck": {
+          "testParams": { "language": "python", "code": "print('healthcheck')" }
+        }
       },
       {
         "name": "run",
-        "description": "Execute code synchronously with automatic language detection via shebang (e.g., #!/usr/bin/env python)."
+        "description": "Execute code synchronously with automatic language detection via shebang (e.g., #!/usr/bin/env python).",
+        "healthCheck": {
+          "testParams": { "code": "#!/usr/bin/env python\nprint('healthcheck')" }
+        }
       },
       {
         "name": "runAsync",
-        "description": "Execute code asynchronously with automatic language detection via shebang. Returns job_id for polling."
+        "description": "Execute code asynchronously with automatic language detection via shebang. Returns job_id for polling.",
+        "healthCheck": {
+          "testParams": { "code": "#!/usr/bin/env python\nprint('healthcheck')" },
+          "cleanup": [{ "tool": "deleteJob", "mapping": { "job_id": "job_id" } }]
+        }
       },
       {
         "name": "getJob",
-        "description": "Get the status and results of an async code execution job by job_id."
+        "description": "Get the status and results of an async code execution job by job_id.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "listJobs",
@@ -72,7 +87,8 @@
       },
       {
         "name": "deleteJob",
-        "description": "Cancel an active code execution job by job_id."
+        "description": "Cancel an active code execution job by job_id.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getLanguages",
@@ -84,11 +100,16 @@
       },
       {
         "name": "createSession",
-        "description": "Create a new persistent session with configurable language, resources, and networking. Sessions maintain state across executions."
+        "description": "Create a new persistent session with configurable language, resources, and networking. Sessions maintain state across executions.",
+        "healthCheck": {
+          "testParams": { "shell": "bash" },
+          "cleanup": [{ "tool": "deleteSession", "mapping": { "session_id": "session_id" } }]
+        }
       },
       {
         "name": "getSession",
-        "description": "Get details of a session including status, resource usage, and configuration."
+        "description": "Get details of a session including status, resource usage, and configuration.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "listSessions",
@@ -96,43 +117,56 @@
       },
       {
         "name": "executeInSession",
-        "description": "Execute code in an existing session. State and files persist between executions."
+        "description": "Execute code in an existing session. State and files persist between executions.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "freezeSession",
-        "description": "Freeze a session to pause execution and reduce resource usage while preserving state."
+        "description": "Freeze a session to pause execution and reduce resource usage while preserving state.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unfreezeSession",
-        "description": "Unfreeze a frozen session to resume execution."
+        "description": "Unfreeze a frozen session to resume execution.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "lockSession",
-        "description": "Lock a session to prevent modifications or deletion."
+        "description": "Lock a session to prevent modifications or deletion.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unlockSession",
-        "description": "Unlock a locked session to allow modifications."
+        "description": "Unlock a locked session to allow modifications.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "createSessionSnapshot",
-        "description": "Create a snapshot of the current session state for backup or cloning."
+        "description": "Create a snapshot of the current session state for backup or cloning.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "restoreSession",
-        "description": "Restore a session from a snapshot."
+        "description": "Restore a session from a snapshot.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "deleteSession",
-        "description": "Delete a session and release all associated resources."
+        "description": "Delete a session and release all associated resources.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "createService",
-        "description": "Create a long-running service with persistent state, networking, and auto-restart capabilities."
+        "description": "Create a long-running service with persistent state, networking, and auto-restart capabilities.",
+        "healthCheck": {
+          "testParams": { "name": "tpmjs-hc-{{timestamp}}" },
+          "cleanup": [{ "tool": "deleteService", "mapping": { "service_id": "service_id" } }]
+        }
       },
       {
         "name": "getService",
-        "description": "Get details of a service including status, endpoints, and resource usage."
+        "description": "Get details of a service including status, endpoints, and resource usage.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "listServices",
@@ -140,59 +174,73 @@
       },
       {
         "name": "executeInService",
-        "description": "Execute a command or code snippet in a running service."
+        "description": "Execute a command or code snippet in a running service.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "freezeService",
-        "description": "Freeze a service to pause execution while preserving state."
+        "description": "Freeze a service to pause execution while preserving state.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unfreezeService",
-        "description": "Unfreeze a frozen service to resume execution."
+        "description": "Unfreeze a frozen service to resume execution.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "lockService",
-        "description": "Lock a service to prevent modifications or deletion."
+        "description": "Lock a service to prevent modifications or deletion.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unlockService",
-        "description": "Unlock a locked service to allow modifications."
+        "description": "Unlock a locked service to allow modifications.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "redeployService",
-        "description": "Redeploy a service with updated configuration or code."
+        "description": "Redeploy a service with updated configuration or code.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getServiceLogs",
-        "description": "Get logs from a service with optional filtering by time range and log level."
+        "description": "Get logs from a service with optional filtering by time range and log level.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "createServiceSnapshot",
-        "description": "Create a snapshot of the current service state."
+        "description": "Create a snapshot of the current service state.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getServiceEnv",
-        "description": "Get environment variables configured for a service."
+        "description": "Get environment variables configured for a service.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "setServiceEnv",
-        "description": "Set or update environment variables for a service."
+        "description": "Set or update environment variables for a service.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "deleteServiceEnv",
-        "description": "Delete an environment variable from a service."
+        "description": "Delete an environment variable from a service.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "deleteService",
-        "description": "Delete a service and release all associated resources."
+        "description": "Delete a service and release all associated resources.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "createSnapshot",
-        "description": "Create a snapshot from any source (session, service, or existing snapshot)."
+        "description": "Create a snapshot from any source (session, service, or existing snapshot).",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getSnapshot",
-        "description": "Get details of a snapshot including metadata and creation info."
+        "description": "Get details of a snapshot including metadata and creation info.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "listSnapshots",
@@ -200,31 +248,38 @@
       },
       {
         "name": "lockSnapshot",
-        "description": "Lock a snapshot to prevent deletion or modification."
+        "description": "Lock a snapshot to prevent deletion or modification.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unlockSnapshot",
-        "description": "Unlock a locked snapshot to allow modifications."
+        "description": "Unlock a locked snapshot to allow modifications.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "restoreSnapshot",
-        "description": "Restore a session or service from a snapshot."
+        "description": "Restore a session or service from a snapshot.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "cloneSnapshot",
-        "description": "Clone a snapshot to create a new independent copy."
+        "description": "Clone a snapshot to create a new independent copy.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "deleteSnapshot",
-        "description": "Delete a snapshot and free associated storage."
+        "description": "Delete a snapshot and free associated storage.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "publishImage",
-        "description": "Publish a snapshot as a reusable image for spawning new sessions or services."
+        "description": "Publish a snapshot as a reusable image for spawning new sessions or services.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getImage",
-        "description": "Get details of a published image including metadata and access info."
+        "description": "Get details of a published image including metadata and access info.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "listImages",
@@ -232,39 +287,48 @@
       },
       {
         "name": "lockImage",
-        "description": "Lock an image to prevent modifications or deletion."
+        "description": "Lock an image to prevent modifications or deletion.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "unlockImage",
-        "description": "Unlock a locked image to allow modifications."
+        "description": "Unlock a locked image to allow modifications.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "grantImageAccess",
-        "description": "Grant access to a private image for specific users or API keys."
+        "description": "Grant access to a private image for specific users or API keys.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "revokeImageAccess",
-        "description": "Revoke access to an image from specific users or API keys."
+        "description": "Revoke access to an image from specific users or API keys.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "transferImage",
-        "description": "Transfer ownership of an image to another user."
+        "description": "Transfer ownership of an image to another user.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "setImageVisibility",
-        "description": "Set image visibility to public or private."
+        "description": "Set image visibility to public or private.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "spawnFromImage",
-        "description": "Spawn a new session or service from an image."
+        "description": "Spawn a new session or service from an image.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "getImageTrustedKeys",
-        "description": "Get list of API keys that have access to a private image."
+        "description": "Get list of API keys that have access to a private image.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "deleteImage",
-        "description": "Delete an image and free associated storage."
+        "description": "Delete an image and free associated storage.",
+        "healthCheck": { "skipExecution": true }
       },
       {
         "name": "healthCheck",

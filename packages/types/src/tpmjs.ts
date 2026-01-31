@@ -94,6 +94,46 @@ export const TpmjsAiAgentSchema = z.object({
 export type TpmjsAiAgent = z.infer<typeof TpmjsAiAgentSchema>;
 
 /**
+ * Health check cleanup step - defines how to undo a side effect after testing.
+ * The cleanup tool is called from the same package with params mapped from the execution result.
+ */
+export const ToolHealthCheckCleanupStepSchema = z.object({
+  /** Tool export name to call for cleanup (from the same package) */
+  tool: z.string().min(1),
+  /** Maps cleanup tool parameter names to fields in the execution result.
+   *  e.g., { "service_id": "service_id" } means: pass result.service_id as the service_id param */
+  mapping: z.record(z.string(), z.string()),
+});
+
+export type ToolHealthCheckCleanupStep = z.infer<typeof ToolHealthCheckCleanupStepSchema>;
+
+/**
+ * Health check configuration for a tool.
+ * Tells the health check system how to safely test this tool without leaving orphaned resources.
+ *
+ * - Tools with no healthCheck config are assumed idempotent (safe to execute with auto-generated params).
+ * - Tools with `skipExecution: true` only get import checks (no execution).
+ * - Tools with `testParams` use those instead of auto-generated minimal values.
+ * - Tools with `cleanup` steps run those after execution to undo side effects.
+ *
+ * Template variables in testParams string values:
+ * - `{{timestamp}}` - replaced with Date.now() at execution time (for unique resource names)
+ */
+export const ToolHealthCheckConfigSchema = z.object({
+  /** Skip execution health check entirely. Only verify the tool imports correctly.
+   *  Use for tools that require existing external resources (would 404 with fake IDs). */
+  skipExecution: z.boolean().optional(),
+  /** Override auto-generated test parameters with known-good values.
+   *  String values support `{{timestamp}}` template variable. */
+  testParams: z.record(z.string(), z.unknown()).optional(),
+  /** Ordered cleanup steps to run after execution to undo side effects.
+   *  Each step calls a tool from the same package with params mapped from the execution result. */
+  cleanup: z.array(ToolHealthCheckCleanupStepSchema).optional(),
+});
+
+export type ToolHealthCheckConfig = z.infer<typeof ToolHealthCheckConfigSchema>;
+
+/**
  * Individual tool definition within a multi-tool package
  *
  * Required fields:
@@ -101,6 +141,7 @@ export type TpmjsAiAgent = z.infer<typeof TpmjsAiAgentSchema>;
  *
  * Optional fields (auto-extracted if not provided):
  * - description: A description of what the tool does (20-500 chars) - auto-extracted from tool
+ * - healthCheck: Configuration for safe health checking (side effects, cleanup)
  *
  * @deprecated fields (now auto-extracted):
  * - parameters: Tool input parameters - auto-extracted from inputSchema
@@ -118,6 +159,8 @@ export const TpmjsToolDefinitionSchema = z.object({
   returns: TpmjsReturnsSchema.optional(),
   // @deprecated - now auto-extracted from tool
   aiAgent: TpmjsAiAgentSchema.optional(),
+  // Health check configuration - declares side effects and cleanup procedures
+  healthCheck: ToolHealthCheckConfigSchema.optional(),
 });
 
 export type TpmjsToolDefinition = z.infer<typeof TpmjsToolDefinitionSchema>;

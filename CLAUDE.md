@@ -1168,3 +1168,131 @@ curl https://tpmjs.com/api/health
 4. If they match, the deployment is live
 
 **Note:** Vercel provides these values via environment variables (`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_COMMIT_MESSAGE`, `VERCEL_URL`) which are automatically available at runtime.
+
+---
+
+## Health Check Side Effects System
+
+The health check system tests every registered tool by importing it and executing it with test parameters. For tools that create real resources on external platforms (e.g., `createService`, `createSession`), this creates orphaned resources that are never cleaned up.
+
+### Problem
+
+The health check service (`apps/web/src/lib/health-check/health-check-service.ts`) runs two checks per tool:
+
+1. **Import check** (`/load-and-describe`): Verifies the tool can be loaded and has valid `description` and `inputSchema`.
+2. **Execution check** (`/execute-tool`): Executes the tool with auto-generated test parameters via the Railway executor.
+
+The Railway executor (`apps/railway-executor/server.ts`) injects real API keys from the package's env vars stored in the database before calling `tool.execute()`. There is no dry-run mode. This means tools like `createService` actually create services on the Unsandbox platform.
+
+### Solution: `healthCheck` Config in tpmjs Spec
+
+Tool authors can declare per-tool health check behavior via the `healthCheck` field in `package.json`:
+
+```json
+{
+  "tpmjs": {
+    "tools": [
+      {
+        "name": "createService",
+        "healthCheck": {
+          "testParams": { "name": "tpmjs-hc-{{timestamp}}" },
+          "cleanup": [
+            { "tool": "deleteService", "mapping": { "service_id": "service_id" } }
+          ]
+        }
+      },
+      {
+        "name": "getSession",
+        "healthCheck": { "skipExecution": true }
+      },
+      {
+        "name": "listJobs"
+      }
+    ]
+  }
+}
+```
+
+### Config Options
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `skipExecution` | `boolean` | Skip execution check entirely. Only verify import. Use for tools that require existing external resources (would 404 with fake IDs). |
+| `testParams` | `Record<string, unknown>` | Override auto-generated test parameters with known-good values. String values support `{{timestamp}}` template variable (replaced with `Date.now()`). |
+| `cleanup` | `Array<{ tool, mapping }>` | Ordered cleanup steps to run after execution. Each step calls a tool from the same package with params mapped from the execution result. |
+
+### Architecture
+
+**Schema:** `ToolHealthCheckConfigSchema` and `ToolHealthCheckCleanupStepSchema` in `packages/types/src/tpmjs.ts`.
+
+**Database:** `healthCheckConfig Json? @db.JsonB` column on the `Tool` model in `packages/db/prisma/schema.prisma`.
+
+**Sync:** The 3 sync routes (`/api/sync/changes`, `/api/sync/keyword`, `/api/sync/package`) store `toolDef.healthCheck` as `healthCheckConfig` during tool upsert.
+
+**Execution:** `checkExecutionHealth()` in the health check service reads the config from the DB and:
+1. If `skipExecution: true` → returns HEALTHY immediately, no execution
+2. If `testParams` → uses them (after `{{timestamp}}` template processing) instead of auto-generated params
+3. After successful execution, if `cleanup` defined → runs each cleanup step in order via the executor
+4. Default behavior unchanged for tools without config
+
+### Tool Classification Guide
+
+When adding `healthCheck` config to a new package:
+
+- **Read-only/list tools** (e.g., `listJobs`, `getLanguages`): No config needed. Safe by default.
+- **Sync execution tools** (e.g., `execute`, `run`): Add `testParams` with valid input. No cleanup needed since execution is ephemeral.
+- **Async execution tools** (e.g., `executeCodeAsync`): Add `testParams` + `cleanup` to delete the created job.
+- **Resource creation tools** (e.g., `createSession`, `createService`): Add `testParams` + `cleanup` to delete the created resource.
+- **Operations on existing resources** (e.g., `getSession`, `freezeService`, `deleteSnapshot`): Add `skipExecution: true`. These would 404 with fake IDs.
+
+### Files Involved
+
+| File | Role |
+|------|------|
+| `packages/types/src/tpmjs.ts` | Zod schemas for `ToolHealthCheckConfigSchema` |
+| `packages/db/prisma/schema.prisma` | `healthCheckConfig` column on Tool model |
+| `apps/web/src/app/api/sync/changes/route.ts` | Stores config during sync |
+| `apps/web/src/app/api/sync/keyword/route.ts` | Stores config during sync |
+| `apps/web/src/app/api/sync/package/route.ts` | Stores config during sync |
+| `apps/web/src/lib/health-check/health-check-service.ts` | Reads config, skip/cleanup logic |
+| `packages/tools/official/unsandbox/package.json` | Reference implementation with all tools configured |
+
+---
+
+## Environment Setup
+
+### Prerequisites
+
+- **Node.js >= 22** (project enforces this in `package.json` engines field)
+- **pnpm** package manager (install via `corepack enable` or `npm install -g pnpm`)
+
+### First-Time Setup
+
+```bash
+# Clone and install
+git clone https://github.com/tpmjs/tpmjs.git
+cd tpmjs
+pnpm install
+
+# Generate Prisma client (required before type-checking)
+pnpm --filter=@tpmjs/db db:generate
+
+# Build all packages (needed for cross-package imports)
+pnpm build
+
+# Verify everything works
+pnpm type-check
+pnpm lint
+```
+
+### Common Issues
+
+**`pnpm` not found:** Run `corepack enable` to enable pnpm via Node's corepack. Alternatively, use `npx -y pnpm` as a fallback.
+
+**Node version mismatch:** The project requires Node >= 22. If you see engine warnings, upgrade Node via nvm: `nvm install 22 && nvm use 22`.
+
+**Prisma client not generated:** After schema changes or fresh installs, always run `pnpm --filter=@tpmjs/db db:generate`. The postinstall hook does this automatically during `pnpm install`, but manual runs may be needed after schema modifications.
+
+**Database migrations:** After adding columns to `schema.prisma`, create and apply a migration: `pnpm --filter=@tpmjs/db db:migrate` (creates SQL migration file and applies it). For development, `pnpm --filter=@tpmjs/db db:push` pushes schema changes without creating a migration file.
+
+**Note:** Vercel provides these values via environment variables (`VERCEL_GIT_COMMIT_SHA`, `VERCEL_GIT_COMMIT_MESSAGE`, `VERCEL_URL`) which are automatically available at runtime.

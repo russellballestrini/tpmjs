@@ -194,6 +194,8 @@ export async function POST(request: NextRequest) {
               returns: toolDef.returns ? (toolDef.returns as any) : undefined,
               // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
               aiAgent: toolDef.aiAgent ? (toolDef.aiAgent as any) : undefined,
+              // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
+              healthCheckConfig: toolDef.healthCheck ? (toolDef.healthCheck as any) : undefined,
               qualityScore: null, // Will be calculated by metrics sync
               // Schema will be extracted below
               schemaSource: toolDef.parameters ? 'author' : null,
@@ -207,6 +209,8 @@ export async function POST(request: NextRequest) {
               returns: toolDef.returns ? (toolDef.returns as any) : undefined,
               // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
               aiAgent: toolDef.aiAgent ? (toolDef.aiAgent as any) : undefined,
+              // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
+              healthCheckConfig: toolDef.healthCheck ? (toolDef.healthCheck as any) : undefined,
               toolDiscoverySource,
             },
           });
