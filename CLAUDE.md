@@ -1,4 +1,11 @@
 
+## Git & PRs
+
+- NEVER add "Generated with Claude Code" or similar attribution lines to commits or PR descriptions.
+- NEVER add emoji attribution badges (e.g., `🤖 Generated with [Claude Code]`) anywhere.
+
+---
+
 ## Monorepo Setup
 
 This project uses a Turborepo monorepo architecture with the following structure:
