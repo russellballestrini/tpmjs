@@ -1,0 +1,591 @@
+openapi: 3.0.3
+info:
+  title: TPMJS Executor Protocol
+  description: |
+    The TPMJS Executor Protocol defines a standard HTTP interface for executing TPMJS tools.
+    Executors are compute adapters that provide a consistent API for running npm-packaged
+    tools regardless of the underlying infrastructure.
+
+    ## Design Philosophy
+
+    - **HTTP-First:** No SDK lock-in, deployable anywhere
+    - **Minimal Surface:** Small core, optional extensions
+    - **Executor ≠ Sandbox:** Standardize coordination, not security
+    - **Declare, Don't Enforce:** Executors report capabilities, TPMJS decides policy
+
+    ## Specification Levels
+
+    - **Level 1 (Core):** `/health`, `/execute-tool` - REQUIRED
+    - **Level 2 (Standard):** `/info`, API key auth - RECOMMENDED
+    - **Level 3 (Extended):** Streaming, async, validation - OPTIONAL (future)
+  version: 1.0.0
+  contact:
+    name: TPMJS
+    url: https://tpmjs.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://executor.example.com
+    description: Example executor endpoint
+
+tags:
+  - name: Core
+    description: Required endpoints for Level 1 compliance
+  - name: Standard
+    description: Recommended endpoints for Level 2 compliance
+
+paths:
+  /health:
+    get:
+      tags:
+        - Core
+      summary: Health check and protocol discovery
+      description: |
+        Verify the executor is running and discover the supported protocol version.
+
+        **Requirements:**
+        - MUST respond within 1 second
+        - MUST return 200 OK if healthy
+        - MUST include `protocolVersion`
+      operationId: getHealth
+      responses:
+        '200':
+          description: Executor is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: ok
+                protocolVersion: '1.0'
+                implementationVersion: 1.0.0
+                runtime: node
+                timestamp: '2026-02-03T12:00:00.000Z'
+        '503':
+          description: Executor is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    options:
+      tags:
+        - Core
+      summary: CORS preflight for health endpoint
+      operationId: optionsHealth
+      responses:
+        '200':
+          description: CORS preflight response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: GET, POST, OPTIONS
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: Content-Type, Authorization, X-TPMJS-Protocol-Version
+
+  /execute-tool:
+    post:
+      tags:
+        - Core
+      summary: Execute a TPMJS tool synchronously
+      description: |
+        Execute a single TPMJS tool and return the result.
+
+        **Execution Lifecycle:**
+        1. Parse JSON body, validate required fields
+        2. Verify API key if configured
+        3. Create temporary execution environment
+        4. Install npm package (`npm install <package>@<version>`)
+        5. Import package, resolve named export
+        6. Call `tool.execute(params)` with environment
+        7. Capture output or error
+        8. Cleanup temporary files/processes
+        9. Return JSON response
+
+        **Tool Resolution Order:**
+        1. `pkg[name]` - Direct named export
+        2. `pkg.default?.[name]` - Named property on default export
+        3. `pkg.default` - Default export itself (if `name` matches)
+      operationId: executeTool
+      parameters:
+        - $ref: '#/components/parameters/ProtocolVersion'
+      security:
+        - BearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecuteToolRequest'
+            examples:
+              basic:
+                summary: Basic execution
+                value:
+                  packageName: '@tpmjs/hello'
+                  version: latest
+                  name: helloWorldTool
+                  params:
+                    greeting: Hello
+              withEnv:
+                summary: Execution with environment variables
+                value:
+                  packageName: '@tpmjs/openai-chat'
+                  version: 1.0.0
+                  name: chatTool
+                  params:
+                    message: Hello, world!
+                  env:
+                    OPENAI_API_KEY: sk-...
+      responses:
+        '200':
+          description: Execution completed (success or tool error)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ExecuteToolSuccessResponse'
+                  - $ref: '#/components/schemas/ExecuteToolErrorResponse'
+              examples:
+                success:
+                  summary: Successful execution
+                  value:
+                    success: true
+                    output:
+                      message: 'Hello, World!'
+                    executionTimeMs: 1234
+                toolError:
+                  summary: Tool threw an error
+                  value:
+                    success: false
+                    error:
+                      code: TOOL_EXECUTION_ERROR
+                      message: 'Tool threw an error: Invalid input'
+                    executionTimeMs: 123
+                packageNotFound:
+                  summary: Package not found
+                  value:
+                    success: false
+                    error:
+                      code: PACKAGE_NOT_FOUND
+                      message: 'npm package @tpmjs/nonexistent could not be installed'
+                    executionTimeMs: 5432
+                timeout:
+                  summary: Execution timeout
+                  value:
+                    success: false
+                    error:
+                      code: EXECUTION_TIMEOUT
+                      message: 'Execution exceeded 120000ms time limit'
+                    executionTimeMs: 120000
+        '400':
+          description: Invalid request (missing fields, malformed JSON)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: INVALID_REQUEST
+                  message: 'Missing required field: packageName'
+        '401':
+          description: Authentication required but missing/invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or missing API key
+        '500':
+          description: Internal executor error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: INTERNAL_ERROR
+                  message: Unexpected error during execution
+    options:
+      tags:
+        - Core
+      summary: CORS preflight for execute-tool endpoint
+      operationId: optionsExecuteTool
+      responses:
+        '200':
+          description: CORS preflight response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: GET, POST, OPTIONS
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: Content-Type, Authorization, X-TPMJS-Protocol-Version
+
+  /info:
+    get:
+      tags:
+        - Standard
+      summary: Get executor capabilities
+      description: |
+        Advertise executor capabilities for intelligent routing.
+
+        This endpoint allows TPMJS to make informed decisions about
+        which executor to use based on:
+        - Isolation level (none, process, container, vm)
+        - Maximum execution time
+        - Request size limits
+        - Future capabilities (streaming, callbacks, caching)
+      operationId: getInfo
+      parameters:
+        - $ref: '#/components/parameters/ProtocolVersion'
+      responses:
+        '200':
+          description: Executor capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+              example:
+                name: Railway Executor
+                version: 1.0.0
+                protocolVersion: '1.0'
+                capabilities:
+                  isolation: process
+                  executionModes:
+                    - sync
+                  maxExecutionTimeMs: 120000
+                  maxRequestBodyBytes: 10485760
+                  supportsStreaming: false
+                  supportsCallbacks: false
+                  supportsCaching: false
+                runtime:
+                  platform: linux
+                  nodeVersion: 20.10.0
+                  region: us-west-1
+    options:
+      tags:
+        - Standard
+      summary: CORS preflight for info endpoint
+      operationId: optionsInfo
+      responses:
+        '200':
+          description: CORS preflight response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: GET, POST, OPTIONS
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: Content-Type, Authorization, X-TPMJS-Protocol-Version
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        API key authentication via Bearer token.
+
+        Executors MAY require authentication. Configuration via `EXECUTOR_API_KEY` environment variable:
+        - If set: All requests MUST include valid Bearer token
+        - If unset: No authentication required
+
+  parameters:
+    ProtocolVersion:
+      name: X-TPMJS-Protocol-Version
+      in: header
+      description: TPMJS protocol version for graceful evolution
+      required: false
+      schema:
+        type: string
+        example: '1.0'
+
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - protocolVersion
+        - implementationVersion
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+          description: Always "ok" if healthy
+        protocolVersion:
+          type: string
+          description: TPMJS protocol version (e.g., "1.0")
+          example: '1.0'
+        implementationVersion:
+          type: string
+          description: Executor software version
+          example: 1.0.0
+        runtime:
+          type: string
+          description: Runtime identifier
+          enum:
+            - node
+            - deno
+            - bun
+          example: node
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp
+          example: '2026-02-03T12:00:00.000Z'
+
+    ExecuteToolRequest:
+      type: object
+      required:
+        - packageName
+        - name
+      properties:
+        packageName:
+          type: string
+          description: npm package name
+          example: '@tpmjs/hello'
+        version:
+          type: string
+          description: Package version (default "latest")
+          default: latest
+          example: 1.0.0
+        name:
+          type: string
+          description: Tool export name
+          example: helloWorldTool
+        params:
+          type: object
+          description: Parameters passed to tool.execute()
+          additionalProperties: true
+          example:
+            greeting: Hello
+        env:
+          type: object
+          description: Environment variables for execution
+          additionalProperties:
+            type: string
+          example:
+            OPENAI_API_KEY: sk-...
+
+    ExecuteToolSuccessResponse:
+      type: object
+      required:
+        - success
+        - output
+        - executionTimeMs
+      properties:
+        success:
+          type: boolean
+          enum:
+            - true
+          description: Indicates successful execution
+        output:
+          description: Return value from tool.execute()
+          oneOf:
+            - type: object
+            - type: array
+            - type: string
+            - type: number
+            - type: boolean
+            - type: 'null'
+        executionTimeMs:
+          type: integer
+          description: Total execution time in milliseconds
+          minimum: 0
+          example: 1234
+
+    ExecuteToolErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+        - executionTimeMs
+      properties:
+        success:
+          type: boolean
+          enum:
+            - false
+          description: Indicates failed execution
+        error:
+          $ref: '#/components/schemas/ExecutionError'
+        executionTimeMs:
+          type: integer
+          description: Total execution time in milliseconds
+          minimum: 0
+          example: 123
+
+    ExecutionError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - PACKAGE_NOT_FOUND
+            - TOOL_NOT_FOUND
+            - TOOL_INVALID
+            - TOOL_EXECUTION_ERROR
+            - EXECUTION_TIMEOUT
+            - INTERNAL_ERROR
+        message:
+          type: string
+          description: Human-readable error message
+          example: 'Tool threw an error: Invalid input'
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          enum:
+            - false
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              enum:
+                - INVALID_REQUEST
+                - UNAUTHORIZED
+                - INTERNAL_ERROR
+            message:
+              type: string
+              description: Human-readable error message
+
+    InfoResponse:
+      type: object
+      required:
+        - name
+        - version
+        - protocolVersion
+        - capabilities
+      properties:
+        name:
+          type: string
+          description: Executor name
+          example: Railway Executor
+        version:
+          type: string
+          description: Executor software version
+          example: 1.0.0
+        protocolVersion:
+          type: string
+          description: TPMJS protocol version
+          example: '1.0'
+        capabilities:
+          $ref: '#/components/schemas/ExecutorCapabilities'
+        runtime:
+          $ref: '#/components/schemas/RuntimeInfo'
+
+    ExecutorCapabilities:
+      type: object
+      required:
+        - isolation
+        - executionModes
+        - maxExecutionTimeMs
+        - maxRequestBodyBytes
+      properties:
+        isolation:
+          type: string
+          description: |
+            Isolation level:
+            - `none`: Tools run in executor process (development only)
+            - `process`: Tools run in separate OS process
+            - `container`: Tools run in isolated container
+            - `vm`: Tools run in isolated VM (strongest)
+          enum:
+            - none
+            - process
+            - container
+            - vm
+          example: process
+        executionModes:
+          type: array
+          description: Supported execution modes
+          items:
+            type: string
+            enum:
+              - sync
+              - stream
+              - async
+          example:
+            - sync
+        maxExecutionTimeMs:
+          type: integer
+          description: Maximum execution time before timeout (milliseconds)
+          minimum: 1000
+          example: 120000
+        maxRequestBodyBytes:
+          type: integer
+          description: Maximum request body size (bytes)
+          minimum: 1024
+          example: 10485760
+        supportsStreaming:
+          type: boolean
+          description: Reserved for v1.1 - streaming response support
+          default: false
+        supportsCallbacks:
+          type: boolean
+          description: Reserved for v1.1 - webhook callback support
+          default: false
+        supportsCaching:
+          type: boolean
+          description: Reserved for v1.1 - package caching support
+          default: false
+
+    RuntimeInfo:
+      type: object
+      properties:
+        platform:
+          type: string
+          description: Operating system platform
+          enum:
+            - linux
+            - darwin
+            - win32
+          example: linux
+        nodeVersion:
+          type: string
+          description: Node.js version
+          example: 20.10.0
+        region:
+          type: string
+          description: Geographic region (if applicable)
+          example: us-west-1

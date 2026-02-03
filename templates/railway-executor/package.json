@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "TPMJS Tool Executor for Railway - Deploy your own executor on Railway",
-  "main": "index.js",
+  "main": "index.cjs",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js"
+    "start": "node index.cjs",
+    "dev": "node index.cjs"
   },
   "engines": {
     "node": ">=18.0.0"

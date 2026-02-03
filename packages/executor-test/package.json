@@ -1,0 +1,58 @@
+{
+  "name": "@tpmjs/executor-test",
+  "version": "0.1.0",
+  "description": "TPMJS Executor Protocol compliance test suite",
+  "author": "TPMJS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/executor-test"
+  },
+  "homepage": "https://tpmjs.com",
+  "keywords": [
+    "tpmjs",
+    "executor",
+    "compliance",
+    "testing",
+    "mcp"
+  ],
+  "type": "module",
+  "bin": {
+    "executor-test": "./bin/run.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@tpmjs/test": "workspace:*",
+    "@tpmjs/tsconfig": "workspace:*",
+    "@types/node": "^22.15.29",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,17 +1,19 @@
 #!/bin/bash
 # TPMJS Executor Standalone Bootstrap Script for Unsandbox
 # This script contains the embedded executor - no network required during bootstrap
+# Protocol Version: 1.0
 set -e
 
 echo "=== TPMJS Executor for Unsandbox ==="
+echo "Protocol Version: 1.0"
 echo "Starting deployment..."
 
-# Embedded executor script
-cat > /root/executor.js << 'EXECUTOR_EOF'
+# Embedded executor script (v1.0 compliant)
+cat > /root/executor.cjs << 'EXECUTOR_EOF'
 #!/usr/bin/env node
 /**
  * TPMJS Executor for Unsandbox
- * API-compatible with the Vercel executor.
+ * Protocol Version: 1.0
  */
 
 const http = require('http');
@@ -21,25 +23,23 @@ const path = require('path');
 
 const PORT = process.env.PORT || 80;
 const API_KEY = process.env.EXECUTOR_API_KEY || null;
+const PROTOCOL_VERSION = '1.0';
+const IMPLEMENTATION_VERSION = '1.0.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-TPMJS-Protocol-Version',
 };
 
 function jsonResponse(res, statusCode, data) {
-  res.writeHead(statusCode, {
-    'Content-Type': 'application/json',
-    ...corsHeaders,
-  });
+  res.writeHead(statusCode, { 'Content-Type': 'application/json', ...corsHeaders });
   res.end(JSON.stringify(data));
 }
 
 function checkAuth(req) {
   if (!API_KEY) return true;
-  const authHeader = req.headers.authorization;
-  return authHeader === `Bearer ${API_KEY}`;
+  return req.headers.authorization === `Bearer ${API_KEY}`;
 }
 
 function parseBody(req) {
@@ -47,11 +47,8 @@ function parseBody(req) {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
-      try {
-        resolve(body ? JSON.parse(body) : {});
-      } catch (e) {
-        reject(new Error('Invalid JSON'));
-      }
+      try { resolve(body ? JSON.parse(body) : {}); }
+      catch (e) { reject(new Error('Invalid JSON')); }
     });
     req.on('error', reject);
   });
@@ -60,11 +57,28 @@ function parseBody(req) {
 function handleHealth(req, res) {
   jsonResponse(res, 200, {
     status: 'ok',
-    version: '1.0.0',
-    info: {
-      runtime: 'unsandbox',
-      timestamp: new Date().toISOString(),
+    protocolVersion: PROTOCOL_VERSION,
+    implementationVersion: IMPLEMENTATION_VERSION,
+    runtime: 'node',
+    timestamp: new Date().toISOString(),
+  });
+}
+
+function handleInfo(req, res) {
+  jsonResponse(res, 200, {
+    name: 'Unsandbox Executor',
+    version: IMPLEMENTATION_VERSION,
+    protocolVersion: PROTOCOL_VERSION,
+    capabilities: {
+      isolation: 'container',
+      executionModes: ['sync'],
+      maxExecutionTimeMs: 120000,
+      maxRequestBodyBytes: 10485760,
+      supportsStreaming: false,
+      supportsCallbacks: false,
+      supportsCaching: false,
     },
+    runtime: { platform: process.platform, nodeVersion: process.version },
   });
 }
 
@@ -74,19 +88,16 @@ async function handleExecuteTool(req, res) {
   if (!checkAuth(req)) {
     return jsonResponse(res, 401, {
       success: false,
-      error: 'Unauthorized',
-      executionTimeMs: Date.now() - startTime,
+      error: { code: 'UNAUTHORIZED', message: 'Invalid or missing API key' },
     });
   }
 
   let body;
-  try {
-    body = await parseBody(req);
-  } catch (e) {
+  try { body = await parseBody(req); }
+  catch (e) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Invalid JSON body',
-      executionTimeMs: Date.now() - startTime,
+      error: { code: 'INVALID_REQUEST', message: 'Invalid JSON body' },
     });
   }
 
@@ -95,8 +106,7 @@ async function handleExecuteTool(req, res) {
   if (!packageName || !name) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Missing required fields: packageName, name',
-      executionTimeMs: Date.now() - startTime,
+      error: { code: 'INVALID_REQUEST', message: 'Missing required fields: packageName, name' },
     });
   }
 
@@ -105,74 +115,41 @@ async function handleExecuteTool(req, res) {
 
   try {
     fs.mkdirSync(workDir, { recursive: true });
-
     fs.writeFileSync(path.join(workDir, 'package.json'), JSON.stringify({
-      name: 'tpmjs-execution',
-      private: true,
-      type: 'commonjs',
+      name: 'tpmjs-execution', private: true, type: 'commonjs',
     }));
 
     console.log(`[executor] Installing ${packageSpec}...`);
-    const installStart = Date.now();
-
     try {
       execSync(`npm install --no-save --omit=dev --no-audit --no-fund ${packageSpec}`, {
-        cwd: workDir,
-        stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 60000,
+        cwd: workDir, stdio: ['pipe', 'pipe', 'pipe'], timeout: 60000,
       });
     } catch (installError) {
-      console.error(`[executor] npm install failed:`, installError.message);
-      return jsonResponse(res, 500, {
+      return jsonResponse(res, 200, {
         success: false,
-        error: `npm install failed: ${installError.message}`,
-        stderr: installError.stderr?.toString(),
+        error: { code: 'PACKAGE_NOT_FOUND', message: `npm install failed: ${installError.message}` },
         executionTimeMs: Date.now() - startTime,
       });
     }
 
-    console.log(`[executor] npm install completed in ${Date.now() - installStart}ms`);
-
     const envSetup = env
-      ? Object.entries(env)
-          .map(([key, value]) => `process.env[${JSON.stringify(key)}] = ${JSON.stringify(value)};`)
-          .join('\n')
+      ? Object.entries(env).map(([k, v]) => `process.env[${JSON.stringify(k)}] = ${JSON.stringify(v)};`).join('\n')
       : '';
 
     const script = `
 ${envSetup}
-
 (async () => {
   try {
     const pkg = require(${JSON.stringify(packageName)});
     let tool = pkg[${JSON.stringify(name)}] || pkg.default?.[${JSON.stringify(name)}] || pkg.default;
-
-    if (!tool) {
-      throw new Error(\`Tool "${name}" not found in package "${packageName}"\`);
-    }
-
+    if (!tool) throw new Error(\`Tool "${name}" not found in package "${packageName}"\`);
     if (typeof tool === 'function' && !tool.execute) {
-      const envVars = ${env ? JSON.stringify(env) : 'null'};
-      try {
-        const result = tool();
-        if (result && typeof result.execute === 'function') {
-          tool = result;
-        }
-      } catch {}
-      if (typeof tool === 'function' && envVars) {
-        try {
-          const result = tool(envVars);
-          if (result && typeof result.execute === 'function') {
-            tool = result;
-          }
-        } catch {}
+      try { const r = tool(); if (r?.execute) tool = r; } catch {}
+      if (typeof tool === 'function' && ${env ? JSON.stringify(env) : 'null'}) {
+        try { const r = tool(${env ? JSON.stringify(env) : 'null'}); if (r?.execute) tool = r; } catch {}
       }
     }
-
-    if (!tool || typeof tool.execute !== 'function') {
-      throw new Error(\`Tool "${name}" does not have an execute() function\`);
-    }
-
+    if (!tool?.execute) throw new Error(\`Tool "${name}" does not have an execute() function\`);
     const result = await tool.execute(${JSON.stringify(params)});
     process.stdout.write(JSON.stringify({ __tpmjs_result__: result }));
   } catch (err) {
@@ -184,52 +161,36 @@ ${envSetup}
 
     fs.writeFileSync(path.join(workDir, 'execute.cjs'), script);
 
-    console.log(`[executor] Running tool ${packageName}/${name}...`);
-    const runStart = Date.now();
-
     const result = await new Promise((resolve) => {
       const child = spawn('node', ['execute.cjs'], {
-        cwd: workDir,
-        env: { ...process.env, ...env },
-        timeout: 120000,
+        cwd: workDir, env: { ...process.env, ...env }, timeout: 120000,
       });
-
-      let stdout = '';
-      let stderr = '';
-
-      child.stdout.on('data', (data) => stdout += data);
-      child.stderr.on('data', (data) => stderr += data);
-
-      child.on('close', (code) => {
-        resolve({ exitCode: code, stdout, stderr });
-      });
-
-      child.on('error', (err) => {
-        resolve({ exitCode: 1, stdout: '', stderr: err.message });
-      });
+      let stdout = '', stderr = '';
+      child.stdout.on('data', d => stdout += d);
+      child.stderr.on('data', d => stderr += d);
+      child.on('close', code => resolve({ exitCode: code, stdout, stderr }));
+      child.on('error', err => resolve({ exitCode: 1, stdout: '', stderr: err.message }));
     });
 
-    console.log(`[executor] Tool execution completed in ${Date.now() - runStart}ms (exit: ${result.exitCode})`);
-
-    try {
-      fs.rmSync(workDir, { recursive: true, force: true });
-    } catch {}
+    try { fs.rmSync(workDir, { recursive: true, force: true }); } catch {}
 
     if (result.exitCode !== 0) {
       try {
         const errorObj = JSON.parse(result.stderr);
         if (errorObj.__tpmjs_error__) {
+          let code = 'TOOL_EXECUTION_ERROR';
+          if (errorObj.__tpmjs_error__.includes('not found in package')) code = 'TOOL_NOT_FOUND';
+          else if (errorObj.__tpmjs_error__.includes('does not have an execute()')) code = 'TOOL_INVALID';
           return jsonResponse(res, 200, {
             success: false,
-            error: errorObj.__tpmjs_error__,
+            error: { code, message: errorObj.__tpmjs_error__ },
             executionTimeMs: Date.now() - startTime,
           });
         }
       } catch {}
-
       return jsonResponse(res, 200, {
         success: false,
-        error: result.stderr || `Script exited with code ${result.exitCode}`,
+        error: { code: 'TOOL_EXECUTION_ERROR', message: result.stderr || `Exit code ${result.exitCode}` },
         executionTimeMs: Date.now() - startTime,
       });
     }
@@ -238,60 +199,55 @@ ${envSetup}
       const parsed = JSON.parse(result.stdout);
       if (parsed.__tpmjs_result__ !== undefined) {
         return jsonResponse(res, 200, {
-          success: true,
-          output: parsed.__tpmjs_result__,
-          executionTimeMs: Date.now() - startTime,
+          success: true, output: parsed.__tpmjs_result__, executionTimeMs: Date.now() - startTime,
         });
       }
     } catch {}
 
     return jsonResponse(res, 200, {
-      success: true,
-      output: result.stdout || null,
-      stderr: result.stderr || undefined,
-      executionTimeMs: Date.now() - startTime,
+      success: true, output: result.stdout || null, executionTimeMs: Date.now() - startTime,
     });
 
   } catch (error) {
-    try {
-      fs.rmSync(workDir, { recursive: true, force: true });
-    } catch {}
-
-    return jsonResponse(res, 500, {
+    try { fs.rmSync(workDir, { recursive: true, force: true }); } catch {}
+    return jsonResponse(res, 200, {
       success: false,
-      error: error.message || String(error),
+      error: { code: 'INTERNAL_ERROR', message: error.message || String(error) },
       executionTimeMs: Date.now() - startTime,
     });
   }
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://localhost:${PORT}`);
-  const pathname = url.pathname;
+  const pathname = new URL(req.url, `http://localhost:${PORT}`).pathname;
 
   if (req.method === 'OPTIONS') {
     res.writeHead(200, corsHeaders);
     return res.end();
   }
 
-  if ((pathname === '/api/health' || pathname === '/health') && req.method === 'GET') {
-    return handleHealth(req, res);
-  }
+  if ((pathname === '/health' || pathname === '/api/health') && req.method === 'GET') return handleHealth(req, res);
+  if ((pathname === '/info' || pathname === '/api/info') && req.method === 'GET') return handleInfo(req, res);
+  if ((pathname === '/execute-tool' || pathname === '/api/execute-tool') && req.method === 'POST') return handleExecuteTool(req, res);
 
-  if ((pathname === '/api/execute-tool' || pathname === '/execute-tool') && req.method === 'POST') {
-    return handleExecuteTool(req, res);
+  if (pathname === '/' && req.method === 'GET') {
+    return jsonResponse(res, 200, {
+      name: 'TPMJS Unsandbox Executor',
+      version: IMPLEMENTATION_VERSION,
+      protocolVersion: PROTOCOL_VERSION,
+      endpoints: { health: 'GET /health', info: 'GET /info', execute: 'POST /execute-tool' },
+    });
   }
 
   jsonResponse(res, 404, { error: 'Not found' });
 });
 
 server.listen(PORT, () => {
-  console.log(`TPMJS Executor running on port ${PORT}`);
-  if (API_KEY) {
-    console.log(`Authentication: Required`);
-  }
+  console.log(`TPMJS Executor v${IMPLEMENTATION_VERSION} (Protocol ${PROTOCOL_VERSION})`);
+  console.log(`Listening on port ${PORT}`);
+  console.log(`Authentication: ${API_KEY ? 'Required' : 'None'}`);
 });
 EXECUTOR_EOF
 
 echo "Starting TPMJS Executor on port 80..."
-exec node /root/executor.js
+exec node /root/executor.cjs

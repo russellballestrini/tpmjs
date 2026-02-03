@@ -7,10 +7,10 @@ echo "=== TPMJS Executor for Unsandbox ==="
 echo "Starting deployment..."
 
 # Download the executor script from GitHub
-EXECUTOR_URL="https://raw.githubusercontent.com/tpmjs/tpmjs/main/templates/unsandbox-executor/executor.js"
+EXECUTOR_URL="https://raw.githubusercontent.com/tpmjs/tpmjs/main/templates/unsandbox-executor/executor.cjs"
 
 echo "Downloading executor from $EXECUTOR_URL..."
-curl -fsSL "$EXECUTOR_URL" -o /root/executor.js
+curl -fsSL "$EXECUTOR_URL" -o /root/executor.cjs
 
 echo "Starting TPMJS Executor on port 80..."
-exec node /root/executor.js
+exec node /root/executor.cjs

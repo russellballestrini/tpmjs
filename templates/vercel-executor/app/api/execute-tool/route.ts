@@ -20,13 +20,28 @@ interface ExecuteToolRequest {
   env?: Record<string, string>;
 }
 
-interface ExecuteToolResponse {
-  success: boolean;
-  output?: unknown;
-  error?: string;
-  stderr?: string;
+interface ExecuteToolSuccessResponse {
+  success: true;
+  output: unknown;
   executionTimeMs: number;
 }
+
+interface ExecuteToolErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+  };
+  executionTimeMs: number;
+}
+
+type ExecuteToolResponse = ExecuteToolSuccessResponse | ExecuteToolErrorResponse;
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-TPMJS-Protocol-Version',
+};
 
 export async function POST(req: NextRequest): Promise<NextResponse<ExecuteToolResponse>> {
   const startTime = Date.now();
@@ -37,8 +52,15 @@ export async function POST(req: NextRequest): Promise<NextResponse<ExecuteToolRe
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || authHeader !== `Bearer ${apiKey}`) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized', executionTimeMs: Date.now() - startTime },
-        { status: 401 }
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Invalid or missing API key',
+          },
+          executionTimeMs: Date.now() - startTime,
+        } as ExecuteToolErrorResponse,
+        { status: 401, headers: corsHeaders }
       );
     }
   }
@@ -53,10 +75,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<ExecuteToolRe
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields: packageName, name',
+          error: {
+            code: 'INVALID_REQUEST',
+            message: 'Missing required fields: packageName, name',
+          },
           executionTimeMs: Date.now() - startTime,
-        },
-        { status: 400 }
+        } as ExecuteToolErrorResponse,
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -92,12 +117,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<ExecuteToolRe
         stdout: installStdout?.slice(0, 500),
         stderr: installStderr?.slice(0, 500),
       });
-      return NextResponse.json({
-        success: false,
-        error: `npm install failed with exit code ${install.exitCode}`,
-        stderr: installStderr || installStdout,
-        executionTimeMs: Date.now() - startTime,
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'PACKAGE_NOT_FOUND',
+            message: `npm install failed for ${packageSpec}: ${installStderr || installStdout}`,
+          },
+          executionTimeMs: Date.now() - startTime,
+        } as ExecuteToolErrorResponse,
+        { headers: corsHeaders }
+      );
     }
 
     // 2) Build environment setup for the script
@@ -188,46 +218,77 @@ ${envSetup}
       try {
         const errorObj = JSON.parse(stderr);
         if (errorObj.__tpmjs_error__) {
-          return NextResponse.json({
-            success: false,
-            error: errorObj.__tpmjs_error__,
-            executionTimeMs: Date.now() - startTime,
-          });
+          const errorMessage = errorObj.__tpmjs_error__;
+          // Determine error code based on message
+          let code = 'TOOL_EXECUTION_ERROR';
+          if (errorMessage.includes('not found in package')) {
+            code = 'TOOL_NOT_FOUND';
+          } else if (errorMessage.includes('does not have an execute()')) {
+            code = 'TOOL_INVALID';
+          }
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code,
+                message: errorMessage,
+              },
+              executionTimeMs: Date.now() - startTime,
+            } as ExecuteToolErrorResponse,
+            { headers: corsHeaders }
+          );
         }
       } catch {}
 
-      return NextResponse.json({
-        success: false,
-        error: stderr || `Script exited with code ${run.exitCode}`,
-        executionTimeMs: Date.now() - startTime,
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'TOOL_EXECUTION_ERROR',
+            message: stderr || `Script exited with code ${run.exitCode}`,
+          },
+          executionTimeMs: Date.now() - startTime,
+        } as ExecuteToolErrorResponse,
+        { headers: corsHeaders }
+      );
     }
 
     // 5) Parse the result
     try {
       const parsed = JSON.parse(stdout);
       if (parsed.__tpmjs_result__ !== undefined) {
-        return NextResponse.json({
-          success: true,
-          output: parsed.__tpmjs_result__,
-          executionTimeMs: Date.now() - startTime,
-        });
+        return NextResponse.json(
+          {
+            success: true,
+            output: parsed.__tpmjs_result__,
+            executionTimeMs: Date.now() - startTime,
+          } as ExecuteToolSuccessResponse,
+          { headers: corsHeaders }
+        );
       }
     } catch {}
 
     // If we couldn't parse structured output, return raw
-    return NextResponse.json({
-      success: true,
-      output: stdout || null,
-      stderr: stderr || undefined,
-      executionTimeMs: Date.now() - startTime,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        output: stdout || null,
+        executionTimeMs: Date.now() - startTime,
+      } as ExecuteToolSuccessResponse,
+      { headers: corsHeaders }
+    );
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
-      executionTimeMs: Date.now() - startTime,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: error instanceof Error ? error.message : String(error),
+        },
+        executionTimeMs: Date.now() - startTime,
+      } as ExecuteToolErrorResponse,
+      { headers: corsHeaders }
+    );
   } finally {
     if (sandbox) {
       try {
@@ -243,10 +304,6 @@ ${envSetup}
 export async function OPTIONS(): Promise<NextResponse> {
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
+    headers: corsHeaders,
   });
 }

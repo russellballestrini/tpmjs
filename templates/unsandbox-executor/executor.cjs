@@ -16,11 +16,15 @@ const path = require('path');
 const PORT = process.env.PORT || 80;
 const API_KEY = process.env.EXECUTOR_API_KEY || null;
 
+// Protocol constants
+const PROTOCOL_VERSION = '1.0';
+const IMPLEMENTATION_VERSION = '1.0.0';
+
 // CORS headers for cross-origin requests
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-TPMJS-Protocol-Version',
 };
 
 /**
@@ -62,15 +66,38 @@ function parseBody(req) {
 }
 
 /**
- * GET /api/health - Health check endpoint
+ * GET /health - Health check endpoint
  */
 function handleHealth(req, res) {
   jsonResponse(res, 200, {
     status: 'ok',
-    version: '1.0.0',
-    info: {
-      runtime: 'unsandbox',
-      timestamp: new Date().toISOString(),
+    protocolVersion: PROTOCOL_VERSION,
+    implementationVersion: IMPLEMENTATION_VERSION,
+    runtime: 'node',
+    timestamp: new Date().toISOString(),
+  });
+}
+
+/**
+ * GET /info - Capability advertisement endpoint
+ */
+function handleInfo(req, res) {
+  jsonResponse(res, 200, {
+    name: 'Unsandbox Executor',
+    version: IMPLEMENTATION_VERSION,
+    protocolVersion: PROTOCOL_VERSION,
+    capabilities: {
+      isolation: 'container',
+      executionModes: ['sync'],
+      maxExecutionTimeMs: 120000,
+      maxRequestBodyBytes: 10485760,
+      supportsStreaming: false,
+      supportsCallbacks: false,
+      supportsCaching: false,
+    },
+    runtime: {
+      platform: process.platform,
+      nodeVersion: process.version,
     },
   });
 }
@@ -94,8 +121,10 @@ async function handleExecuteTool(req, res) {
   if (!checkAuth(req)) {
     return jsonResponse(res, 401, {
       success: false,
-      error: 'Unauthorized',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: 'Invalid or missing API key',
+      },
     });
   }
 
@@ -106,8 +135,10 @@ async function handleExecuteTool(req, res) {
   } catch (e) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Invalid JSON body',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Invalid JSON body',
+      },
     });
   }
 
@@ -117,8 +148,10 @@ async function handleExecuteTool(req, res) {
   if (!packageName || !name) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Missing required fields: packageName, name',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Missing required fields: packageName, name',
+      },
     });
   }
 
@@ -151,10 +184,12 @@ async function handleExecuteTool(req, res) {
       });
     } catch (installError) {
       console.error(`[executor] npm install failed:`, installError.message);
-      return jsonResponse(res, 500, {
+      return jsonResponse(res, 200, {
         success: false,
-        error: `npm install failed: ${installError.message}`,
-        stderr: installError.stderr?.toString(),
+        error: {
+          code: 'PACKAGE_NOT_FOUND',
+          message: `npm install failed for ${packageSpec}: ${installError.message}`,
+        },
         executionTimeMs: Date.now() - startTime,
       });
     }
@@ -264,9 +299,20 @@ ${envSetup}
       try {
         const errorObj = JSON.parse(result.stderr);
         if (errorObj.__tpmjs_error__) {
+          const errorMessage = errorObj.__tpmjs_error__;
+          // Determine error code based on message
+          let code = 'TOOL_EXECUTION_ERROR';
+          if (errorMessage.includes('not found in package')) {
+            code = 'TOOL_NOT_FOUND';
+          } else if (errorMessage.includes('does not have an execute()')) {
+            code = 'TOOL_INVALID';
+          }
           return jsonResponse(res, 200, {
             success: false,
-            error: errorObj.__tpmjs_error__,
+            error: {
+              code,
+              message: errorMessage,
+            },
             executionTimeMs: Date.now() - startTime,
           });
         }
@@ -274,7 +320,10 @@ ${envSetup}
 
       return jsonResponse(res, 200, {
         success: false,
-        error: result.stderr || `Script exited with code ${result.exitCode}`,
+        error: {
+          code: 'TOOL_EXECUTION_ERROR',
+          message: result.stderr || `Script exited with code ${result.exitCode}`,
+        },
         executionTimeMs: Date.now() - startTime,
       });
     }
@@ -295,7 +344,6 @@ ${envSetup}
     return jsonResponse(res, 200, {
       success: true,
       output: result.stdout || null,
-      stderr: result.stderr || undefined,
       executionTimeMs: Date.now() - startTime,
     });
   } catch (error) {
@@ -304,9 +352,12 @@ ${envSetup}
       fs.rmSync(workDir, { recursive: true, force: true });
     } catch {}
 
-    return jsonResponse(res, 500, {
+    return jsonResponse(res, 200, {
       success: false,
-      error: error.message || String(error),
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error.message || String(error),
+      },
       executionTimeMs: Date.now() - startTime,
     });
   }
@@ -330,8 +381,26 @@ const server = http.createServer(async (req, res) => {
     return handleHealth(req, res);
   }
 
+  if ((pathname === '/api/info' || pathname === '/info') && req.method === 'GET') {
+    return handleInfo(req, res);
+  }
+
   if ((pathname === '/api/execute-tool' || pathname === '/execute-tool') && req.method === 'POST') {
     return handleExecuteTool(req, res);
+  }
+
+  // Root path - simple info
+  if (pathname === '/' && req.method === 'GET') {
+    return jsonResponse(res, 200, {
+      name: 'TPMJS Unsandbox Executor',
+      version: IMPLEMENTATION_VERSION,
+      protocolVersion: PROTOCOL_VERSION,
+      endpoints: {
+        health: 'GET /health',
+        info: 'GET /info',
+        execute: 'POST /execute-tool',
+      },
+    });
   }
 
   // 404 for unknown routes

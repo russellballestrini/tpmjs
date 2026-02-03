@@ -16,11 +16,15 @@ const path = require('node:path');
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.EXECUTOR_API_KEY || null;
 
+// Protocol constants
+const PROTOCOL_VERSION = '1.0';
+const IMPLEMENTATION_VERSION = '1.0.0';
+
 // CORS headers for cross-origin requests
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-TPMJS-Protocol-Version',
 };
 
 /**
@@ -69,11 +73,34 @@ function parseBody(req) {
 function handleHealth(_req, res) {
   jsonResponse(res, 200, {
     status: 'ok',
-    version: '1.0.0',
-    info: {
-      runtime: 'railway',
-      timestamp: new Date().toISOString(),
-      region: process.env.RAILWAY_REGION || 'unknown',
+    protocolVersion: PROTOCOL_VERSION,
+    implementationVersion: IMPLEMENTATION_VERSION,
+    runtime: 'node',
+    timestamp: new Date().toISOString(),
+  });
+}
+
+/**
+ * GET /info - Capability advertisement endpoint
+ */
+function handleInfo(_req, res) {
+  jsonResponse(res, 200, {
+    name: 'Railway Executor',
+    version: IMPLEMENTATION_VERSION,
+    protocolVersion: PROTOCOL_VERSION,
+    capabilities: {
+      isolation: 'process',
+      executionModes: ['sync'],
+      maxExecutionTimeMs: 120000,
+      maxRequestBodyBytes: 10485760,
+      supportsStreaming: false,
+      supportsCallbacks: false,
+      supportsCaching: false,
+    },
+    runtime: {
+      platform: process.platform,
+      nodeVersion: process.version,
+      region: process.env.RAILWAY_REGION || undefined,
     },
   });
 }
@@ -220,9 +247,20 @@ function parseExecutionResult(result, startTime) {
     try {
       const errorObj = JSON.parse(result.stderr);
       if (errorObj.__tpmjs_error__) {
+        const errorMessage = errorObj.__tpmjs_error__;
+        // Determine error code based on message
+        let code = 'TOOL_EXECUTION_ERROR';
+        if (errorMessage.includes('not found in package')) {
+          code = 'TOOL_NOT_FOUND';
+        } else if (errorMessage.includes('does not have an execute()')) {
+          code = 'TOOL_INVALID';
+        }
         return {
           success: false,
-          error: errorObj.__tpmjs_error__,
+          error: {
+            code,
+            message: errorMessage,
+          },
           executionTimeMs: Date.now() - startTime,
         };
       }
@@ -232,7 +270,10 @@ function parseExecutionResult(result, startTime) {
 
     return {
       success: false,
-      error: result.stderr || `Script exited with code ${result.exitCode}`,
+      error: {
+        code: 'TOOL_EXECUTION_ERROR',
+        message: result.stderr || `Script exited with code ${result.exitCode}`,
+      },
       executionTimeMs: Date.now() - startTime,
     };
   }
@@ -255,7 +296,6 @@ function parseExecutionResult(result, startTime) {
   return {
     success: true,
     output: result.stdout || null,
-    stderr: result.stderr || undefined,
     executionTimeMs: Date.now() - startTime,
   };
 }
@@ -270,8 +310,10 @@ async function handleExecuteTool(req, res) {
   if (!checkAuth(req)) {
     return jsonResponse(res, 401, {
       success: false,
-      error: 'Unauthorized',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: 'Invalid or missing API key',
+      },
     });
   }
 
@@ -282,8 +324,10 @@ async function handleExecuteTool(req, res) {
   } catch (_e) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Invalid JSON body',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Invalid JSON body',
+      },
     });
   }
 
@@ -293,8 +337,10 @@ async function handleExecuteTool(req, res) {
   if (!packageName || !name) {
     return jsonResponse(res, 400, {
       success: false,
-      error: 'Missing required fields: packageName, name',
-      executionTimeMs: Date.now() - startTime,
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Missing required fields: packageName, name',
+      },
     });
   }
 
@@ -311,10 +357,12 @@ async function handleExecuteTool(req, res) {
     } catch (installError) {
       console.error(`[executor] npm install failed:`, installError.message);
       cleanup(workDir);
-      return jsonResponse(res, 500, {
+      return jsonResponse(res, 200, {
         success: false,
-        error: `npm install failed: ${installError.message}`,
-        stderr: installError.stderr?.toString(),
+        error: {
+          code: 'PACKAGE_NOT_FOUND',
+          message: `npm install failed for ${packageSpec}: ${installError.message}`,
+        },
         executionTimeMs: Date.now() - startTime,
       });
     }
@@ -338,9 +386,12 @@ async function handleExecuteTool(req, res) {
     return jsonResponse(res, 200, parseExecutionResult(result, startTime));
   } catch (error) {
     cleanup(workDir);
-    return jsonResponse(res, 500, {
+    return jsonResponse(res, 200, {
       success: false,
-      error: error.message || String(error),
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: error.message || String(error),
+      },
       executionTimeMs: Date.now() - startTime,
     });
   }
@@ -364,6 +415,10 @@ const server = http.createServer(async (req, res) => {
     return handleHealth(req, res);
   }
 
+  if ((pathname === '/api/info' || pathname === '/info') && req.method === 'GET') {
+    return handleInfo(req, res);
+  }
+
   if ((pathname === '/api/execute-tool' || pathname === '/execute-tool') && req.method === 'POST') {
     return handleExecuteTool(req, res);
   }
@@ -371,11 +426,12 @@ const server = http.createServer(async (req, res) => {
   // Root path - simple info
   if (pathname === '/' && req.method === 'GET') {
     return jsonResponse(res, 200, {
-      name: 'TPMJS Executor',
-      version: '1.0.0',
-      runtime: 'railway',
+      name: 'TPMJS Railway Executor',
+      version: IMPLEMENTATION_VERSION,
+      protocolVersion: PROTOCOL_VERSION,
       endpoints: {
         health: 'GET /health',
+        info: 'GET /info',
         execute: 'POST /execute-tool',
       },
     });
