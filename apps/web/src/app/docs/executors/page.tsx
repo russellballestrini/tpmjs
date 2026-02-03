@@ -119,7 +119,54 @@ export default function ExecutorsDocsPage(): React.ReactElement {
               needs:
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Railway Card */}
+              <Link
+                href="/docs/executors/railway"
+                className="group p-6 bg-surface border border-border rounded-lg hover:border-primary/50 transition-colors"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-[#0B0D0E] rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-7 h-7"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      role="img"
+                      aria-labelledby="railway-logo-title"
+                    >
+                      <title id="railway-logo-title">Railway logo</title>
+                      <path
+                        d="M.113 12.611c-.139.312-.107.633.092.917.156.222.38.35.651.357h5.523a.28.28 0 00.216-.1c.07-.078.135-.22.2-.426.224-.718.428-1.09.65-1.492l.003-.005c.247-.448.51-.924.817-1.762.26-.712.296-1.371.113-2.008-.178-.62-.627-1.213-1.406-1.823a.248.248 0 00-.23-.044c-.078.025-.14.08-.178.157l-5.46 4.67a1.017 1.017 0 00-.287.41z"
+                        fill="#fff"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      Railway
+                    </h3>
+                    <p className="text-sm text-foreground-secondary mt-1">
+                      Always-on with auto-scaling and a $5/month free tier. One-click deploy.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <span className="px-2 py-0.5 text-xs bg-success/10 text-success rounded">
+                        Official
+                      </span>
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        Free tier
+                      </span>
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        Auto-scaling
+                      </span>
+                    </div>
+                  </div>
+                  <Icon
+                    icon="chevronRight"
+                    className="w-5 h-5 text-foreground-tertiary group-hover:text-primary transition-colors"
+                  />
+                </div>
+              </Link>
+
               {/* Unsandbox Card */}
               <Link
                 href="/docs/executors/unsandbox"
@@ -138,9 +185,6 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                       command.
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
-                      <span className="px-2 py-0.5 text-xs bg-success/10 text-success rounded">
-                        Recommended
-                      </span>
                       <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
                         No cold starts
                       </span>
@@ -167,8 +211,10 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                       className="w-6 h-6 text-white"
                       viewBox="0 0 76 65"
                       fill="currentColor"
-                      aria-label="Vercel logo"
+                      role="img"
+                      aria-labelledby="vercel-logo-title"
                     >
+                      <title id="vercel-logo-title">Vercel logo</title>
                       <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
                     </svg>
                   </div>
@@ -177,15 +223,14 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                       Vercel
                     </h3>
                     <p className="text-sm text-foreground-secondary mt-1">
-                      Serverless execution with VM-level isolation using Vercel Sandbox. One-click
-                      deploy.
+                      Serverless execution with VM-level isolation using Vercel Sandbox.
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
                       <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
                         One-click deploy
                       </span>
                       <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
-                        Free tier available
+                        Pay-per-use
                       </span>
                     </div>
                   </div>
@@ -211,6 +256,7 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left py-3 pr-4 font-medium text-foreground">Feature</th>
+                    <th className="text-left py-3 px-4 font-medium text-foreground">Railway</th>
                     <th className="text-left py-3 px-4 font-medium text-foreground">Unsandbox</th>
                     <th className="text-left py-3 pl-4 font-medium text-foreground">Vercel</th>
                   </tr>
@@ -218,16 +264,21 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                 <tbody className="text-foreground-secondary">
                   <tr className="border-b border-border/50">
                     <td className="py-3 pr-4">Deploy method</td>
+                    <td className="py-3 px-4">One-click / CLI</td>
                     <td className="py-3 px-4">CLI command</td>
                     <td className="py-3 pl-4">One-click button</td>
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="py-3 pr-4">Isolation</td>
                     <td className="py-3 px-4">Container-level</td>
+                    <td className="py-3 px-4">Container-level</td>
                     <td className="py-3 pl-4">VM-level (Sandbox)</td>
                   </tr>
                   <tr className="border-b border-border/50">
                     <td className="py-3 pr-4">Cold starts</td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">None (always-on)</span>
+                    </td>
                     <td className="py-3 px-4">
                       <span className="text-success">None (always-on)</span>
                     </td>
@@ -238,22 +289,44 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                     <td className="py-3 px-4">
                       <span className="text-success">Unlimited</span>
                     </td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">Unlimited</span>
+                    </td>
                     <td className="py-3 pl-4">45min (Hobby) / 5hr (Pro)</td>
                   </tr>
                   <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Free tier</td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">$5/month credit</span>
+                    </td>
+                    <td className="py-3 px-4">None</td>
+                    <td className="py-3 pl-4">Limited</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
                     <td className="py-3 pr-4">Pricing</td>
+                    <td className="py-3 px-4">Per usage</td>
                     <td className="py-3 px-4">Per uptime</td>
                     <td className="py-3 pl-4">Per compute time</td>
                   </tr>
                   <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Auto-scaling</td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">Yes</span>
+                    </td>
+                    <td className="py-3 px-4">Manual</td>
+                    <td className="py-3 pl-4">Yes</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
                     <td className="py-3 pr-4">Custom domains</td>
+                    <td className="py-3 px-4">Yes</td>
                     <td className="py-3 px-4">Yes</td>
                     <td className="py-3 pl-4">Yes</td>
                   </tr>
                   <tr>
-                    <td className="py-3 pr-4">Freeze/unfreeze</td>
-                    <td className="py-3 px-4">Yes (save costs)</td>
-                    <td className="py-3 pl-4">N/A (serverless)</td>
+                    <td className="py-3 pr-4">Docker support</td>
+                    <td className="py-3 px-4">Yes</td>
+                    <td className="py-3 px-4">Yes</td>
+                    <td className="py-3 pl-4">No</td>
                   </tr>
                 </tbody>
               </table>
@@ -387,18 +460,18 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                   Which platform should I choose?
                 </h3>
                 <p className="text-foreground-secondary text-sm">
-                  <strong>Unsandbox</strong> is recommended for most use cases. It has no cold
-                  starts, unlimited runtime, and simple CLI deployment. Use <strong>Vercel</strong>{' '}
-                  if you&apos;re already on Vercel or prefer one-click deployment and pay-per-use
-                  pricing.
+                  <strong>Railway</strong> is our official recommendation. It offers one-click
+                  deployment, no cold starts, auto-scaling, and a generous $5/month free tier. Use{' '}
+                  <strong>Unsandbox</strong> if you prefer CLI deployment, or{' '}
+                  <strong>Vercel</strong> if you&apos;re already on Vercel and prefer pay-per-use
+                  serverless pricing.
                 </p>
               </div>
               <div>
                 <h3 className="font-medium text-foreground mb-2">Can I use other platforms?</h3>
                 <p className="text-foreground-secondary text-sm">
                   Yes! Any platform that runs Node.js and exposes HTTP endpoints works. AWS Lambda,
-                  Google Cloud Run, Railway, Render, Fly.io—just implement the API specification
-                  above.
+                  Google Cloud Run, Render, Fly.io—just implement the API specification above.
                 </p>
               </div>
               <div>
