@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { AppHeader } from '../components/AppHeader';
 import { FeaturesSection } from '../components/home/FeaturesSection';
 import { HeroSection } from '../components/home/HeroSection';
-import { ToolspaceSection } from '../components/home/ToolspaceSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -136,9 +135,6 @@ export default async function HomePage(): Promise<React.ReactElement> {
         {/* Hero Section - Dithered Design */}
         <HeroSection stats={data.stats} />
 
-        {/* Toolspace Virtualization Concept */}
-        <ToolspaceSection />
-
         {/* Features Section */}
         <FeaturesSection />
 
@@ -162,14 +158,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
         <section className="py-16 bg-background">
           <Container size="xl" padding="lg">
             <div className="text-center mb-12">
-              <p className="font-mono text-xs text-primary uppercase tracking-widest mb-3">
-                from the toolspace
-              </p>
-              <h2 className="font-mono text-3xl md:text-4xl font-semibold mb-4 text-foreground lowercase">
-                top quality tools
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+                Featured Tools
               </h2>
-              <p className="text-base text-foreground-secondary max-w-2xl mx-auto mb-8 font-sans">
-                Surfaced by quality signals: health checks, downloads, documentation richness.
+              <p className="text-lg text-foreground-secondary max-w-2xl mx-auto mb-8">
+                Production-ready tools you can use today. Add to your AI agent in one line.
               </p>
             </div>
 
@@ -365,14 +358,13 @@ export default async function HomePage(): Promise<React.ReactElement> {
             {/* Section Header */}
             <div className="text-center mb-16">
               <p className="font-mono text-xs text-primary uppercase tracking-widest mb-3">
-                mcp is the socket
+                universal compatibility
               </p>
               <h2 className="font-mono text-3xl md:text-4xl font-semibold mb-4 text-foreground lowercase">
-                plug into the toolspace
+                works everywhere
               </h2>
               <p className="text-base text-foreground-secondary max-w-xl mx-auto font-sans">
-                Any MCP client becomes a window into the infinite toolspace. One URL unlocks
-                everything.
+                Use TPMJS tools with any MCP-compatible AI client. One URL, instant access.
               </p>
             </div>
 
@@ -430,7 +422,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
             {/* Code Example - Fieldset Style */}
             <fieldset className="border border-dashed border-border p-8 max-w-2xl mx-auto">
               <legend className="font-mono text-sm text-foreground-secondary px-3 lowercase">
-                connect to the toolspace
+                quick start
               </legend>
               <div className="mb-4">
                 <p className="font-mono text-xs text-foreground-tertiary uppercase tracking-wider mb-2">
@@ -466,8 +458,8 @@ export default async function HomePage(): Promise<React.ReactElement> {
               <div className="flex items-center gap-3 pt-4 border-t border-dashed border-border">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
                 <p className="font-mono text-xs text-foreground-secondary">
-                  one url → infinite toolspace →{' '}
-                  <span className="text-primary font-medium">tools load on-demand</span>
+                  add to config → instant access to{' '}
+                  <span className="text-primary font-medium">170+ tools</span>
                 </p>
               </div>
             </fieldset>
@@ -479,11 +471,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
           <Container size="xl" padding="lg">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-                Join the Infinite Toolspace
+                Publish Your AI Tool
               </h2>
               <p className="text-lg text-foreground-secondary mb-8">
-                Publish to npm, reach every agent. Your tool becomes discoverable to any AI that
-                needs it, without manual integration.
+                Share your tool with the AI community. Automatic discovery, quality scoring, and
+                integration with Vercel AI SDK, LangChain, and more.
               </p>
 
               {/* Generator Highlight Box */}
@@ -494,11 +486,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold mb-2 text-foreground">
-                      One Command. Infinite Reach.
+                      Start with Our Package Generator
                     </h3>
                     <p className="text-sm text-foreground-secondary mb-4">
-                      Generate a production-ready tool package in seconds. Once published, your tool
-                      is discoverable by every agent in the toolspace.
+                      Create a production-ready TPMJS tool package in seconds with our CLI
+                      generator. Includes 2-3 tools, complete setup, and best practices.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <code className="text-sm bg-surface px-4 py-2 rounded text-foreground border border-border">
@@ -523,27 +515,27 @@ export default async function HomePage(): Promise<React.ReactElement> {
                   <div className="text-3xl mb-2" aria-hidden="true">
                     🚀
                   </div>
-                  <h3 className="font-semibold mb-1 text-foreground">Publish Once</h3>
+                  <h3 className="font-semibold mb-1 text-foreground">Quick Setup</h3>
                   <p className="text-sm text-foreground-secondary">
-                    Add one keyword. Publish to npm. Done.
+                    Add one keyword to package.json and publish to NPM
                   </p>
                 </div>
                 <div className="p-4">
                   <div className="text-3xl mb-2" aria-hidden="true">
                     ⚡
                   </div>
-                  <h3 className="font-semibold mb-1 text-foreground">Reach All Agents</h3>
+                  <h3 className="font-semibold mb-1 text-foreground">Auto Discovery</h3>
                   <p className="text-sm text-foreground-secondary">
-                    Discoverable by every agent using the toolspace
+                    Your tool appears on tpmjs.com within 15 minutes
                   </p>
                 </div>
                 <div className="p-4">
                   <div className="text-3xl mb-2" aria-hidden="true">
                     📊
                   </div>
-                  <h3 className="font-semibold mb-1 text-foreground">Surface Quality</h3>
+                  <h3 className="font-semibold mb-1 text-foreground">Quality Metrics</h3>
                   <p className="text-sm text-foreground-secondary">
-                    Health checks and metrics help tools get discovered
+                    Automatic scoring based on docs, downloads, and stars
                   </p>
                 </div>
               </div>
