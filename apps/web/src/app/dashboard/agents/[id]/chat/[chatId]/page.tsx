@@ -713,7 +713,7 @@ export default function AgentChatPage(): React.ReactElement {
                           className={`max-w-[85%] rounded-lg p-4 ${
                             message.role === 'USER'
                               ? 'bg-primary text-primary-foreground'
-                              : 'bg-surface border border-dashed border-border'
+                              : 'bg-surface text-foreground border border-dashed border-border'
                           }`}
                         >
                           {message.role === 'USER' ? (
