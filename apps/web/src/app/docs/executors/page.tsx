@@ -1,4 +1,3 @@
-import { Button } from '@tpmjs/ui/Button/Button';
 import { CodeBlock } from '@tpmjs/ui/CodeBlock/CodeBlock';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import type { Metadata } from 'next';
@@ -10,7 +9,7 @@ import { AppHeader } from '~/components/AppHeader';
 export const metadata: Metadata = {
   title: 'Custom Executors - TPMJS',
   description:
-    'Learn how to deploy and configure custom executors for running TPMJS tools on your own infrastructure.',
+    'Deploy your own executor to run TPMJS tools on your own infrastructure with full control and privacy.',
 };
 
 const executeToolExample = `// POST /execute-tool
@@ -46,69 +45,39 @@ export default function ExecutorsDocsPage(): React.ReactElement {
           <div className="mb-12">
             <h1 className="text-3xl font-bold text-foreground mb-4">Custom Executors</h1>
             <p className="text-lg text-foreground-secondary">
-              Deploy your own executor to run TPMJS tools on your own infrastructure.
+              Deploy your own executor to run TPMJS tools on your infrastructure with full control
+              over environment, secrets, and data.
             </p>
           </div>
 
-          {/* Quick Start Banner */}
-          <section className="mb-12">
-            <Link
-              href="/docs/tutorials/custom-executor"
-              className="block p-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/30 rounded-lg hover:border-primary/50 transition-colors"
-            >
-              <div className="flex items-center gap-4">
-                <div className="text-3xl">🚀</div>
-                <div className="flex-1">
-                  <p className="font-medium text-foreground">
-                    New to custom executors? Start with the tutorial
-                  </p>
-                  <p className="text-sm text-foreground-secondary">
-                    Deploy your own executor in 10 minutes with our step-by-step guide
-                  </p>
-                </div>
-                <Icon icon="chevronRight" className="w-5 h-5 text-primary" />
-              </div>
-            </Link>
-          </section>
-
-          {/* Overview Section */}
+          {/* What is an Executor */}
           <section className="mb-12">
             <h2 className="text-2xl font-semibold text-foreground mb-4">What is an Executor?</h2>
             <p className="text-foreground-secondary mb-4">
               An executor is a service that runs TPMJS tools. When you use a collection or agent,
-              TPMJS sends tool execution requests to an executor, which dynamically loads and runs
-              the tool code.
+              TPMJS sends tool execution requests to an executor, which dynamically loads the npm
+              package and calls the tool&apos;s{' '}
+              <code className="px-1 bg-surface rounded">execute()</code> function.
             </p>
-            <p className="text-foreground-secondary mb-6">
-              By default, TPMJS uses a shared executor. You can deploy your own for:
+            <p className="text-foreground-secondary">
+              By default, TPMJS uses a shared executor. Deploying your own gives you complete
+              control over the execution environment.
             </p>
+          </section>
+
+          {/* Benefits Grid */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">
+              Why Deploy Your Own Executor?
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-surface border border-border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon icon="folder" className="w-5 h-5 text-primary" />
-                  <h3 className="font-medium text-foreground">Full Control</h3>
-                </div>
-                <p className="text-sm text-foreground-secondary">
-                  Run tools on your own infrastructure with complete control over the execution
-                  environment.
-                </p>
-              </div>
-              <div className="p-4 bg-surface border border-border rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon icon="globe" className="w-5 h-5 text-primary" />
+                  <Icon icon="key" className="w-5 h-5 text-primary" />
                   <h3 className="font-medium text-foreground">Privacy</h3>
                 </div>
                 <p className="text-sm text-foreground-secondary">
-                  Keep tool execution data on your own servers. No data leaves your infrastructure.
-                </p>
-              </div>
-              <div className="p-4 bg-surface border border-border rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon icon="clock" className="w-5 h-5 text-primary" />
-                  <h3 className="font-medium text-foreground">Performance</h3>
-                </div>
-                <p className="text-sm text-foreground-secondary">
-                  Deploy in regions closest to your users for lower latency tool execution.
+                  Keep tool execution data on your own servers. No data passes through TPMJS.
                 </p>
               </div>
               <div className="p-4 bg-surface border border-border rounded-lg">
@@ -117,68 +86,206 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                   <h3 className="font-medium text-foreground">Custom Environment</h3>
                 </div>
                 <p className="text-sm text-foreground-secondary">
-                  Inject your own environment variables, secrets, and configuration into tool
-                  execution.
+                  Inject your own API keys, database connections, and secrets into tool execution.
+                </p>
+              </div>
+              <div className="p-4 bg-surface border border-border rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon icon="folder" className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">Full Control</h3>
+                </div>
+                <p className="text-sm text-foreground-secondary">
+                  Choose your infrastructure, scale resources, and customize the execution
+                  environment.
+                </p>
+              </div>
+              <div className="p-4 bg-surface border border-border rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon icon="clock" className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">No Timeouts</h3>
+                </div>
+                <p className="text-sm text-foreground-secondary">
+                  Run long-running tools without hitting shared executor time limits.
                 </p>
               </div>
             </div>
           </section>
 
-          {/* Deploy Section */}
+          {/* Choose Your Platform */}
           <section id="deploy" className="mb-12">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">
-              Deploy Your Own Executor
-            </h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Choose Your Platform</h2>
             <p className="text-foreground-secondary mb-6">
-              The fastest way to get started is to deploy our template to Vercel with one click:
+              We provide deployment templates for multiple platforms. Choose the one that fits your
+              needs:
             </p>
-            <div className="mb-6">
-              <a
-                href="https://vercel.com/new/clone?repository-url=https://github.com/tpmjs/tpmjs/tree/main/templates/vercel-executor&project-name=tpmjs-executor&repository-name=tpmjs-executor"
-                target="_blank"
-                rel="noopener noreferrer"
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Unsandbox Card */}
+              <Link
+                href="/docs/executors/unsandbox"
+                className="group p-6 bg-surface border border-border rounded-lg hover:border-primary/50 transition-colors"
               >
-                <Button size="lg">
-                  <Icon icon="externalLink" className="w-4 h-4 mr-2" />
-                  Deploy to Vercel
-                </Button>
-              </a>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                    un
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      Unsandbox
+                    </h3>
+                    <p className="text-sm text-foreground-secondary mt-1">
+                      Always-on container execution with automatic HTTPS. Deploy with one CLI
+                      command.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <span className="px-2 py-0.5 text-xs bg-success/10 text-success rounded">
+                        Recommended
+                      </span>
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        No cold starts
+                      </span>
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        Unlimited runtime
+                      </span>
+                    </div>
+                  </div>
+                  <Icon
+                    icon="chevronRight"
+                    className="w-5 h-5 text-foreground-tertiary group-hover:text-primary transition-colors"
+                  />
+                </div>
+              </Link>
+
+              {/* Vercel Card */}
+              <Link
+                href="/docs/executors/vercel"
+                className="group p-6 bg-surface border border-border rounded-lg hover:border-primary/50 transition-colors"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      viewBox="0 0 76 65"
+                      fill="currentColor"
+                      aria-label="Vercel logo"
+                    >
+                      <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      Vercel
+                    </h3>
+                    <p className="text-sm text-foreground-secondary mt-1">
+                      Serverless execution with VM-level isolation using Vercel Sandbox. One-click
+                      deploy.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        One-click deploy
+                      </span>
+                      <span className="px-2 py-0.5 text-xs bg-surface-secondary rounded text-foreground-tertiary">
+                        Free tier available
+                      </span>
+                    </div>
+                  </div>
+                  <Icon
+                    icon="chevronRight"
+                    className="w-5 h-5 text-foreground-tertiary group-hover:text-primary transition-colors"
+                  />
+                </div>
+              </Link>
             </div>
-            <p className="text-sm text-foreground-tertiary">
-              After deployment, you&apos;ll get a URL like{' '}
-              <code className="px-1.5 py-0.5 bg-surface rounded text-foreground-secondary">
-                https://tpmjs-executor.vercel.app
-              </code>
+
+            <p className="text-sm text-foreground-tertiary mt-4">
+              You can also build your own executor on any platform that runs Node.js. Just implement
+              the API specification below.
             </p>
+          </section>
+
+          {/* Comparison Table */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Platform Comparison</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 pr-4 font-medium text-foreground">Feature</th>
+                    <th className="text-left py-3 px-4 font-medium text-foreground">Unsandbox</th>
+                    <th className="text-left py-3 pl-4 font-medium text-foreground">Vercel</th>
+                  </tr>
+                </thead>
+                <tbody className="text-foreground-secondary">
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Deploy method</td>
+                    <td className="py-3 px-4">CLI command</td>
+                    <td className="py-3 pl-4">One-click button</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Isolation</td>
+                    <td className="py-3 px-4">Container-level</td>
+                    <td className="py-3 pl-4">VM-level (Sandbox)</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Cold starts</td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">None (always-on)</span>
+                    </td>
+                    <td className="py-3 pl-4">Yes (serverless)</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Max runtime</td>
+                    <td className="py-3 px-4">
+                      <span className="text-success">Unlimited</span>
+                    </td>
+                    <td className="py-3 pl-4">45min (Hobby) / 5hr (Pro)</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Pricing</td>
+                    <td className="py-3 px-4">Per uptime</td>
+                    <td className="py-3 pl-4">Per compute time</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-3 pr-4">Custom domains</td>
+                    <td className="py-3 px-4">Yes</td>
+                    <td className="py-3 pl-4">Yes</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 pr-4">Freeze/unfreeze</td>
+                    <td className="py-3 px-4">Yes (save costs)</td>
+                    <td className="py-3 pl-4">N/A (serverless)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </section>
 
           {/* Configuration Section */}
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">Configuration</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">
+              Connecting to Your Executor
+            </h2>
             <p className="text-foreground-secondary mb-4">
-              Once you have your executor deployed, configure your collections or agents to use it:
+              Once deployed, configure your collections or agents to use your executor:
             </p>
             <ol className="list-decimal list-inside text-foreground-secondary space-y-3 mb-6">
               <li>Go to your collection or agent settings</li>
-              <li>
-                In the &quot;Executor Configuration&quot; section, select &quot;Custom
-                Executor&quot;
-              </li>
+              <li>In &quot;Executor Configuration&quot;, select &quot;Custom Executor&quot;</li>
               <li>
                 Enter your executor URL (e.g.,{' '}
                 <code className="px-1.5 py-0.5 bg-surface rounded">
-                  https://tpmjs-executor.vercel.app
+                  https://my-executor.on.unsandbox.com
                 </code>
                 )
               </li>
-              <li>Optionally add an API key if your executor requires authentication</li>
-              <li>Click &quot;Verify Connection&quot; to test the configuration</li>
+              <li>Add your API key if authentication is enabled</li>
+              <li>Click &quot;Verify Connection&quot; to test</li>
             </ol>
             <div className="p-4 bg-warning/10 border border-warning/30 rounded-lg">
               <p className="text-sm text-warning">
-                <strong>Security tip:</strong> Set the{' '}
-                <code className="px-1 bg-warning/20 rounded">EXECUTOR_API_KEY</code> environment
-                variable in your Vercel project to require authentication for all requests.
+                <strong>Security:</strong> Always set{' '}
+                <code className="px-1 bg-warning/20 rounded">EXECUTOR_API_KEY</code> to require
+                authentication. Without it, anyone can execute tools on your executor.
               </p>
             </div>
           </section>
@@ -188,7 +295,10 @@ export default function ExecutorsDocsPage(): React.ReactElement {
             <h2 className="text-2xl font-semibold text-foreground mb-4">
               Executor API Specification
             </h2>
-            <p className="text-foreground-secondary mb-6">All executors must implement this API:</p>
+            <p className="text-foreground-secondary mb-6">
+              All executors must implement these endpoints. Use this spec if building a custom
+              executor.
+            </p>
 
             {/* POST /execute-tool */}
             <div className="mb-8">
@@ -197,7 +307,9 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                 /execute-tool
               </h3>
               <p className="text-foreground-secondary mb-4">
-                Execute a TPMJS tool with the provided parameters.
+                Execute a TPMJS tool. The executor should install the npm package, find the named
+                export, and call its{' '}
+                <code className="px-1 bg-surface rounded">execute(params)</code> function.
               </p>
               <div className="space-y-4">
                 <div>
@@ -217,22 +329,33 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                 <code className="px-2 py-1 bg-success/10 text-success rounded">GET</code> /health
               </h3>
               <p className="text-foreground-secondary mb-4">
-                Check executor health status. Used by TPMJS to verify the executor is reachable.
+                Health check endpoint. TPMJS uses this to verify the executor is reachable and
+                working.
               </p>
               <div>
                 <p className="text-sm font-medium text-foreground mb-2">Response:</p>
                 <CodeBlock language="json" code={healthExample} />
               </div>
             </div>
+
+            <div className="p-4 bg-surface border border-border rounded-lg">
+              <p className="text-sm text-foreground-secondary">
+                <strong>Note:</strong> Both{' '}
+                <code className="px-1 bg-surface-secondary rounded">/api/health</code> and{' '}
+                <code className="px-1 bg-surface-secondary rounded">/health</code> paths should work
+                (same for <code className="px-1 bg-surface-secondary rounded">/execute-tool</code>).
+                Our templates support both.
+              </p>
+            </div>
           </section>
 
-          {/* Cascade Section */}
+          {/* Executor Cascade */}
           <section className="mb-12">
             <h2 className="text-2xl font-semibold text-foreground mb-4">Executor Cascade</h2>
             <p className="text-foreground-secondary mb-4">
-              Executor configuration follows a cascade resolution order:
+              When a tool is executed, TPMJS resolves which executor to use in this order:
             </p>
-            <div className="flex items-center gap-2 text-foreground-secondary mb-4">
+            <div className="flex items-center gap-2 text-foreground-secondary mb-4 flex-wrap">
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
                 Agent Config
               </span>
@@ -255,35 +378,47 @@ export default function ExecutorsDocsPage(): React.ReactElement {
             </ul>
           </section>
 
-          {/* FAQ Section */}
+          {/* FAQ */}
           <section className="mb-12">
             <h2 className="text-2xl font-semibold text-foreground mb-4">FAQ</h2>
             <div className="space-y-6">
               <div>
-                <h3 className="font-medium text-foreground mb-2">Can I use any cloud provider?</h3>
+                <h3 className="font-medium text-foreground mb-2">
+                  Which platform should I choose?
+                </h3>
                 <p className="text-foreground-secondary text-sm">
-                  Yes! While we provide a Vercel template, you can deploy an executor anywhere that
-                  can run Node.js and expose an HTTP endpoint. The executor just needs to implement
-                  the API specification above.
+                  <strong>Unsandbox</strong> is recommended for most use cases. It has no cold
+                  starts, unlimited runtime, and simple CLI deployment. Use <strong>Vercel</strong>{' '}
+                  if you&apos;re already on Vercel or prefer one-click deployment and pay-per-use
+                  pricing.
                 </p>
               </div>
               <div>
-                <h3 className="font-medium text-foreground mb-2">What about timeouts?</h3>
+                <h3 className="font-medium text-foreground mb-2">Can I use other platforms?</h3>
                 <p className="text-foreground-secondary text-sm">
-                  The default timeout for tool execution is 30 seconds. On Vercel&apos;s free tier,
-                  you get up to 10 seconds per request. For longer-running tools, consider deploying
-                  to a platform with higher timeout limits.
+                  Yes! Any platform that runs Node.js and exposes HTTP endpoints works. AWS Lambda,
+                  Google Cloud Run, Railway, Render, Fly.io—just implement the API specification
+                  above.
                 </p>
               </div>
               <div>
                 <h3 className="font-medium text-foreground mb-2">How do tools get loaded?</h3>
                 <p className="text-foreground-secondary text-sm">
-                  Tools are dynamically imported from{' '}
-                  <Link href="https://esm.sh" className="text-primary hover:underline">
-                    esm.sh
-                  </Link>
-                  , a CDN for npm packages. The executor fetches the package, finds the tool export,
-                  and calls its <code className="px-1 bg-surface rounded">execute()</code> function.
+                  The executor runs <code className="px-1 bg-surface rounded">npm install</code> for
+                  the requested package, then dynamically imports it and calls the tool&apos;s{' '}
+                  <code className="px-1 bg-surface rounded">execute()</code> function. Each
+                  execution uses a fresh temporary directory.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-foreground mb-2">
+                  Are environment variables secure?
+                </h3>
+                <p className="text-foreground-secondary text-sm">
+                  Yes. Environment variables are stored encrypted by the platform (Vercel/Unsandbox)
+                  and only available during execution. You can also pass per-request environment
+                  variables in the <code className="px-1 bg-surface rounded">env</code> field of the
+                  execute-tool request.
                 </p>
               </div>
             </div>
@@ -302,16 +437,22 @@ export default function ExecutorsDocsPage(): React.ReactElement {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="secondary" size="sm">
+                <button
+                  type="button"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-surface-secondary hover:bg-surface-tertiary text-foreground transition-colors"
+                >
                   <Icon icon="github" className="w-4 h-4 mr-2" />
                   Open an Issue
-                </Button>
+                </button>
               </a>
               <a href="https://discord.gg/tpmjs" target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="sm">
+                <button
+                  type="button"
+                  className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md hover:bg-surface text-foreground-secondary transition-colors"
+                >
                   <Icon icon="discord" className="w-4 h-4 mr-2" />
                   Join Discord
-                </Button>
+                </button>
               </a>
             </div>
           </section>
