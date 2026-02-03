@@ -160,8 +160,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         {/* Backdrop */}
         <div className={modalBackdropVariants({ state: 'entered' })} aria-hidden="true" />
 
-        {/* Container */}
+        {/* Container - handles backdrop click to close modal */}
         <div
+          role="presentation"
           className={modalContainerVariants({})}
           onClick={handleBackdropClick}
           onKeyDown={handleKeyDown}

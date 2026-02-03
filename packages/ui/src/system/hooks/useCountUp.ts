@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface UseCountUpOptions {
   /**
@@ -83,7 +83,7 @@ export function useCountUp(options: UseCountUpOptions): {
   const [count, setCount] = useState(startValue);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const animate = (): void => {
+  const animate = useCallback((): void => {
     const startTime = Date.now();
     const endTime = startTime + duration;
     const range = end - startValue;
@@ -108,24 +108,28 @@ export function useCountUp(options: UseCountUpOptions): {
 
     setIsAnimating(true);
     requestAnimationFrame(updateCount);
-  };
+  }, [duration, end, startValue, easing, decimals]);
 
-  const start = (): void => {
+  const start = useCallback((): void => {
     if (!isAnimating) {
       animate();
     }
-  };
+  }, [isAnimating, animate]);
 
-  const reset = (): void => {
+  const reset = useCallback((): void => {
     setCount(startValue);
     setIsAnimating(false);
-  };
+  }, [startValue]);
 
+  // Auto-start animation on mount if autoStart is true
+  // Use requestAnimationFrame to defer the start call outside the effect's synchronous execution
   useEffect(() => {
     if (autoStart) {
-      start();
+      const frameId = requestAnimationFrame(() => {
+        start();
+      });
+      return () => cancelAnimationFrame(frameId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart, start]);
 
   return {

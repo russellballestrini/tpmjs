@@ -94,7 +94,7 @@ export function RegistrySearchRenderer({
             <span className="text-sm font-medium text-foreground">Registry Search</span>
             {searchInput?.query && (
               <Badge variant="secondary" size="sm">
-                "{searchInput.query}"
+                &ldquo;{searchInput.query}&rdquo;
               </Badge>
             )}
           </div>

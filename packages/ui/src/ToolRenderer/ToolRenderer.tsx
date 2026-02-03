@@ -89,6 +89,7 @@ function extractError(output: unknown): string | undefined {
  * })}
  * ```
  */
+/* eslint-disable react-hooks/static-components -- dynamic component selection from registry is intentional */
 export function ToolRenderer({
   part,
   isStreaming = false,
@@ -115,3 +116,4 @@ export function ToolRenderer({
 
   return <Renderer {...props} />;
 }
+/* eslint-enable react-hooks/static-components */

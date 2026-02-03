@@ -93,7 +93,7 @@ export interface BreadcrumbSeparatorProps extends HTMLAttributes<HTMLSpanElement
 /**
  * BreadcrumbEllipsis component props
  */
-export interface BreadcrumbEllipsisProps extends HTMLAttributes<HTMLSpanElement> {}
+export type BreadcrumbEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 
 /**
  * Breadcrumbs ref type

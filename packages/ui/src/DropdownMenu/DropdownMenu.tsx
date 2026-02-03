@@ -22,6 +22,17 @@ import type {
   DropdownMenuProps,
   DropdownMenuSeparatorProps,
 } from './types';
+
+/**
+ * Props interface for trigger elements that can receive dropdown event handlers
+ */
+interface TriggerElementProps {
+  ref?: React.Ref<HTMLElement>;
+  onClick?: (e: React.MouseEvent) => void;
+  'aria-haspopup'?: string;
+  'aria-expanded'?: boolean;
+}
+
 import {
   dropdownMenuContentVariants,
   dropdownMenuItemIconVariants,
@@ -259,17 +270,19 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     }, [isOpen, closeOnEscape, closeMenu]);
 
     // Clone trigger element with click handler
+    /* eslint-disable react-hooks/refs -- passing ref object to cloneElement is a standard pattern */
     const triggerElement = isValidElement(trigger)
-      ? cloneElement(trigger as React.ReactElement<any>, {
+      ? cloneElement(trigger as React.ReactElement<TriggerElementProps>, {
           ref: triggerRef,
           onClick: (e: React.MouseEvent) => {
-            (trigger as React.ReactElement<any>).props.onClick?.(e);
+            (trigger as React.ReactElement<TriggerElementProps>).props.onClick?.(e);
             handleToggle();
           },
           'aria-haspopup': 'menu',
           'aria-expanded': isOpen,
         })
       : trigger;
+    /* eslint-enable react-hooks/refs */
 
     const contextValue = useMemo(
       () => ({
@@ -347,6 +360,7 @@ export const DropdownMenuItem = forwardRef<HTMLButtonElement, DropdownMenuItemPr
       }
     }, [context]);
 
+    /* eslint-disable react-hooks/refs -- indexRef.current is stable (set once on mount) */
     const isActive = context?.activeIndex === indexRef.current;
 
     const handleClick = useCallback(() => {
@@ -387,6 +401,7 @@ export const DropdownMenuItem = forwardRef<HTMLButtonElement, DropdownMenuItemPr
         onMouseEnter={() => context?.setActiveIndex(indexRef.current)}
         {...props}
       >
+        {/* eslint-enable react-hooks/refs */}
         {icon && (
           <span
             className={dropdownMenuItemIconVariants({
@@ -410,6 +425,7 @@ DropdownMenuItem.displayName = 'DropdownMenuItem';
  */
 export const DropdownMenuSeparator = forwardRef<HTMLDivElement, DropdownMenuSeparatorProps>(
   ({ className, ...props }, ref) => (
+    // biome-ignore lint/a11y/useSemanticElements: div with role="separator" is intentional for styling flexibility
     <div
       ref={ref}
       role="separator"
@@ -439,6 +455,7 @@ DropdownMenuLabel.displayName = 'DropdownMenuLabel';
  */
 export const DropdownMenuGroup = forwardRef<HTMLDivElement, DropdownMenuGroupProps>(
   ({ label, children, className, ...props }, ref) => (
+    // biome-ignore lint/a11y/useSemanticElements: div with role="group" is intentional for dropdown menu structure
     <div ref={ref} role="group" className={className} {...props}>
       {label && <DropdownMenuLabel>{label}</DropdownMenuLabel>}
       {children}

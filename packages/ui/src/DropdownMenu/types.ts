@@ -112,7 +112,7 @@ export interface DropdownMenuItemProps extends HTMLAttributes<HTMLButtonElement>
 /**
  * DropdownMenuSeparator component props
  */
-export interface DropdownMenuSeparatorProps extends HTMLAttributes<HTMLDivElement> {}
+export type DropdownMenuSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
 /**
  * DropdownMenuLabel component props

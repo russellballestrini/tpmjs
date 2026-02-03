@@ -15,6 +15,17 @@ import type { TooltipPlacement, TooltipProps } from './types';
 import { tooltipArrowVariants, tooltipContentVariants } from './variants';
 
 /**
+ * Props interface for trigger elements that can receive tooltip event handlers
+ */
+interface TriggerElementProps {
+  ref?: React.Ref<HTMLElement>;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onMouseLeave?: (e: React.MouseEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
+}
+
+/**
  * Calculate position based on trigger and placement
  */
 function calculatePosition(
@@ -207,27 +218,30 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     }, []);
 
     // Clone trigger element with event handlers
+    // We're passing the ref object itself (not reading .current), which is safe
+    /* eslint-disable react-hooks/refs -- passing ref object to cloneElement is a standard pattern */
     const triggerElement = isValidElement(children)
-      ? cloneElement(children as React.ReactElement<any>, {
+      ? cloneElement(children as React.ReactElement<TriggerElementProps>, {
           ref: triggerRef,
           onMouseEnter: (e: React.MouseEvent) => {
-            (children as React.ReactElement<any>).props.onMouseEnter?.(e);
+            (children as React.ReactElement<TriggerElementProps>).props.onMouseEnter?.(e);
             handleOpen();
           },
           onMouseLeave: (e: React.MouseEvent) => {
-            (children as React.ReactElement<any>).props.onMouseLeave?.(e);
+            (children as React.ReactElement<TriggerElementProps>).props.onMouseLeave?.(e);
             handleClose();
           },
           onFocus: (e: React.FocusEvent) => {
-            (children as React.ReactElement<any>).props.onFocus?.(e);
+            (children as React.ReactElement<TriggerElementProps>).props.onFocus?.(e);
             handleOpen();
           },
           onBlur: (e: React.FocusEvent) => {
-            (children as React.ReactElement<any>).props.onBlur?.(e);
+            (children as React.ReactElement<TriggerElementProps>).props.onBlur?.(e);
             handleClose();
           },
         })
       : children;
+    /* eslint-enable react-hooks/refs */
 
     // Only render portal in browser
     const canRenderPortal = typeof window !== 'undefined';

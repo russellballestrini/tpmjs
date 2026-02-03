@@ -167,7 +167,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
         />
 
         {/* Container */}
-        <div className={drawerContainerVariants({})} onKeyDown={handleKeyDown}>
+        <div role="presentation" className={drawerContainerVariants({})} onKeyDown={handleKeyDown}>
           {/* Panel */}
           <div
             ref={(node) => {

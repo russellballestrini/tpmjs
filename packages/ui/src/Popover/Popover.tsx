@@ -15,6 +15,18 @@ import type { PopoverPlacement, PopoverProps } from './types';
 import { popoverArrowVariants, popoverBodyVariants, popoverContentVariants } from './variants';
 
 /**
+ * Props interface for trigger elements that can receive popover event handlers
+ */
+interface TriggerElementProps {
+  ref?: React.Ref<HTMLElement>;
+  onClick?: (e: React.MouseEvent) => void;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onMouseLeave?: (e: React.MouseEvent) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
+}
+
+/**
  * Calculate position based on trigger and placement
  */
 function calculatePosition(
@@ -253,37 +265,40 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     }, []);
 
     // Clone trigger element with event handlers
+    // We're passing the ref object itself (not reading .current), which is safe
+    /* eslint-disable react-hooks/refs -- passing ref object to cloneElement is a standard pattern */
     const triggerElement = isValidElement(children)
-      ? cloneElement(children as React.ReactElement<any>, {
+      ? cloneElement(children as React.ReactElement<TriggerElementProps>, {
           ref: triggerRef,
           ...(trigger === 'click' && {
             onClick: (e: React.MouseEvent) => {
-              (children as React.ReactElement<any>).props.onClick?.(e);
+              (children as React.ReactElement<TriggerElementProps>).props.onClick?.(e);
               handleToggle();
             },
           }),
           ...(trigger === 'hover' && {
             onMouseEnter: (e: React.MouseEvent) => {
-              (children as React.ReactElement<any>).props.onMouseEnter?.(e);
+              (children as React.ReactElement<TriggerElementProps>).props.onMouseEnter?.(e);
               handleOpen();
             },
             onMouseLeave: (e: React.MouseEvent) => {
-              (children as React.ReactElement<any>).props.onMouseLeave?.(e);
+              (children as React.ReactElement<TriggerElementProps>).props.onMouseLeave?.(e);
               handleClose();
             },
           }),
           ...(trigger === 'focus' && {
             onFocus: (e: React.FocusEvent) => {
-              (children as React.ReactElement<any>).props.onFocus?.(e);
+              (children as React.ReactElement<TriggerElementProps>).props.onFocus?.(e);
               handleOpen();
             },
             onBlur: (e: React.FocusEvent) => {
-              (children as React.ReactElement<any>).props.onBlur?.(e);
+              (children as React.ReactElement<TriggerElementProps>).props.onBlur?.(e);
               handleClose();
             },
           }),
         })
       : children;
+    /* eslint-enable react-hooks/refs */
 
     // Only render portal in browser
     const canRenderPortal = typeof window !== 'undefined';
