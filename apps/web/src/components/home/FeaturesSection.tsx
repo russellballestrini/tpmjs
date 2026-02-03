@@ -3,6 +3,7 @@
 import { Badge } from '@tpmjs/ui/Badge/Badge';
 import { Button } from '@tpmjs/ui/Button/Button';
 import { Container } from '@tpmjs/ui/Container/Container';
+import type { IconName } from '@tpmjs/ui/Icon/Icon';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
 
@@ -11,20 +12,26 @@ import Link from 'next/link';
 // ============================================================================
 
 interface FeatureCardProps {
-  icon: string;
+  icon: IconName;
   title: string;
   description: string;
   badge?: string;
   href?: string;
 }
 
-function FeatureCard({ icon, title, description, badge, href }: FeatureCardProps): React.ReactElement {
+function FeatureCard({
+  icon,
+  title,
+  description,
+  badge,
+  href,
+}: FeatureCardProps): React.ReactElement {
   const content = (
     <div className="group h-full p-6 border border-dashed border-border bg-surface hover:border-primary hover:bg-primary/5 transition-all duration-200">
       {/* Icon */}
       <div className="w-12 h-12 flex items-center justify-center mb-4 border border-dashed border-border bg-background group-hover:border-primary group-hover:bg-primary/10 transition-all duration-200">
         <Icon
-          icon={icon as any}
+          icon={icon}
           size="md"
           className="text-foreground-secondary group-hover:text-primary transition-colors duration-200"
         />
@@ -61,28 +68,34 @@ function FeatureCard({ icon, title, description, badge, href }: FeatureCardProps
 // ============================================================================
 
 export function FeaturesSection(): React.ReactElement {
-  const features = [
+  const features: Array<{
+    icon: IconName;
+    title: string;
+    description: string;
+    badge: string;
+    href?: string;
+  }> = [
     {
       icon: 'search',
-      title: 'tool registry',
+      title: 'semantic retrieval',
       description:
-        'Browse 1M+ AI tools from npm. Auto-discovered within minutes of publication with quality scoring and health monitoring.',
-      badge: 'auto-sync',
+        'Agent describes what it needs, TPMJS returns the right tools. Selection at scale through semantic search and quality scoring.',
+      badge: 'core',
       href: '/tool/tool-search',
     },
     {
       icon: 'puzzle',
       title: 'omega agent',
       description:
-        'Chat with an AI that dynamically discovers and executes tools based on your requests. No configuration needed.',
-      badge: 'live',
+        'See toolspace virtualization in action. Omega discovers and executes from 1M+ tools on-demand. No pre-configuration.',
+      badge: 'demo',
       href: '/omega',
     },
     {
       icon: 'folder',
       title: 'collections',
       description:
-        'Curate tool sets for specific use cases. Add test scenarios to validate behavior and generate living documentation.',
+        'Curate domain-specific toolsets. Collections become instant MCP servers with stable URLs and progressive tool loading.',
       badge: 'shareable',
       href: '/collections',
     },
@@ -90,7 +103,7 @@ export function FeaturesSection(): React.ReactElement {
       icon: 'user',
       title: 'custom agents',
       description:
-        'Build AI agents with your choice of LLM, custom prompts, and curated tool collections. Share publicly or keep private.',
+        'Build agents with any LLM and custom prompts. The toolspace scales independently of agent complexity.',
       badge: 'unlimited',
       href: '/agents',
     },
@@ -98,22 +111,22 @@ export function FeaturesSection(): React.ReactElement {
       icon: 'link',
       title: 'mcp protocol',
       description:
-        'Works with Claude Desktop, Cursor, Windsurf, and any MCP-compatible client. One URL, instant access to all tools.',
+        'MCP is the socket. TPMJS is the operating system. Works with Claude, Cursor, Windsurf, and any MCP client.',
       badge: 'universal',
       href: '/integrations',
     },
     {
       icon: 'key',
-      title: 'secure execution',
+      title: 'sandboxed execution',
       description:
-        'Every tool runs in an isolated sandbox with rate limiting and timeout handling. Your credentials are encrypted at rest.',
-      badge: 'sandboxed',
+        'Every tool runs isolated with timeouts and rate limits. npm is storage, TPMJS is the secure runtime.',
+      badge: 'secure',
     },
     {
       icon: 'checkCircle',
-      title: 'test scenarios',
+      title: 'quality signals',
       description:
-        'AI-generated test scenarios validate tool behavior. Track pass rates, execution times, and quality scores.',
+        'Health checks, test scenarios, and usage metrics. Surface the best tools from the infinite toolspace.',
       badge: 'automated',
       href: '/scenarios',
     },
@@ -121,15 +134,15 @@ export function FeaturesSection(): React.ReactElement {
       icon: 'message',
       title: 'living skills',
       description:
-        'Documentation that evolves from real usage. Skills emerge from question patterns and proven behaviors.',
-      badge: 'new',
+        'Documentation emerges from real usage. Tools teach agents how to use them through proven patterns.',
+      badge: 'evolving',
       href: '/docs/skills',
     },
     {
       icon: 'terminal',
-      title: 'developer sdk',
+      title: 'publish once',
       description:
-        'Publish tools with one keyword. Full TypeScript support, Vercel AI SDK integration, and automatic schema extraction.',
+        'Add one keyword to package.json. Your tool joins the infinite toolspace within minutes. Zero configuration.',
       badge: 'npm',
       href: '/publish',
     },
@@ -141,14 +154,14 @@ export function FeaturesSection(): React.ReactElement {
         {/* Section Header */}
         <div className="text-center mb-16">
           <p className="font-mono text-xs text-primary uppercase tracking-widest mb-3">
-            platform capabilities
+            toolspace virtualization
           </p>
           <h2 className="font-mono text-3xl md:text-4xl font-semibold mb-4 text-foreground lowercase">
-            everything you need
+            the retrieval layer
           </h2>
           <p className="text-base text-foreground-secondary max-w-2xl mx-auto font-sans">
-            From discovery to execution, TPMJS provides the complete infrastructure for AI tool
-            development and deployment.
+            npm stores the tools. TPMJS retrieves the right ones. Agents get infinite capabilities
+            without infinite context windows.
           </p>
         </div>
 

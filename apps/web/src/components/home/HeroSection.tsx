@@ -62,14 +62,19 @@ export function HeroSection({ stats }: HeroSectionProps): React.ReactElement {
         {/* Main Heading */}
         <div className="max-w-7xl">
           <h1
-            className="mb-8 font-bold leading-none tracking-tight text-foreground"
+            className="mb-4 font-bold leading-none tracking-tight text-foreground"
             style={{ fontSize: 'clamp(48px, 10vw, 96px)' }}
           >
-            THE NPM FOR AI TOOLS
+            INFINITE TOOLSPACE
           </h1>
 
+          {/* Tagline */}
+          <p className="mb-8 font-mono text-lg md:text-xl text-brutalist-accent uppercase tracking-wide">
+            A million tools. Zero configuration.
+          </p>
+
           {/* Live Metrics Strip */}
-          <div className="mb-12 flex flex-wrap items-center gap-3 border-l-[6px] border-brutalist-accent pl-6 font-mono text-base md:text-lg font-bold uppercase tracking-wider">
+          <div className="mb-10 flex flex-wrap items-center gap-3 border-l-[6px] border-foreground/20 pl-6 font-mono text-base md:text-lg font-bold uppercase tracking-wider">
             <div className="flex items-center gap-2">
               <span className="text-foreground">{formatNumber(stats.packageCount)}</span>
               <span className="text-foreground-secondary">PACKAGES</span>
@@ -79,12 +84,17 @@ export function HeroSection({ stats }: HeroSectionProps): React.ReactElement {
               <span className="text-foreground">{formatNumber(stats.toolCount)}</span>
               <span className="text-foreground-secondary">TOOLS</span>
             </div>
+            <span className="text-foreground-tertiary">/</span>
+            <div className="flex items-center gap-2">
+              <span className="text-foreground">1M+</span>
+              <span className="text-foreground-secondary">ON NPM</span>
+            </div>
           </div>
 
           {/* Subheading */}
           <p className="mb-12 max-w-3xl text-xl md:text-2xl font-medium leading-relaxed text-foreground-secondary tracking-tight">
-            Discover and use npm packages as AI agent tools. Works with Claude, GPT, LangChain, and
-            any MCP-compatible client.
+            Any agent can use a million tools without loading a million tools. TPMJS is the
+            retrieval layer between npm and AI agents.
           </p>
 
           {/* Brutalist Search Interface */}
