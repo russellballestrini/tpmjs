@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-postmark",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Postmark email API tools for AI agents. Send emails, manage templates, bounces, domains, webhooks, and more.",
   "type": "module",
   "keywords": [
