@@ -1,0 +1,383 @@
+{
+  "name": "@tpmjs/tools-postmark",
+  "version": "0.1.0",
+  "description": "Postmark email API tools for AI agents. Send emails, manage templates, bounces, domains, webhooks, and more.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "postmark",
+    "email",
+    "transactional",
+    "smtp",
+    "agent"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/postmark"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "ops",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "tools": [
+      {
+        "name": "sendEmail",
+        "description": "Send a single transactional email via Postmark."
+      },
+      {
+        "name": "sendBatchEmails",
+        "description": "Send a batch of up to 500 emails in a single API call."
+      },
+      {
+        "name": "sendEmailWithTemplate",
+        "description": "Send an email using a Postmark template."
+      },
+      {
+        "name": "sendBatchWithTemplates",
+        "description": "Send a batch of templated emails in a single API call."
+      },
+      {
+        "name": "sendBulkEmail",
+        "description": "Submit a bulk email job for large-scale sending."
+      },
+      {
+        "name": "getBulkEmailStatus",
+        "description": "Get the status of a bulk email job."
+      },
+      {
+        "name": "getDeliveryStats",
+        "description": "Get delivery statistics including bounce counts by type."
+      },
+      {
+        "name": "searchBounces",
+        "description": "Search bounces with optional filters."
+      },
+      {
+        "name": "getBounce",
+        "description": "Get details of a specific bounce by ID."
+      },
+      {
+        "name": "getBounceDump",
+        "description": "Get the raw SMTP dump for a specific bounce."
+      },
+      {
+        "name": "activateBounce",
+        "description": "Activate a bounced email address to allow sending again."
+      },
+      {
+        "name": "listTemplates",
+        "description": "List email templates with optional filtering."
+      },
+      {
+        "name": "getTemplate",
+        "description": "Get details of a specific template."
+      },
+      {
+        "name": "createTemplate",
+        "description": "Create a new email template."
+      },
+      {
+        "name": "updateTemplate",
+        "description": "Update an existing email template."
+      },
+      {
+        "name": "deleteTemplate",
+        "description": "Delete an email template."
+      },
+      {
+        "name": "validateTemplate",
+        "description": "Validate template content and model."
+      },
+      {
+        "name": "pushTemplates",
+        "description": "Push templates from one server to another."
+      },
+      {
+        "name": "getServer",
+        "description": "Get the current server configuration."
+      },
+      {
+        "name": "updateServer",
+        "description": "Update the current server configuration."
+      },
+      {
+        "name": "listServers",
+        "description": "List all servers in the account."
+      },
+      {
+        "name": "getServerById",
+        "description": "Get a specific server by ID."
+      },
+      {
+        "name": "createServer",
+        "description": "Create a new server in the account."
+      },
+      {
+        "name": "updateServerById",
+        "description": "Update a specific server by ID."
+      },
+      {
+        "name": "deleteServer",
+        "description": "Delete a server from the account."
+      },
+      {
+        "name": "listMessageStreams",
+        "description": "List all message streams for the server."
+      },
+      {
+        "name": "getMessageStream",
+        "description": "Get details of a specific message stream."
+      },
+      {
+        "name": "createMessageStream",
+        "description": "Create a new message stream."
+      },
+      {
+        "name": "updateMessageStream",
+        "description": "Update a message stream's properties."
+      },
+      {
+        "name": "archiveMessageStream",
+        "description": "Archive a message stream."
+      },
+      {
+        "name": "unarchiveMessageStream",
+        "description": "Unarchive a previously archived message stream."
+      },
+      {
+        "name": "searchOutboundMessages",
+        "description": "Search outbound messages with optional filters."
+      },
+      {
+        "name": "getOutboundMessageDetails",
+        "description": "Get full details of a specific outbound message."
+      },
+      {
+        "name": "getOutboundMessageDump",
+        "description": "Get the raw SMTP dump of an outbound message."
+      },
+      {
+        "name": "getOutboundMessageOpens",
+        "description": "Get open events for a specific outbound message."
+      },
+      {
+        "name": "getOutboundMessageClicks",
+        "description": "Get click events for a specific outbound message."
+      },
+      {
+        "name": "searchInboundMessages",
+        "description": "Search inbound messages with optional filters."
+      },
+      {
+        "name": "getInboundMessageDetails",
+        "description": "Get full details of a specific inbound message."
+      },
+      {
+        "name": "bypassInboundRules",
+        "description": "Bypass inbound rules for a specific message."
+      },
+      {
+        "name": "retryInboundMessage",
+        "description": "Retry processing of an inbound message."
+      },
+      {
+        "name": "searchMessageOpens",
+        "description": "Search message open events across all messages."
+      },
+      {
+        "name": "searchMessageClicks",
+        "description": "Search message click events across all messages."
+      },
+      {
+        "name": "getStatsOverview",
+        "description": "Get an overview of outbound email statistics."
+      },
+      {
+        "name": "getStatsSends",
+        "description": "Get send count statistics over time."
+      },
+      {
+        "name": "getStatsBounces",
+        "description": "Get bounce statistics over time."
+      },
+      {
+        "name": "getStatsSpamComplaints",
+        "description": "Get spam complaint statistics over time."
+      },
+      {
+        "name": "getStatsTracked",
+        "description": "Get tracked email statistics over time."
+      },
+      {
+        "name": "getStatsOpens",
+        "description": "Get email open statistics over time."
+      },
+      {
+        "name": "getStatsOpensByPlatform",
+        "description": "Get email open statistics grouped by platform."
+      },
+      {
+        "name": "getStatsOpensByClient",
+        "description": "Get email open statistics grouped by email client."
+      },
+      {
+        "name": "getStatsClicks",
+        "description": "Get link click statistics over time."
+      },
+      {
+        "name": "getStatsClicksByBrowser",
+        "description": "Get link click statistics grouped by browser."
+      },
+      {
+        "name": "getStatsClicksByPlatform",
+        "description": "Get link click statistics grouped by platform."
+      },
+      {
+        "name": "getStatsClicksByLocation",
+        "description": "Get link click statistics grouped by geographic location."
+      },
+      {
+        "name": "listDomains",
+        "description": "List all domains in the account."
+      },
+      {
+        "name": "getDomain",
+        "description": "Get details of a specific domain."
+      },
+      {
+        "name": "createDomain",
+        "description": "Create a new sending domain."
+      },
+      {
+        "name": "updateDomain",
+        "description": "Update a domain's return-path."
+      },
+      {
+        "name": "deleteDomain",
+        "description": "Delete a domain from the account."
+      },
+      {
+        "name": "verifyDomainDkim",
+        "description": "Trigger DKIM verification for a domain."
+      },
+      {
+        "name": "verifyDomainReturnPath",
+        "description": "Trigger return-path verification for a domain."
+      },
+      {
+        "name": "verifyDomainSpf",
+        "description": "Trigger SPF verification for a domain."
+      },
+      {
+        "name": "rotateDomainDkim",
+        "description": "Rotate DKIM keys for a domain."
+      },
+      {
+        "name": "listSenderSignatures",
+        "description": "List all sender signatures in the account."
+      },
+      {
+        "name": "getSenderSignature",
+        "description": "Get details of a specific sender signature."
+      },
+      {
+        "name": "createSenderSignature",
+        "description": "Create a new sender signature."
+      },
+      {
+        "name": "updateSenderSignature",
+        "description": "Update an existing sender signature."
+      },
+      {
+        "name": "deleteSenderSignature",
+        "description": "Delete a sender signature."
+      },
+      {
+        "name": "resendSenderConfirmation",
+        "description": "Resend the confirmation email for a sender signature."
+      },
+      {
+        "name": "listWebhooks",
+        "description": "List all webhooks for the server."
+      },
+      {
+        "name": "getWebhook",
+        "description": "Get details of a specific webhook."
+      },
+      {
+        "name": "createWebhook",
+        "description": "Create a new webhook."
+      },
+      {
+        "name": "updateWebhook",
+        "description": "Update an existing webhook."
+      },
+      {
+        "name": "deleteWebhook",
+        "description": "Delete a webhook."
+      },
+      {
+        "name": "listSuppressions",
+        "description": "List suppressed email addresses for a message stream."
+      },
+      {
+        "name": "createSuppressions",
+        "description": "Add email addresses to the suppression list."
+      },
+      {
+        "name": "deleteSuppressions",
+        "description": "Remove email addresses from the suppression list."
+      },
+      {
+        "name": "listInboundRules",
+        "description": "List all inbound processing rules."
+      },
+      {
+        "name": "createInboundRule",
+        "description": "Create a new inbound processing rule."
+      },
+      {
+        "name": "deleteInboundRule",
+        "description": "Delete an inbound processing rule."
+      },
+      {
+        "name": "createDataRemoval",
+        "description": "Request removal of personal data."
+      },
+      {
+        "name": "getDataRemovalStatus",
+        "description": "Get the status of a data removal request."
+      }
+    ]
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  }
+}

@@ -499,6 +499,53 @@ domain:
       description: "An HLLM API key"
 
     # -------------------------------------------------------------------------
+    # Postmark email entities
+    # -------------------------------------------------------------------------
+    postmark_email_result:
+      fields: [To, SubmittedAt, MessageID, ErrorCode, Message]
+      description: "Result of sending an email via Postmark"
+
+    postmark_bounce:
+      fields: [ID, Type, TypeCode, Name, Tag, MessageID, ServerID, Description, Details, Email, From, BouncedAt, DumpAvailable, Inactive, CanActivate, Subject, Content]
+      description: "A Postmark bounce record"
+
+    postmark_template:
+      fields: [TemplateId, Name, Subject, HtmlBody, TextBody, Alias, TemplateType, LayoutTemplate, Active]
+      description: "A Postmark email template"
+
+    postmark_server:
+      fields: [ID, Name, Color, SmtpApiActivated, RawEmailEnabled, TrackOpens, TrackLinks, InboundDomain]
+      description: "A Postmark server configuration"
+
+    postmark_message_stream:
+      fields: [ID, ServerID, Name, Description, MessageStreamType, CreatedAt, UpdatedAt, ArchivedAt]
+      description: "A Postmark message stream"
+
+    postmark_outbound_message:
+      fields: [Tag, MessageID, To, Cc, Bcc, Recipients, ReceivedAt, From, Subject, Attachments, Status, MessageEvents]
+      description: "An outbound message in Postmark"
+
+    postmark_domain:
+      fields: [ID, Name, SPFVerified, DKIMVerified, ReturnPathDomainVerified, ReturnPathDomain]
+      description: "A Postmark sending domain"
+
+    postmark_sender_signature:
+      fields: [ID, Domain, EmailAddress, Name, ReplyToEmailAddress, Confirmed]
+      description: "A Postmark sender signature"
+
+    postmark_webhook:
+      fields: [ID, Url, MessageStream, HttpAuth, HttpHeaders, Triggers]
+      description: "A Postmark webhook configuration"
+
+    postmark_suppression:
+      fields: [EmailAddress, SuppressionReason, Origin, CreatedAt]
+      description: "A suppressed email address in Postmark"
+
+    postmark_stats:
+      fields: [Sent, Bounced, SMTPApiErrors, BounceRate, SpamComplaints, SpamComplaintsRate, Opens, UniqueOpens, Clicks, UniqueClicks, TotalClicks]
+      description: "Postmark outbound statistics"
+
+    # -------------------------------------------------------------------------
     # Agent & workflow entities
     # -------------------------------------------------------------------------
     recipe:
@@ -8216,6 +8263,1682 @@ blocks:
         type: array
         optional: true
         description: "List of packages that failed to install"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ===========================================================================
+  # POSTMARK — Email API tools (82 tools)
+  # ===========================================================================
+
+  # --- Email Sending ---
+
+  ops.sendEmail:
+    type: utility
+    description: "Send a single transactional email via Postmark."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /email endpoint"
+    inputs:
+      - name: From
+        type: string
+        description: "Sender email address"
+      - name: To
+        type: string
+        description: "Recipient email address(es)"
+      - name: Subject
+        type: string
+        optional: true
+        description: "Email subject line"
+      - name: HtmlBody
+        type: string
+        optional: true
+        description: "HTML body"
+      - name: TextBody
+        type: string
+        optional: true
+        description: "Plain text body"
+    outputs:
+      - name: To
+        type: string
+        description: "Recipient address"
+      - name: MessageID
+        type: string
+        description: "Postmark message ID"
+      - name: SubmittedAt
+        type: string
+        description: "Submission timestamp"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.sendBatchEmails:
+    type: utility
+    description: "Send a batch of up to 500 emails in a single API call."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /email/batch endpoint"
+    inputs:
+      - name: Messages
+        type: array
+        description: "Array of email messages (max 500)"
+    outputs:
+      - name: results
+        type: postmark_email_result[]
+        description: "Array of send results"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.sendEmailWithTemplate:
+    type: utility
+    description: "Send an email using a Postmark template."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /email/withTemplate endpoint"
+    inputs:
+      - name: TemplateId
+        type: number
+        optional: true
+        description: "Numeric template ID"
+      - name: TemplateAlias
+        type: string
+        optional: true
+        description: "Template alias string"
+      - name: TemplateModel
+        type: object
+        description: "Template variable values"
+      - name: From
+        type: string
+        description: "Sender email address"
+      - name: To
+        type: string
+        description: "Recipient email address"
+    outputs:
+      - name: MessageID
+        type: string
+        description: "Postmark message ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.sendBatchWithTemplates:
+    type: utility
+    description: "Send a batch of templated emails in a single API call (max 500)."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /email/batchWithTemplates endpoint"
+    inputs:
+      - name: Messages
+        type: array
+        description: "Array of templated email messages"
+    outputs:
+      - name: results
+        type: postmark_email_result[]
+        description: "Array of send results"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Bulk Email ---
+
+  ops.sendBulkEmail:
+    type: utility
+    description: "Submit a bulk email job for large-scale sending."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /email/bulk endpoint"
+    inputs:
+      - name: From
+        type: string
+        description: "Sender email address"
+      - name: To
+        type: string
+        description: "Recipient email address(es)"
+    outputs:
+      - name: JobId
+        type: string
+        description: "Bulk job ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getBulkEmailStatus:
+    type: utility
+    description: "Get the status of a bulk email job."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /email/bulk/{id} endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Bulk email job ID"
+    outputs:
+      - name: status
+        type: object
+        description: "Bulk job status"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Bounces ---
+
+  ops.getDeliveryStats:
+    type: utility
+    description: "Get delivery statistics including bounce counts by type."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /deliverystats endpoint"
+    inputs: []
+    outputs:
+      - name: InactiveMails
+        type: number
+        description: "Count of inactive emails"
+      - name: Bounces
+        type: array
+        description: "Bounce counts by type"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.searchBounces:
+    type: utility
+    description: "Search bounces with optional filters like type, date range, and email."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /bounces endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of bounces to return"
+      - name: offset
+        type: number
+        description: "Number of bounces to skip"
+      - name: type
+        type: string
+        optional: true
+        description: "Bounce type filter"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total matching bounces"
+      - name: Bounces
+        type: postmark_bounce[]
+        description: "Array of bounce records"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getBounce:
+    type: utility
+    description: "Get details of a specific bounce by ID."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /bounces/{id} endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Bounce ID"
+    outputs:
+      - name: bounce
+        type: postmark_bounce
+        description: "Bounce details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getBounceDump:
+    type: utility
+    description: "Get the raw SMTP dump for a specific bounce."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /bounces/{id}/dump endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Bounce ID"
+    outputs:
+      - name: Body
+        type: string
+        description: "Raw SMTP dump content"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.activateBounce:
+    type: utility
+    description: "Activate a bounced email address to allow sending again."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /bounces/{id}/activate endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Bounce ID to activate"
+    outputs:
+      - name: Message
+        type: string
+        description: "Activation result message"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Templates ---
+
+  ops.listTemplates:
+    type: utility
+    description: "List email templates with optional filtering by type."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /templates endpoint"
+    inputs:
+      - name: Count
+        type: number
+        description: "Number of templates to return"
+      - name: Offset
+        type: number
+        description: "Number of templates to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total templates"
+      - name: Templates
+        type: postmark_template[]
+        description: "Array of templates"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getTemplate:
+    type: utility
+    description: "Get details of a specific template by ID or alias."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /templates/{id} endpoint"
+    inputs:
+      - name: templateIdOrAlias
+        type: string
+        description: "Template ID or alias"
+    outputs:
+      - name: template
+        type: postmark_template
+        description: "Template details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createTemplate:
+    type: utility
+    description: "Create a new email template."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /templates endpoint"
+    inputs:
+      - name: Name
+        type: string
+        description: "Template name"
+      - name: Subject
+        type: string
+        optional: true
+        description: "Default subject line"
+      - name: HtmlBody
+        type: string
+        optional: true
+        description: "HTML body"
+      - name: TextBody
+        type: string
+        optional: true
+        description: "Text body"
+    outputs:
+      - name: TemplateId
+        type: number
+        description: "New template ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateTemplate:
+    type: utility
+    description: "Update an existing email template."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /templates/{id} endpoint"
+    inputs:
+      - name: templateIdOrAlias
+        type: string
+        description: "Template ID or alias"
+      - name: Name
+        type: string
+        optional: true
+        description: "Template name"
+    outputs:
+      - name: TemplateId
+        type: number
+        description: "Updated template ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteTemplate:
+    type: utility
+    description: "Delete an email template."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /templates/{id} endpoint"
+    inputs:
+      - name: templateIdOrAlias
+        type: string
+        description: "Template ID or alias to delete"
+    outputs:
+      - name: ErrorCode
+        type: number
+        description: "Error code (0 = success)"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.validateTemplate:
+    type: utility
+    description: "Validate template content and test render with a model."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /templates/validate endpoint"
+    inputs:
+      - name: Subject
+        type: string
+        optional: true
+        description: "Subject line to validate"
+      - name: HtmlBody
+        type: string
+        optional: true
+        description: "HTML body to validate"
+    outputs:
+      - name: AllContentIsValid
+        type: boolean
+        description: "Whether all content is valid"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.pushTemplates:
+    type: utility
+    description: "Push templates from one server to another. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /templates/push endpoint with account token"
+    inputs:
+      - name: SourceServerID
+        type: number
+        description: "Source server ID"
+      - name: DestinationServerID
+        type: number
+        description: "Destination server ID"
+      - name: PerformChanges
+        type: boolean
+        description: "Apply changes or dry-run"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total templates compared"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Server Config ---
+
+  ops.getServer:
+    type: utility
+    description: "Get the current server configuration."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /server endpoint"
+    inputs: []
+    outputs:
+      - name: server
+        type: postmark_server
+        description: "Server configuration"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateServer:
+    type: utility
+    description: "Update the current server configuration."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /server endpoint"
+    inputs:
+      - name: Name
+        type: string
+        optional: true
+        description: "Server name"
+      - name: TrackOpens
+        type: boolean
+        optional: true
+        description: "Enable open tracking"
+    outputs:
+      - name: server
+        type: postmark_server
+        description: "Updated server configuration"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Servers Management ---
+
+  ops.listServers:
+    type: utility
+    description: "List all servers in the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /servers endpoint with account token"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of servers to return"
+      - name: offset
+        type: number
+        description: "Number of servers to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total servers"
+      - name: Servers
+        type: postmark_server[]
+        description: "Array of servers"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getServerById:
+    type: utility
+    description: "Get a specific server by ID. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /servers/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Server ID"
+    outputs:
+      - name: server
+        type: postmark_server
+        description: "Server details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createServer:
+    type: utility
+    description: "Create a new server in the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /servers endpoint with account token"
+    inputs:
+      - name: Name
+        type: string
+        description: "Server name"
+    outputs:
+      - name: server
+        type: postmark_server
+        description: "Created server"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateServerById:
+    type: utility
+    description: "Update a specific server by ID. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /servers/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Server ID"
+      - name: Name
+        type: string
+        optional: true
+        description: "Server name"
+    outputs:
+      - name: server
+        type: postmark_server
+        description: "Updated server"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteServer:
+    type: utility
+    description: "Delete a server from the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /servers/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Server ID to delete"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Message Streams ---
+
+  ops.listMessageStreams:
+    type: utility
+    description: "List all message streams for the server."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /message-streams endpoint"
+    inputs:
+      - name: MessageStreamType
+        type: string
+        optional: true
+        description: "Filter by stream type"
+    outputs:
+      - name: MessageStreams
+        type: postmark_message_stream[]
+        description: "Array of message streams"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getMessageStream:
+    type: utility
+    description: "Get details of a specific message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /message-streams/{id} endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message stream ID"
+    outputs:
+      - name: stream
+        type: postmark_message_stream
+        description: "Message stream details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createMessageStream:
+    type: utility
+    description: "Create a new message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /message-streams endpoint"
+    inputs:
+      - name: ID
+        type: string
+        description: "Unique stream ID"
+      - name: Name
+        type: string
+        description: "Display name"
+      - name: MessageStreamType
+        type: string
+        description: "Stream type (Transactional or Broadcasts)"
+    outputs:
+      - name: stream
+        type: postmark_message_stream
+        description: "Created message stream"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateMessageStream:
+    type: utility
+    description: "Update a message stream's name or description."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PATCH /message-streams/{id} endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message stream ID"
+      - name: Name
+        type: string
+        optional: true
+        description: "New display name"
+    outputs:
+      - name: stream
+        type: postmark_message_stream
+        description: "Updated message stream"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.archiveMessageStream:
+    type: utility
+    description: "Archive a message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /message-streams/{id}/archive endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message stream ID to archive"
+    outputs:
+      - name: result
+        type: object
+        description: "Archive result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.unarchiveMessageStream:
+    type: utility
+    description: "Unarchive a previously archived message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /message-streams/{id}/unarchive endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message stream ID to unarchive"
+    outputs:
+      - name: result
+        type: object
+        description: "Unarchive result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Messages — Outbound ---
+
+  ops.searchOutboundMessages:
+    type: utility
+    description: "Search outbound messages with optional filters."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of messages to return"
+      - name: offset
+        type: number
+        description: "Number of messages to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total matching messages"
+      - name: Messages
+        type: postmark_outbound_message[]
+        description: "Array of messages"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getOutboundMessageDetails:
+    type: utility
+    description: "Get full details of a specific outbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/{id}/details endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: message
+        type: postmark_outbound_message
+        description: "Message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getOutboundMessageDump:
+    type: utility
+    description: "Get the raw SMTP dump of an outbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/{id}/dump endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: Body
+        type: string
+        description: "Raw SMTP dump"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getOutboundMessageOpens:
+    type: utility
+    description: "Get open events for a specific outbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/opens/{id} endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: Opens
+        type: array
+        description: "Array of open events"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getOutboundMessageClicks:
+    type: utility
+    description: "Get click events for a specific outbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/clicks/{id} endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: Clicks
+        type: array
+        description: "Array of click events"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Messages — Inbound ---
+
+  ops.searchInboundMessages:
+    type: utility
+    description: "Search inbound messages with optional filters."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/inbound endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of messages to return"
+      - name: offset
+        type: number
+        description: "Number of messages to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total matching messages"
+      - name: InboundMessages
+        type: array
+        description: "Array of inbound messages"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getInboundMessageDetails:
+    type: utility
+    description: "Get full details of a specific inbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/inbound/{id}/details endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Inbound message ID"
+    outputs:
+      - name: message
+        type: object
+        description: "Inbound message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.bypassInboundRules:
+    type: utility
+    description: "Bypass inbound rules for a specific message, reprocessing it."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /messages/inbound/{id}/bypass endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Inbound message ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Bypass result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.retryInboundMessage:
+    type: utility
+    description: "Retry processing of an inbound message."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /messages/inbound/{id}/retry endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Inbound message ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Retry result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Messages — Search Opens/Clicks ---
+
+  ops.searchMessageOpens:
+    type: utility
+    description: "Search message open events across all outbound messages."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/opens endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of results"
+      - name: offset
+        type: number
+        description: "Number to skip"
+    outputs:
+      - name: Opens
+        type: array
+        description: "Array of open events"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.searchMessageClicks:
+    type: utility
+    description: "Search message click events across all outbound messages."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /messages/outbound/clicks endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of results"
+      - name: offset
+        type: number
+        description: "Number to skip"
+    outputs:
+      - name: Clicks
+        type: array
+        description: "Array of click events"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Stats ---
+
+  ops.getStatsOverview:
+    type: utility
+    description: "Get an overview of outbound email statistics."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+        description: "Filter by tag"
+      - name: fromdate
+        type: string
+        optional: true
+        description: "Start date"
+      - name: todate
+        type: string
+        optional: true
+        description: "End date"
+    outputs:
+      - name: stats
+        type: postmark_stats
+        description: "Statistics overview"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsSends:
+    type: utility
+    description: "Get send count statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/sends endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily send counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsBounces:
+    type: utility
+    description: "Get bounce statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/bounces endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily bounce counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsSpamComplaints:
+    type: utility
+    description: "Get spam complaint statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/spam endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily spam complaint counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsTracked:
+    type: utility
+    description: "Get tracked email statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/tracked endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily tracked counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsOpens:
+    type: utility
+    description: "Get email open statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/opens endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily open counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsOpensByPlatform:
+    type: utility
+    description: "Get email open statistics grouped by platform."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/opens/platforms endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Platform-grouped open counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsOpensByClient:
+    type: utility
+    description: "Get email open statistics grouped by email client."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/opens/emailclients endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Client-grouped open counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsClicks:
+    type: utility
+    description: "Get link click statistics over time."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/clicks endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Daily click counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsClicksByBrowser:
+    type: utility
+    description: "Get link click statistics grouped by browser family."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/clicks/browserfamilies endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Browser-grouped click counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsClicksByPlatform:
+    type: utility
+    description: "Get link click statistics grouped by platform."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/clicks/platforms endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Platform-grouped click counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getStatsClicksByLocation:
+    type: utility
+    description: "Get link click statistics grouped by geographic location."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /stats/outbound/clicks/location endpoint"
+    inputs:
+      - name: tag
+        type: string
+        optional: true
+      - name: fromdate
+        type: string
+        optional: true
+      - name: todate
+        type: string
+        optional: true
+    outputs:
+      - name: Days
+        type: array
+        description: "Location-grouped click counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Domains ---
+
+  ops.listDomains:
+    type: utility
+    description: "List all domains in the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /domains endpoint with account token"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of domains to return"
+      - name: offset
+        type: number
+        description: "Number of domains to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total domains"
+      - name: Domains
+        type: postmark_domain[]
+        description: "Array of domains"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getDomain:
+    type: utility
+    description: "Get details of a specific domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /domains/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Domain details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createDomain:
+    type: utility
+    description: "Create a new sending domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /domains endpoint with account token"
+    inputs:
+      - name: Name
+        type: string
+        description: "Domain name"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Created domain"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateDomain:
+    type: utility
+    description: "Update a domain's return-path. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /domains/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+      - name: ReturnPathDomain
+        type: string
+        optional: true
+        description: "New return-path domain"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Updated domain"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteDomain:
+    type: utility
+    description: "Delete a domain from the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /domains/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID to delete"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.verifyDomainDkim:
+    type: utility
+    description: "Trigger DKIM verification for a domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /domains/{id}/verifyDkim endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Domain with updated DKIM status"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.verifyDomainReturnPath:
+    type: utility
+    description: "Trigger return-path verification for a domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /domains/{id}/verifyReturnPath endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Domain with updated return-path status"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.verifyDomainSpf:
+    type: utility
+    description: "Trigger SPF verification for a domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /domains/{id}/verifyspf endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+    outputs:
+      - name: domain
+        type: postmark_domain
+        description: "Domain with updated SPF status"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.rotateDomainDkim:
+    type: utility
+    description: "Rotate DKIM keys for a domain. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /domains/{id}/rotatedkim endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Domain ID"
+    outputs:
+      - name: result
+        type: object
+        description: "DKIM rotation result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Sender Signatures ---
+
+  ops.listSenderSignatures:
+    type: utility
+    description: "List all sender signatures in the account. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /senders endpoint with account token"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of signatures to return"
+      - name: offset
+        type: number
+        description: "Number of signatures to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total signatures"
+      - name: SenderSignatures
+        type: postmark_sender_signature[]
+        description: "Array of sender signatures"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getSenderSignature:
+    type: utility
+    description: "Get details of a specific sender signature. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /senders/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Sender signature ID"
+    outputs:
+      - name: signature
+        type: postmark_sender_signature
+        description: "Sender signature details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createSenderSignature:
+    type: utility
+    description: "Create a new sender signature. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /senders endpoint with account token"
+    inputs:
+      - name: FromEmail
+        type: string
+        description: "Sender email address"
+      - name: Name
+        type: string
+        description: "Sender display name"
+    outputs:
+      - name: signature
+        type: postmark_sender_signature
+        description: "Created sender signature"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateSenderSignature:
+    type: utility
+    description: "Update an existing sender signature. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /senders/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Sender signature ID"
+      - name: Name
+        type: string
+        optional: true
+        description: "Sender display name"
+    outputs:
+      - name: signature
+        type: postmark_sender_signature
+        description: "Updated sender signature"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteSenderSignature:
+    type: utility
+    description: "Delete a sender signature. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /senders/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Sender signature ID to delete"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.resendSenderConfirmation:
+    type: utility
+    description: "Resend the confirmation email for a sender signature. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /senders/{id}/resend endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Sender signature ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Resend result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Webhooks ---
+
+  ops.listWebhooks:
+    type: utility
+    description: "List all webhooks for the server."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /webhooks endpoint"
+    inputs:
+      - name: MessageStream
+        type: string
+        optional: true
+        description: "Filter by message stream"
+    outputs:
+      - name: Webhooks
+        type: postmark_webhook[]
+        description: "Array of webhooks"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getWebhook:
+    type: utility
+    description: "Get details of a specific webhook."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /webhooks/{id} endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Webhook ID"
+    outputs:
+      - name: webhook
+        type: postmark_webhook
+        description: "Webhook details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createWebhook:
+    type: utility
+    description: "Create a new webhook."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /webhooks endpoint"
+    inputs:
+      - name: Url
+        type: string
+        description: "Webhook endpoint URL"
+      - name: Triggers
+        type: object
+        optional: true
+        description: "Event triggers to enable"
+    outputs:
+      - name: webhook
+        type: postmark_webhook
+        description: "Created webhook"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.updateWebhook:
+    type: utility
+    description: "Update an existing webhook."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API PUT /webhooks/{id} endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Webhook ID"
+      - name: Url
+        type: string
+        optional: true
+        description: "Webhook endpoint URL"
+    outputs:
+      - name: webhook
+        type: postmark_webhook
+        description: "Updated webhook"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteWebhook:
+    type: utility
+    description: "Delete a webhook."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /webhooks/{id} endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Webhook ID to delete"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Suppressions ---
+
+  ops.listSuppressions:
+    type: utility
+    description: "List suppressed email addresses for a message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /message-streams/{streamId}/suppressions/dump endpoint"
+    inputs:
+      - name: streamId
+        type: string
+        description: "Message stream ID"
+    outputs:
+      - name: Suppressions
+        type: postmark_suppression[]
+        description: "Array of suppressed addresses"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createSuppressions:
+    type: utility
+    description: "Add email addresses to the suppression list for a message stream."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /message-streams/{streamId}/suppressions endpoint"
+    inputs:
+      - name: streamId
+        type: string
+        description: "Message stream ID"
+      - name: Suppressions
+        type: array
+        description: "Email addresses to suppress"
+    outputs:
+      - name: Suppressions
+        type: array
+        description: "Results of suppression operations"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteSuppressions:
+    type: utility
+    description: "Remove email addresses from the suppression list."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /message-streams/{streamId}/suppressions/delete endpoint"
+    inputs:
+      - name: streamId
+        type: string
+        description: "Message stream ID"
+      - name: Suppressions
+        type: array
+        description: "Email addresses to unsuppress"
+    outputs:
+      - name: Suppressions
+        type: array
+        description: "Results of unsuppression operations"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Inbound Rules ---
+
+  ops.listInboundRules:
+    type: utility
+    description: "List all inbound processing rules."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /triggers/inboundrules endpoint"
+    inputs:
+      - name: count
+        type: number
+        description: "Number of rules to return"
+      - name: offset
+        type: number
+        description: "Number of rules to skip"
+    outputs:
+      - name: TotalCount
+        type: number
+        description: "Total rules"
+      - name: InboundRules
+        type: array
+        description: "Array of inbound rules"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.createInboundRule:
+    type: utility
+    description: "Create a new inbound processing rule to block emails matching a pattern."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /triggers/inboundrules endpoint"
+    inputs:
+      - name: Rule
+        type: string
+        description: "Email address or domain pattern to block"
+    outputs:
+      - name: ID
+        type: number
+        description: "Created rule ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.deleteInboundRule:
+    type: utility
+    description: "Delete an inbound processing rule."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API DELETE /triggers/inboundrules/{id} endpoint"
+    inputs:
+      - name: id
+        type: number
+        description: "Inbound rule ID to delete"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # --- Data Removals ---
+
+  ops.createDataRemoval:
+    type: utility
+    description: "Request removal of personal data associated with an email address. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API POST /data-removals endpoint with account token"
+    inputs:
+      - name: RequestedBy
+        type: string
+        description: "Email of the person requesting removal"
+      - name: RequestedFor
+        type: string
+        description: "Email address whose data should be removed"
+    outputs:
+      - name: ID
+        type: number
+        description: "Data removal request ID"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.getDataRemovalStatus:
+    type: utility
+    description: "Get the status of a data removal request. Uses account token."
+    path: "postmark"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Postmark API GET /data-removals/{id} endpoint with account token"
+    inputs:
+      - name: id
+        type: number
+        description: "Data removal request ID"
+    outputs:
+      - name: Status
+        type: string
+        description: "Current status of the removal request"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
 # =============================================================================
