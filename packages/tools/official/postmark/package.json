@@ -1,6 +1,6 @@
 {
   "name": "@tpmjs/tools-postmark",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Postmark email API tools for AI agents. Send emails, manage templates, bounces, domains, webhooks, and more.",
   "type": "module",
   "keywords": [
@@ -341,7 +341,7 @@
       },
       {
         "name": "deleteWebhook",
-        "description": "Delete a webhook."
+        "description": "Delete a webhook from the server."
       },
       {
         "name": "listSuppressions",
