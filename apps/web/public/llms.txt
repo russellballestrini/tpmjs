@@ -1,0 +1,85 @@
+# TPMJS — The NPM for AI Tools
+
+> TPMJS is an open tool registry and platform for discovering, publishing, and executing AI agent tools from npm. Any npm package with the `tpmjs` keyword is automatically discovered and made available. Tools use the Vercel AI SDK `tool()` pattern and work with Claude, GPT, LangChain, and any MCP-compatible client. The platform provides collections for organizing tools, custom agents with multi-provider support, scenario testing, living skills documentation, and a unified MCP endpoint.
+
+## Getting Started
+
+- [Homepage](https://tpmjs.com): Browse the registry and discover AI tools
+- [Quickstart Guide](https://tpmjs.com/docs/quickstart): Get started with TPMJS in minutes
+- [How It Works](https://tpmjs.com/how-it-works): Overview of the platform architecture and tool lifecycle
+- [Platform Guide](https://tpmjs.com/docs/platform-guide): Comprehensive guide to all platform features
+- [Publishing Tools](https://tpmjs.com/publish): How to create and publish your own AI tools to the registry
+- [FAQ](https://tpmjs.com/faq): Frequently asked questions
+
+## Documentation
+
+- [Docs Home](https://tpmjs.com/docs): Documentation index
+- [Architecture](https://tpmjs.com/docs/architecture): System design, monorepo structure, and technical decisions
+- [SDK Reference](https://tpmjs.com/docs/sdk): JavaScript/TypeScript SDK for building with TPMJS tools
+- [Tool Specification](https://tpmjs.com/spec): The TPMJS package.json `tpmjs` field specification for tool authors
+- [Agents Guide](https://tpmjs.com/docs/agents): Creating and managing AI agents with multi-provider support
+- [Scenarios Guide](https://tpmjs.com/docs/scenarios): AI-generated test scenarios for validating tool integrations
+- [Skills Guide](https://tpmjs.com/docs/skills): Living documentation that evolves from agent usage patterns
+- [Sharing Guide](https://tpmjs.com/docs/sharing): How to share collections, agents, and tools publicly
+- [Developer Guide](https://tpmjs.com/docs/developers/guide): In-depth guide for tool developers
+
+## Tutorials
+
+- [MCP Integration](https://tpmjs.com/docs/tutorials/mcp): Connect TPMJS tools to Claude Desktop, Cursor, and other MCP clients
+- [Bridge Setup](https://tpmjs.com/docs/tutorials/bridge): Bridge local MCP servers to the TPMJS cloud
+- [Custom Agents](https://tpmjs.com/docs/tutorials/agents): Build AI agents with curated tool collections
+- [Custom Executors](https://tpmjs.com/docs/tutorials/custom-executor): Run tools on your own infrastructure
+
+## API Reference
+
+- [API Overview](https://tpmjs.com/docs/api): REST API introduction and authentication
+- [Authentication](https://tpmjs.com/docs/api/authentication): API key management and auth patterns
+- [Tools API](https://tpmjs.com/docs/api/tools): Search, list, execute, and validate tools
+- [Collections API](https://tpmjs.com/docs/api/collections): Create and manage tool collections
+- [Agents API](https://tpmjs.com/docs/api/agents): Create, configure, and chat with AI agents
+- [Scenarios API](https://tpmjs.com/docs/api/scenarios): Generate, run, and manage test scenarios
+
+## Executors
+
+- [Executors Overview](https://tpmjs.com/docs/executors): How tool execution works in TPMJS
+- [Unsandbox Executor](https://tpmjs.com/docs/executors/unsandbox): Sandboxed code execution environment
+- [Vercel Executor](https://tpmjs.com/docs/executors/vercel): Deploy executors on Vercel
+- [Railway Executor](https://tpmjs.com/docs/executors/railway): Deploy executors on Railway
+
+## Explore
+
+- [Tool Search](https://tpmjs.com/tool/tool-search): Search the full tool registry with filters
+- [Collections](https://tpmjs.com/collections): Browse public tool collections
+- [Agents](https://tpmjs.com/agents): Browse public AI agents
+- [Scenarios](https://tpmjs.com/scenarios): Browse featured test scenarios
+- [Use Cases](https://tpmjs.com/use-cases): Real-world use cases generated from scenario testing
+- [Playground](https://tpmjs.com/playground): Interactive tool testing playground
+- [Registry Stats](https://tpmjs.com/stats): Live registry statistics and health dashboard
+- [Tool Ideas](https://tpmjs.com/tool-ideas): Community-sourced AI tool ideas
+
+## CLI
+
+- [CLI Auth](https://tpmjs.com/cli/auth): Authenticate the TPMJS CLI
+
+## npm Packages
+
+- [@tpmjs/cli](https://www.npmjs.com/package/@tpmjs/cli): Command-line interface with 37 commands for tools, agents, collections, scenarios, and MCP
+- [@tpmjs/types](https://www.npmjs.com/package/@tpmjs/types): Shared TypeScript types and Zod schemas
+- [@tpmjs/ui](https://www.npmjs.com/package/@tpmjs/ui): React component library for TPMJS applications
+- [@tpmjs/utils](https://www.npmjs.com/package/@tpmjs/utils): Utility functions including className merging and formatters
+- [@tpmjs/env](https://www.npmjs.com/package/@tpmjs/env): Environment variable validation with Zod
+- [@tpmjs/mcp-client](https://www.npmjs.com/package/@tpmjs/mcp-client): MCP client library for connecting to Model Context Protocol servers
+- [@tpmjs/bridge](https://www.npmjs.com/package/@tpmjs/bridge): Bridge CLI for connecting local MCP servers to TPMJS cloud
+- [@tpmjs/executor-test](https://www.npmjs.com/package/@tpmjs/executor-test): Executor protocol compliance test suite
+
+## Optional
+
+- [Features Overview](https://tpmjs.com/features): Marketing overview of all platform capabilities
+- [Integrations](https://tpmjs.com/integrations): Supported AI platforms and MCP clients
+- [Changelog](https://tpmjs.com/changelog): Release history and updates
+- [About](https://tpmjs.com/about): About the TPMJS project
+- [Privacy Policy](https://tpmjs.com/privacy): Privacy policy
+- [Terms of Service](https://tpmjs.com/terms): Terms of service
+- [Broken Tools](https://tpmjs.com/tool/broken): Tools with health issues
+- [Omega Agent](https://tpmjs.com/omega): Chat-based tool discovery and execution agent
+- [Style Guide](https://tpmjs.com/style-guide): Visual design system reference
