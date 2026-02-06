@@ -76,6 +76,10 @@ REGISTRY_TOOLS_ANALYSIS.md
 USER_ACCOUNT_ANALYSIS_*.md
 *.skill
 
+# symlinked skill dirs (source is .agents/ which is gitignored)
+/skills/
+.claude/skills/skill-creator
+
 # storybook
 storybook-static
 

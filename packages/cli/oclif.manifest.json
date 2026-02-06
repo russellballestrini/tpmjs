@@ -568,147 +568,6 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "agent", "update.js"]
     },
-    "auth:login": {
-      "aliases": [],
-      "args": {
-        "key": {
-          "description": "API key (alternative to --api-key flag)",
-          "name": "key",
-          "required": false
-        }
-      },
-      "description": "Authenticate with TPMJS",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> --api-key tpm_xxxxx",
-        "<%= config.bin %> <%= command.id %> --browser"
-      ],
-      "flags": {
-        "api-key": {
-          "char": "k",
-          "description": "API key (or set TPMJS_API_KEY environment variable)",
-          "name": "api-key",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "browser": {
-          "char": "b",
-          "description": "Open browser for OAuth authentication",
-          "name": "browser",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:login",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "login.js"]
-    },
-    "auth:logout": {
-      "aliases": [],
-      "args": {},
-      "description": "Log out from TPMJS",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:logout",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "logout.js"]
-    },
-    "auth:status": {
-      "aliases": [],
-      "args": {},
-      "description": "Show authentication status",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:status",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "status.js"]
-    },
-    "auth:whoami": {
-      "aliases": [],
-      "args": {},
-      "description": "Show current user information",
-      "examples": ["<%= config.bin %> <%= command.id %>"],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "auth:whoami",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "auth", "whoami.js"]
-    },
     "collection:add": {
       "aliases": [],
       "args": {
@@ -1099,64 +958,36 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "collection", "update.js"]
     },
-    "publish:check": {
+    "auth:login": {
       "aliases": [],
       "args": {
-        "package": {
-          "description": "npm package name (defaults to current directory)",
-          "name": "package",
+        "key": {
+          "description": "API key (alternative to --api-key flag)",
+          "name": "key",
           "required": false
         }
       },
-      "description": "Check if your package has been discovered by tpmjs.com",
+      "description": "Authenticate with TPMJS",
       "examples": [
-        "<%= config.bin %> <%= command.id %> @myorg/my-tool",
-        "<%= config.bin %> <%= command.id %>"
+        "<%= config.bin %> <%= command.id %> --api-key tpm_xxxxx",
+        "<%= config.bin %> <%= command.id %> --browser"
       ],
       "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "publish:check",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "check.js"]
-    },
-    "publish:preview": {
-      "aliases": [],
-      "args": {},
-      "description": "Preview how your tool will appear on tpmjs.com",
-      "examples": [
-        "<%= config.bin %> <%= command.id %>",
-        "<%= config.bin %> <%= command.id %> --path ./my-tool"
-      ],
-      "flags": {
-        "path": {
-          "char": "p",
-          "description": "Path to package directory",
-          "name": "path",
-          "default": ".",
+        "api-key": {
+          "char": "k",
+          "description": "API key (or set TPMJS_API_KEY environment variable)",
+          "name": "api-key",
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
         },
+        "browser": {
+          "char": "b",
+          "description": "Open browser for OAuth authentication",
+          "name": "browser",
+          "allowNo": false,
+          "type": "boolean"
+        },
         "json": {
           "description": "Output in JSON format",
           "name": "json",
@@ -1173,14 +1004,100 @@
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "publish:preview",
+      "id": "auth:login",
       "pluginAlias": "@tpmjs/cli",
       "pluginName": "@tpmjs/cli",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "preview.js"]
+      "relativePath": ["dist", "commands", "auth", "login.js"]
+    },
+    "auth:logout": {
+      "aliases": [],
+      "args": {},
+      "description": "Log out from TPMJS",
+      "examples": ["<%= config.bin %> <%= command.id %>"],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:logout",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "auth", "logout.js"]
+    },
+    "auth:status": {
+      "aliases": [],
+      "args": {},
+      "description": "Show authentication status",
+      "examples": ["<%= config.bin %> <%= command.id %>"],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:status",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "auth", "status.js"]
+    },
+    "auth:whoami": {
+      "aliases": [],
+      "args": {},
+      "description": "Show current user information",
+      "examples": ["<%= config.bin %> <%= command.id %>"],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "auth:whoami",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "auth", "whoami.js"]
     },
     "mcp:config": {
       "aliases": [],
@@ -1302,6 +1219,89 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "mcp", "serve.js"]
+    },
+    "publish:check": {
+      "aliases": [],
+      "args": {
+        "package": {
+          "description": "npm package name (defaults to current directory)",
+          "name": "package",
+          "required": false
+        }
+      },
+      "description": "Check if your package has been discovered by tpmjs.com",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> @myorg/my-tool",
+        "<%= config.bin %> <%= command.id %>"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "publish:check",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "publish", "check.js"]
+    },
+    "publish:preview": {
+      "aliases": [],
+      "args": {},
+      "description": "Preview how your tool will appear on tpmjs.com",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --path ./my-tool"
+      ],
+      "flags": {
+        "path": {
+          "char": "p",
+          "description": "Path to package directory",
+          "name": "path",
+          "default": ".",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "publish:preview",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "publish", "preview.js"]
     },
     "scenario:generate": {
       "aliases": [],
