@@ -19,10 +19,40 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { AddToolSearch } from '~/components/collections/AddToolSearch';
 import { CollectionForm } from '~/components/collections/CollectionForm';
-import { InstallationSection } from '~/components/collections/InstallationSection';
 import { DashboardLayout } from '~/components/dashboard/DashboardLayout';
 import { EnvVarsEditor } from '~/components/EnvVarsEditor';
 import { ExecutorConfigPanel } from '~/components/ExecutorConfigPanel';
+
+// MCP URL display component
+function McpUrlDisplay({ url, label, sublabel }: { url: string; label: string; sublabel: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="text-xs font-medium text-foreground-secondary uppercase tracking-wide">
+          {label}
+        </span>
+        <span className="text-xs text-foreground-tertiary">({sublabel})</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1 px-3 py-2 bg-surface border border-border rounded-lg font-mono text-sm text-foreground-secondary overflow-x-auto">
+          {url}
+        </div>
+        <Button variant="secondary" size="sm" onClick={copyToClipboard} className="shrink-0">
+          <Icon icon={copied ? 'check' : 'copy'} size="xs" className="mr-1" />
+          {copied ? 'Copied!' : 'Copy'}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 interface CollectionTool {
   id: string;
@@ -61,9 +91,9 @@ interface Collection {
   tools: CollectionTool[];
 }
 
-type TabId = 'tools' | 'installation' | 'env-vars' | 'settings';
+type TabId = 'tools' | 'connect' | 'env-vars' | 'settings';
 
-const VALID_TABS: TabId[] = ['tools', 'installation', 'env-vars', 'settings'];
+const VALID_TABS: TabId[] = ['tools', 'connect', 'env-vars', 'settings'];
 
 export default function CollectionDetailPage(): React.ReactElement {
   const params = useParams();
@@ -84,6 +114,7 @@ export default function CollectionDetailPage(): React.ReactElement {
   const [isDeleting, setIsDeleting] = useState(false);
   const [executorConfig, setExecutorConfig] = useState<ExecutorConfig | null>(null);
   const [envVars, setEnvVars] = useState<Record<string, string> | null>(null);
+  const [showClaudeConfig, setShowClaudeConfig] = useState(false);
 
   // Update URL when tab changes
   const handleTabChange = (tabId: string) => {
@@ -334,11 +365,29 @@ export default function CollectionDetailPage(): React.ReactElement {
   }
 
   const existingToolIds = collection.tools.map((t) => t.toolId);
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://tpmjs.com';
+  const httpUrl = `${baseUrl}/api/mcp/${collection.user.username}/${collection.slug}/http`;
+  const sseUrl = `${baseUrl}/api/mcp/${collection.user.username}/${collection.slug}/sse`;
+
+  const configSnippet = `{
+  "mcpServers": {
+    "${collection.slug}": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "${httpUrl}",
+        "--header",
+        "Authorization: Bearer YOUR_TPMJS_API_KEY"
+      ]
+    }
+  }
+}`;
+
   const envVarsCount = envVars ? Object.keys(envVars).length : 0;
 
   const tabs = [
     { id: 'tools' as const, label: 'Tools', count: collection.toolCount },
-    { id: 'installation' as const, label: 'Installation' },
+    { id: 'connect' as const, label: 'Connect' },
     {
       id: 'env-vars' as const,
       label: 'Env Vars',
@@ -469,11 +518,11 @@ export default function CollectionDetailPage(): React.ReactElement {
         </div>
       )}
 
-      {/* Installation Tab */}
-      {activeTab === 'installation' && (
+      {/* Connect Tab */}
+      {activeTab === 'connect' && (
         <div className="space-y-6">
           {/* Username warning */}
-          {!collection.user.username && (
+          {collection.isPublic && !collection.user.username && (
             <div className="p-4 bg-warning/10 border border-warning/30 rounded-lg">
               <div className="flex items-start gap-3">
                 <Icon icon="alertCircle" size="sm" className="text-warning mt-0.5" />
@@ -509,20 +558,63 @@ export default function CollectionDetailPage(): React.ReactElement {
             </div>
           )}
 
-          {/* Installation Section */}
-          {collection.user.username && (
-            <InstallationSection
-              collection={{
-                id: collection.id,
-                slug: collection.slug,
-                name: collection.name,
-                toolCount: collection.toolCount,
-                envVars: envVars,
-              }}
-              username={collection.user.username}
-              isPrivate={!collection.isPublic}
-              showForkButton={false}
-            />
+          {/* MCP URLs */}
+          {collection.isPublic && collection.user.username && (
+            <div className="bg-surface border border-border rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <Icon icon="link" size="sm" className="text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground">MCP Server URLs</h3>
+              </div>
+
+              <div className="space-y-4">
+                <McpUrlDisplay url={httpUrl} label="HTTP Transport" sublabel="recommended" />
+                <McpUrlDisplay url={sseUrl} label="SSE Transport" sublabel="streaming" />
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setShowClaudeConfig(!showClaudeConfig)}
+                  className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+                >
+                  <Icon icon={showClaudeConfig ? 'chevronDown' : 'chevronRight'} size="xs" />
+                  <span>Show Claude Desktop config</span>
+                </button>
+
+                {showClaudeConfig && (
+                  <div className="mt-3 relative">
+                    <pre className="p-4 bg-surface-secondary border border-border rounded-lg text-xs font-mono text-foreground-secondary overflow-x-auto">
+                      {configSnippet}
+                    </pre>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigator.clipboard.writeText(configSnippet)}
+                      className="absolute top-2 right-2"
+                    >
+                      <Icon icon="copy" size="xs" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <p className="mt-4 text-xs text-foreground-tertiary">
+                Use these URLs with{' '}
+                <Link href="/docs/tutorials/mcp" className="text-primary hover:underline">
+                  Claude Desktop, Cursor, or any MCP client
+                </Link>
+                . Requires your{' '}
+                <Link
+                  href="/dashboard/settings/tpmjs-api-keys"
+                  className="text-primary hover:underline"
+                >
+                  TPMJS API key
+                </Link>{' '}
+                for authentication.
+              </p>
+            </div>
           )}
         </div>
       )}
