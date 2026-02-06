@@ -87,32 +87,36 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     // Check if collection is public
     if (!question.collection.isPublic) {
-      return NextResponse.json({ error: 'Question belongs to a private collection' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Question belongs to a private collection' },
+        { status: 403 }
+      );
     }
 
     // Fetch similar questions (based on same skills)
     const skillIds = question.skillNodes.map((sn) => sn.skill.id);
-    const similarQuestions = skillIds.length > 0
-      ? await prisma.skillQuestion.findMany({
-          where: {
-            id: { not: id },
-            collectionId: question.collection.id,
-            skillNodes: {
-              some: {
-                skillId: { in: skillIds },
+    const similarQuestions =
+      skillIds.length > 0
+        ? await prisma.skillQuestion.findMany({
+            where: {
+              id: { not: id },
+              collectionId: question.collection.id,
+              skillNodes: {
+                some: {
+                  skillId: { in: skillIds },
+                },
               },
             },
-          },
-          take: 5,
-          orderBy: { createdAt: 'desc' },
-          select: {
-            id: true,
-            question: true,
-            confidence: true,
-            createdAt: true,
-          },
-        })
-      : [];
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            select: {
+              id: true,
+              question: true,
+              confidence: true,
+              createdAt: true,
+            },
+          })
+        : [];
 
     return NextResponse.json({
       success: true,

@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 4: Custom Agents (0:32 - 0:40)
@@ -108,8 +102,7 @@ const AgentCard = ({
         <div
           style={{
             padding: '4px 10px',
-            backgroundColor:
-              status === 'public' ? colors.status.successMuted : colors.bg.surface2,
+            backgroundColor: status === 'public' ? colors.status.successMuted : colors.bg.surface2,
             border: `1px solid ${status === 'public' ? colors.status.success : colors.border.default}`,
             fontSize: typography.fontSize.xs,
             color: status === 'public' ? colors.status.success : colors.text.muted,

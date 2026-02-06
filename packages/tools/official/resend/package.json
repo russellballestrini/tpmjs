@@ -1,0 +1,166 @@
+{
+  "name": "@tpmjs/tools-resend",
+  "version": "0.1.0",
+  "description": "Resend email API tools for AI agents. Send emails, manage domains, contacts, broadcasts, audiences, and API keys.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "resend",
+    "email",
+    "transactional",
+    "agent"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/resend"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "ops",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "tools": [
+      {
+        "name": "sendEmail",
+        "description": "Send a single email via the Resend API."
+      },
+      {
+        "name": "sendBatchEmails",
+        "description": "Send a batch of emails in a single API call via Resend."
+      },
+      {
+        "name": "getEmail",
+        "description": "Retrieve details of a specific sent email by ID."
+      },
+      {
+        "name": "updateEmail",
+        "description": "Update a scheduled email by changing its scheduled time."
+      },
+      {
+        "name": "cancelEmail",
+        "description": "Cancel a scheduled email that has not been sent yet."
+      },
+      {
+        "name": "listEmails",
+        "description": "List sent emails with optional cursor-based pagination."
+      },
+      {
+        "name": "createDomain",
+        "description": "Add a new sending domain to your Resend account."
+      },
+      {
+        "name": "getDomain",
+        "description": "Retrieve details and DNS records for a specific domain."
+      },
+      {
+        "name": "updateDomain",
+        "description": "Update tracking and TLS settings for a domain."
+      },
+      {
+        "name": "deleteDomain",
+        "description": "Delete a sending domain from your Resend account."
+      },
+      {
+        "name": "listDomains",
+        "description": "List all sending domains in your Resend account."
+      },
+      {
+        "name": "verifyDomain",
+        "description": "Trigger DNS verification for a sending domain."
+      },
+      {
+        "name": "createApiKey",
+        "description": "Create a new API key with specified permissions."
+      },
+      {
+        "name": "listApiKeys",
+        "description": "List all API keys in your Resend account."
+      },
+      {
+        "name": "deleteApiKey",
+        "description": "Delete an API key from your Resend account."
+      },
+      {
+        "name": "createContact",
+        "description": "Create a new contact with email and optional properties."
+      },
+      {
+        "name": "getContact",
+        "description": "Retrieve a contact by their ID or email address."
+      },
+      {
+        "name": "updateContact",
+        "description": "Update a contact's name, subscription status, or properties."
+      },
+      {
+        "name": "deleteContact",
+        "description": "Delete a contact by their ID or email address."
+      },
+      {
+        "name": "listContacts",
+        "description": "List contacts with optional segment filtering and pagination."
+      },
+      {
+        "name": "createBroadcast",
+        "description": "Create a new broadcast email to send to a segment."
+      },
+      {
+        "name": "listBroadcasts",
+        "description": "List all broadcasts with cursor-based pagination."
+      },
+      {
+        "name": "sendBroadcast",
+        "description": "Send or schedule a previously created broadcast."
+      },
+      {
+        "name": "deleteBroadcast",
+        "description": "Delete a draft broadcast that has not been sent."
+      },
+      {
+        "name": "createAudience",
+        "description": "Create a new audience for organizing contacts."
+      },
+      {
+        "name": "listAudiences",
+        "description": "List all audiences in your Resend account."
+      },
+      {
+        "name": "getAudience",
+        "description": "Retrieve details of a specific audience by ID."
+      },
+      {
+        "name": "deleteAudience",
+        "description": "Delete an audience from your Resend account."
+      }
+    ]
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  }
+}

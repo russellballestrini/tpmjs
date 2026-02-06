@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 5: MCP Protocol (0:40 - 0:49)
@@ -253,11 +247,7 @@ export const MCPProtocolScene = () => {
         }}
       >
         {clients.map((client, i) => (
-          <ClientLogo
-            key={client.name}
-            {...client}
-            delay={fps * 1 + i * 8}
-          />
+          <ClientLogo key={client.name} {...client} delay={fps * 1 + i * 8} />
         ))}
       </div>
 
@@ -281,7 +271,7 @@ export const MCPProtocolScene = () => {
 
           return (
             <path
-              key={i}
+              key={`path-${String(i)}`}
               d={path}
               fill="none"
               stroke={colors.copper.default}

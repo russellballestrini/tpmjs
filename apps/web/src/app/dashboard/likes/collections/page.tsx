@@ -113,7 +113,7 @@ export default function LikedCollectionsPage(): React.ReactElement {
           <p className="text-foreground-secondary mb-4">
             Browse public collections and click the heart icon to save your favorites
           </p>
-          <Link href="/collections">
+          <Link href="/">
             <Button>Browse Collections</Button>
           </Link>
         </div>

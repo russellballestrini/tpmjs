@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 9: Developer SDK (1:13 - 1:22)
@@ -201,11 +195,7 @@ export const DeveloperSDKScene = () => {
               />
             </div>
             {codeLines.map((line, i) => (
-              <CodeLine
-                key={i}
-                {...line}
-                delay={fps * 0.5 + i * 5}
-              />
+              <CodeLine key={line.text} {...line} delay={fps * 0.5 + i * 5} />
             ))}
           </div>
 

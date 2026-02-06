@@ -90,9 +90,10 @@ export function QuestionDetailClient({
   const [copied, setCopied] = useState(false);
 
   const basePath = `/${collection.username}/collections/${collection.slug}`;
-  const questionUrl = typeof window !== 'undefined'
-    ? window.location.href
-    : `https://tpmjs.com${basePath}/skills/questions/${question.id}`;
+  const questionUrl =
+    typeof window !== 'undefined'
+      ? window.location.href
+      : `https://tpmjs.com${basePath}/skills/questions/${question.id}`;
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(questionUrl);
@@ -140,10 +141,7 @@ export function QuestionDetailClient({
                   <Icon icon="clock" className="w-4 h-4" />
                   {formatDate(question.createdAt)}
                 </span>
-                <Badge
-                  variant={question.confidence >= 0.7 ? 'success' : 'secondary'}
-                  size="md"
-                >
+                <Badge variant={question.confidence >= 0.7 ? 'success' : 'secondary'} size="md">
                   {Math.round(question.confidence * 100)}% confidence
                 </Badge>
                 {question.similarCount > 0 && (
@@ -233,7 +231,9 @@ export function QuestionDetailClient({
                         className="block p-2 bg-muted/50 border border-border rounded hover:border-primary/30 transition-colors"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm text-foreground">{sn.skill.name}</span>
+                          <span className="font-medium text-sm text-foreground">
+                            {sn.skill.name}
+                          </span>
                           <Badge variant="outline" size="sm">
                             {sn.skill.questionCount} Q
                           </Badge>
@@ -288,10 +288,7 @@ export function QuestionDetailClient({
                       >
                         <p className="text-sm text-foreground line-clamp-2">{sq.question}</p>
                         <div className="flex items-center justify-between mt-1.5">
-                          <Badge
-                            variant={sq.confidence >= 0.7 ? 'success' : 'secondary'}
-                            size="sm"
-                          >
+                          <Badge variant={sq.confidence >= 0.7 ? 'success' : 'secondary'} size="sm">
                             {Math.round(sq.confidence * 100)}%
                           </Badge>
                           <span className="text-xs text-foreground-tertiary">

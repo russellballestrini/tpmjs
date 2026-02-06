@@ -6,7 +6,7 @@
 import { prisma } from '@tpmjs/db';
 
 const RATE_LIMIT_WINDOW_MS = 3600000; // 1 hour
-const RATE_LIMIT_MAX_REQUESTS = 10; // 10 executions per hour
+const RATE_LIMIT_MAX_REQUESTS = 100; // 100 executions per hour
 
 export interface RateLimitResult {
   allowed: boolean;

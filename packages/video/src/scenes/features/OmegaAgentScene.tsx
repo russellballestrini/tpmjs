@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 2: Omega Agent (0:15 - 0:24)
@@ -13,11 +7,11 @@ import { colors, typography, springConfigs } from '../../design-tokens';
  */
 
 const Message = ({
-  role,
+  sender,
   content,
   delay,
 }: {
-  role: 'user' | 'assistant';
+  sender: 'user' | 'assistant';
   content: string;
   delay: number;
 }) => {
@@ -30,7 +24,7 @@ const Message = ({
     config: springConfigs.snappy,
   });
 
-  const isUser = role === 'user';
+  const isUser = sender === 'user';
 
   return (
     <div
@@ -195,7 +189,7 @@ export const OmegaAgentScene = () => {
         }}
       >
         <Message
-          role="user"
+          sender="user"
           content="Scrape competitor pricing pages and create a comparison chart"
           delay={fps * 0.5}
         />
@@ -230,7 +224,7 @@ export const OmegaAgentScene = () => {
         )}
 
         <Message
-          role="assistant"
+          sender="assistant"
           content="I've scraped 5 competitor pages and generated a comparison chart. Found 23% average price difference..."
           delay={fps * 3.5}
         />
@@ -256,8 +250,7 @@ export const OmegaAgentScene = () => {
             color: colors.text.secondary,
           }}
         >
-          No configuration needed.{' '}
-          <span style={{ color: colors.copper.default }}>Just ask.</span>
+          No configuration needed. <span style={{ color: colors.copper.default }}>Just ask.</span>
         </span>
       </div>
     </AbsoluteFill>

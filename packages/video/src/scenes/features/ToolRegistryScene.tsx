@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 1: Tool Registry (0:06 - 0:15)
@@ -250,11 +244,7 @@ export const ToolRegistryScene = () => {
         {/* Right - Tool list */}
         <div style={{ flex: 1, maxWidth: 500 }}>
           {tools.map((tool, i) => (
-            <ToolCard
-              key={tool.name}
-              {...tool}
-              delay={fps * 1 + i * 10}
-            />
+            <ToolCard key={tool.name} {...tool} delay={fps * 1 + i * 10} />
           ))}
         </div>
       </div>

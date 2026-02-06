@@ -110,9 +110,7 @@ export async function generateMetadata({ params }: QuestionPageProps): Promise<M
   }
 
   const truncatedQuestion =
-    question.question.length > 60
-      ? question.question.slice(0, 60) + '...'
-      : question.question;
+    question.question.length > 60 ? `${question.question.slice(0, 60)}...` : question.question;
 
   return {
     title: `${truncatedQuestion} | TPMJS Skills`,

@@ -120,13 +120,15 @@ export function SkillsStats({ collectionId }: SkillsStatsProps): React.ReactElem
           </CardHeader>
           <CardContent padding="sm" className="pt-0">
             <div className="space-y-3">
-              {stats.topSkills.slice(0, 5).map((skill, i) => (
-                <div key={i} className="space-y-1">
+              {stats.topSkills.slice(0, 5).map((skill) => (
+                <div key={skill.name} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" size="sm" className="truncate max-w-[140px]">
                       {skill.name}
                     </Badge>
-                    <span className="text-xs text-foreground-secondary">{skill.questionCount} Q</span>
+                    <span className="text-xs text-foreground-secondary">
+                      {skill.questionCount} Q
+                    </span>
                   </div>
                   <ProgressBar
                     value={skill.confidence * 100}

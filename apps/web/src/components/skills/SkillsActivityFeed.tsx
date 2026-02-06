@@ -124,7 +124,10 @@ export function SkillsActivityFeed({
     <div className="space-y-3">
       {questions.map((q) => (
         <Link key={q.id} href={`${basePath}/skills/questions/${q.id}`} className="block">
-          <Card variant="default" className="hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer">
+          <Card
+            variant="default"
+            className="hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer"
+          >
             <CardHeader padding="sm" className="pb-2">
               <div className="flex items-start justify-between gap-2">
                 <CardTitle as="h4" className="text-sm font-medium line-clamp-2">
@@ -146,8 +149,8 @@ export function SkillsActivityFeed({
 
               <div className="flex items-center justify-between">
                 <div className="flex gap-1.5 flex-wrap">
-                  {q.skillNodes.slice(0, 2).map((sn, i) => (
-                    <Badge key={i} variant="outline" size="sm">
+                  {q.skillNodes.slice(0, 2).map((sn) => (
+                    <Badge key={sn.skill.name} variant="outline" size="sm">
                       {sn.skill.name}
                     </Badge>
                   ))}

@@ -93,21 +93,21 @@ export interface RateLimitConfig {
   prefix?: string;
 }
 
-/** Default rate limit: 100 requests per minute */
+/** Default rate limit: 1000 requests per minute */
 export const DEFAULT_RATE_LIMIT: RateLimitConfig = {
-  limit: 100,
+  limit: 1000,
   windowSeconds: 60,
 };
 
-/** Strict rate limit for expensive operations: 20 requests per minute */
+/** Strict rate limit for expensive operations: 200 requests per minute */
 export const STRICT_RATE_LIMIT: RateLimitConfig = {
-  limit: 20,
+  limit: 200,
   windowSeconds: 60,
 };
 
-/** AI generation rate limit: 5 requests per hour (expensive AI operations) */
+/** AI generation rate limit: 50 requests per hour (expensive AI operations) */
 export const AI_GENERATION_RATE_LIMIT: RateLimitConfig = {
-  limit: 5,
+  limit: 50,
   windowSeconds: 3600, // 1 hour
   prefix: 'ai-gen',
 };

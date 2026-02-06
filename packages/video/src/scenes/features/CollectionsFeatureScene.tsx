@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 3: Collections (0:24 - 0:32)
@@ -92,7 +86,7 @@ const CollectionCard = ({
         >
           {Array.from({ length: Math.min(toolCount, 5) }).map((_, i) => (
             <div
-              key={i}
+              key={`dot-${String(i)}`}
               style={{
                 width: 8,
                 height: 8,
@@ -234,8 +228,7 @@ export const CollectionsFeatureScene = () => {
           >
             Curate tool sets
             <br />
-            for specific{' '}
-            <span style={{ color: colors.copper.default }}>use cases</span>
+            for specific <span style={{ color: colors.copper.default }}>use cases</span>
           </div>
           <div
             style={{

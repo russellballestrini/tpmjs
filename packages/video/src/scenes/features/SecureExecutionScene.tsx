@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 6: Secure Execution (0:49 - 0:57)
@@ -222,12 +216,7 @@ export const SecureExecutionScene = () => {
           }}
         >
           {layers.map((layer, i) => (
-            <SecurityLayer
-              key={layer.label}
-              {...layer}
-              index={i}
-              delay={fps * 1 + i * 10}
-            />
+            <SecurityLayer key={layer.label} {...layer} index={i} delay={fps * 1 + i * 10} />
           ))}
         </div>
       </div>

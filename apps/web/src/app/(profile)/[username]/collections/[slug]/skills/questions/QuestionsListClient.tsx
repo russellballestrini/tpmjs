@@ -131,7 +131,11 @@ export function QuestionsListClient({
 
   const clearSkillFilter = () => {
     setSkillFilter(undefined);
-    window.history.replaceState(null, '', `/${collection.username}/collections/${collection.slug}/skills/questions`);
+    window.history.replaceState(
+      null,
+      '',
+      `/${collection.username}/collections/${collection.slug}/skills/questions`
+    );
   };
 
   const basePath = `/${collection.username}/collections/${collection.slug}`;
@@ -224,7 +228,7 @@ export function QuestionsListClient({
                 description={
                   skillFilter
                     ? `No questions found for skill "${skillFilter}"`
-                    : 'Be the first to ask a question about this collection\'s tools.'
+                    : "Be the first to ask a question about this collection's tools."
                 }
                 size="md"
               />
@@ -243,11 +247,7 @@ export function QuestionsListClient({
         {!loading && !error && questions.length > 0 && (
           <div className="space-y-4">
             {questions.map((q) => (
-              <Link
-                key={q.id}
-                href={`${basePath}/skills/questions/${q.id}`}
-                className="block"
-              >
+              <Link key={q.id} href={`${basePath}/skills/questions/${q.id}`} className="block">
                 <Card
                   variant="default"
                   className="hover:border-primary/30 hover:bg-muted/30 transition-all cursor-pointer"
@@ -311,11 +311,7 @@ export function QuestionsListClient({
             {/* Load More */}
             {hasMore && (
               <div className="text-center pt-4">
-                <Button
-                  variant="secondary"
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                >
+                <Button variant="secondary" onClick={handleLoadMore} disabled={loadingMore}>
                   {loadingMore ? (
                     <>
                       <Icon icon="loader" className="w-4 h-4 mr-2 animate-spin" />

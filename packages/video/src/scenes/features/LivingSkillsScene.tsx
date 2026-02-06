@@ -1,11 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
-import { colors, typography, springConfigs } from '../../design-tokens';
+import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { colors, springConfigs, typography } from '../../design-tokens';
 
 /**
  * Feature 8: Living Skills (1:05 - 1:13)
@@ -189,8 +183,7 @@ export const LivingSkillsScene = () => {
             opacity: headerProgress,
           }}
         >
-          Documentation that{' '}
-          <span style={{ color: colors.copper.default }}>evolves</span>
+          Documentation that <span style={{ color: colors.copper.default }}>evolves</span>
         </div>
         <div
           style={{

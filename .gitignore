@@ -63,6 +63,18 @@ secrets.json
 
 # ide
 .idea
+.agent/
+.agents/
+.continue/
+.cursor/
+.windsurf/
+
+# temporary analysis docs
+COMPREHENSIVE_ANALYSIS.md
+PLAN.md
+REGISTRY_TOOLS_ANALYSIS.md
+USER_ACCOUNT_ANALYSIS_*.md
+*.skill
 
 # storybook
 storybook-static

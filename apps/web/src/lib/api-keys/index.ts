@@ -108,9 +108,9 @@ export const DEFAULT_API_KEY_SCOPES: ApiKeyScope[] = [
  * Rate limits by user tier (requests per hour)
  */
 export const RATE_LIMITS_BY_TIER = {
-  FREE: 100,
-  PRO: 1000,
-  ENTERPRISE: 10000,
+  FREE: 1000,
+  PRO: 10000,
+  ENTERPRISE: 100000,
 } as const;
 
 /**
