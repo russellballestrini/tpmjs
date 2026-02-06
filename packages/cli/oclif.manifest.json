@@ -1099,6 +1099,89 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "collection", "update.js"]
     },
+    "publish:check": {
+      "aliases": [],
+      "args": {
+        "package": {
+          "description": "npm package name (defaults to current directory)",
+          "name": "package",
+          "required": false
+        }
+      },
+      "description": "Check if your package has been discovered by tpmjs.com",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> @myorg/my-tool",
+        "<%= config.bin %> <%= command.id %>"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "publish:check",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "publish", "check.js"]
+    },
+    "publish:preview": {
+      "aliases": [],
+      "args": {},
+      "description": "Preview how your tool will appear on tpmjs.com",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> --path ./my-tool"
+      ],
+      "flags": {
+        "path": {
+          "char": "p",
+          "description": "Path to package directory",
+          "name": "path",
+          "default": ".",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "publish:preview",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "publish", "preview.js"]
+    },
     "mcp:config": {
       "aliases": [],
       "args": {
@@ -1220,21 +1303,37 @@
       "isESM": true,
       "relativePath": ["dist", "commands", "mcp", "serve.js"]
     },
-    "publish:check": {
+    "scenario:generate": {
       "aliases": [],
       "args": {
-        "package": {
-          "description": "npm package name (defaults to current directory)",
-          "name": "package",
-          "required": false
+        "collection": {
+          "description": "Collection ID or slug",
+          "name": "collection",
+          "required": true
         }
       },
-      "description": "Check if your package has been discovered by tpmjs.com",
+      "description": "Generate AI-powered scenarios for a collection",
       "examples": [
-        "<%= config.bin %> <%= command.id %> @myorg/my-tool",
-        "<%= config.bin %> <%= command.id %>"
+        "<%= config.bin %> <%= command.id %> my-collection",
+        "<%= config.bin %> <%= command.id %> my-collection --count 3",
+        "<%= config.bin %> <%= command.id %> my-collection --skip-similarity-check"
       ],
       "flags": {
+        "count": {
+          "char": "n",
+          "description": "Number of scenarios to generate (1-10)",
+          "name": "count",
+          "default": 1,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "skip-similarity-check": {
+          "description": "Skip checking for similar existing scenarios",
+          "name": "skip-similarity-check",
+          "allowNo": false,
+          "type": "boolean"
+        },
         "json": {
           "description": "Output in JSON format",
           "name": "json",
@@ -1251,29 +1350,36 @@
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "publish:check",
+      "id": "scenario:generate",
       "pluginAlias": "@tpmjs/cli",
       "pluginName": "@tpmjs/cli",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "check.js"]
+      "relativePath": ["dist", "commands", "scenario", "generate.js"]
     },
-    "publish:preview": {
+    "scenario:info": {
       "aliases": [],
-      "args": {},
-      "description": "Preview how your tool will appear on tpmjs.com",
+      "args": {
+        "scenarioId": {
+          "description": "Scenario ID",
+          "name": "scenarioId",
+          "required": true
+        }
+      },
+      "description": "Show detailed information about a scenario",
       "examples": [
-        "<%= config.bin %> <%= command.id %>",
-        "<%= config.bin %> <%= command.id %> --path ./my-tool"
+        "<%= config.bin %> <%= command.id %> clu123abc456",
+        "<%= config.bin %> <%= command.id %> clu123abc456 --runs 20",
+        "<%= config.bin %> <%= command.id %> clu123abc456 --json"
       ],
       "flags": {
-        "path": {
-          "char": "p",
-          "description": "Path to package directory",
-          "name": "path",
-          "default": ".",
+        "runs": {
+          "char": "r",
+          "description": "Number of recent runs to show",
+          "name": "runs",
+          "default": 10,
           "hasDynamicHelp": false,
           "multiple": false,
           "type": "option"
@@ -1294,14 +1400,172 @@
       },
       "hasDynamicHelp": false,
       "hiddenAliases": [],
-      "id": "publish:preview",
+      "id": "scenario:info",
       "pluginAlias": "@tpmjs/cli",
       "pluginName": "@tpmjs/cli",
       "pluginType": "core",
       "strict": true,
       "enableJsonFlag": false,
       "isESM": true,
-      "relativePath": ["dist", "commands", "publish", "preview.js"]
+      "relativePath": ["dist", "commands", "scenario", "info.js"]
+    },
+    "scenario:list": {
+      "aliases": [],
+      "args": {
+        "collection": {
+          "description": "Collection ID or slug (optional - shows all public scenarios if omitted)",
+          "name": "collection",
+          "required": false
+        }
+      },
+      "description": "List scenarios for a collection or all public scenarios",
+      "examples": [
+        "<%= config.bin %> <%= command.id %>",
+        "<%= config.bin %> <%= command.id %> my-collection",
+        "<%= config.bin %> <%= command.id %> --limit 20 --json"
+      ],
+      "flags": {
+        "limit": {
+          "char": "l",
+          "description": "Maximum number of results",
+          "name": "limit",
+          "default": 20,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "offset": {
+          "char": "o",
+          "description": "Offset for pagination",
+          "name": "offset",
+          "default": 0,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "tags": {
+          "char": "t",
+          "description": "Filter by tags (comma-separated)",
+          "name": "tags",
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        },
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "scenario:list",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "scenario", "list.js"]
+    },
+    "scenario:run": {
+      "aliases": [],
+      "args": {
+        "collection": {
+          "description": "Collection ID or slug",
+          "name": "collection",
+          "required": true
+        }
+      },
+      "description": "Run all scenarios for a collection",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> my-collection",
+        "<%= config.bin %> <%= command.id %> my-collection --json",
+        "<%= config.bin %> <%= command.id %> my-collection --verbose"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "limit": {
+          "char": "l",
+          "description": "Maximum number of scenarios to run",
+          "name": "limit",
+          "default": 50,
+          "hasDynamicHelp": false,
+          "multiple": false,
+          "type": "option"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "scenario:run",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "scenario", "run.js"]
+    },
+    "scenario:test": {
+      "aliases": [],
+      "args": {
+        "scenarioId": {
+          "description": "Scenario ID to run",
+          "name": "scenarioId",
+          "required": true
+        }
+      },
+      "description": "Run a single scenario by ID",
+      "examples": [
+        "<%= config.bin %> <%= command.id %> clu123abc456",
+        "<%= config.bin %> <%= command.id %> clu123abc456 --json",
+        "<%= config.bin %> <%= command.id %> clu123abc456 --verbose"
+      ],
+      "flags": {
+        "json": {
+          "description": "Output in JSON format",
+          "name": "json",
+          "allowNo": false,
+          "type": "boolean"
+        },
+        "verbose": {
+          "char": "v",
+          "description": "Show verbose output including full reason",
+          "name": "verbose",
+          "allowNo": false,
+          "type": "boolean"
+        }
+      },
+      "hasDynamicHelp": false,
+      "hiddenAliases": [],
+      "id": "scenario:test",
+      "pluginAlias": "@tpmjs/cli",
+      "pluginName": "@tpmjs/cli",
+      "pluginType": "core",
+      "strict": true,
+      "enableJsonFlag": false,
+      "isESM": true,
+      "relativePath": ["dist", "commands", "scenario", "test.js"]
     },
     "tool:execute": {
       "aliases": [],
@@ -1655,270 +1919,6 @@
       "enableJsonFlag": false,
       "isESM": true,
       "relativePath": ["dist", "commands", "tool", "validate.js"]
-    },
-    "scenario:generate": {
-      "aliases": [],
-      "args": {
-        "collection": {
-          "description": "Collection ID or slug",
-          "name": "collection",
-          "required": true
-        }
-      },
-      "description": "Generate AI-powered scenarios for a collection",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> my-collection",
-        "<%= config.bin %> <%= command.id %> my-collection --count 3",
-        "<%= config.bin %> <%= command.id %> my-collection --skip-similarity-check"
-      ],
-      "flags": {
-        "count": {
-          "char": "n",
-          "description": "Number of scenarios to generate (1-10)",
-          "name": "count",
-          "default": 1,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "skip-similarity-check": {
-          "description": "Skip checking for similar existing scenarios",
-          "name": "skip-similarity-check",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "scenario:generate",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "generate.js"]
-    },
-    "scenario:info": {
-      "aliases": [],
-      "args": {
-        "scenarioId": {
-          "description": "Scenario ID",
-          "name": "scenarioId",
-          "required": true
-        }
-      },
-      "description": "Show detailed information about a scenario",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> clu123abc456",
-        "<%= config.bin %> <%= command.id %> clu123abc456 --runs 20",
-        "<%= config.bin %> <%= command.id %> clu123abc456 --json"
-      ],
-      "flags": {
-        "runs": {
-          "char": "r",
-          "description": "Number of recent runs to show",
-          "name": "runs",
-          "default": 10,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "scenario:info",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "info.js"]
-    },
-    "scenario:list": {
-      "aliases": [],
-      "args": {
-        "collection": {
-          "description": "Collection ID or slug (optional - shows all public scenarios if omitted)",
-          "name": "collection",
-          "required": false
-        }
-      },
-      "description": "List scenarios for a collection or all public scenarios",
-      "examples": [
-        "<%= config.bin %> <%= command.id %>",
-        "<%= config.bin %> <%= command.id %> my-collection",
-        "<%= config.bin %> <%= command.id %> --limit 20 --json"
-      ],
-      "flags": {
-        "limit": {
-          "char": "l",
-          "description": "Maximum number of results",
-          "name": "limit",
-          "default": 20,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "offset": {
-          "char": "o",
-          "description": "Offset for pagination",
-          "name": "offset",
-          "default": 0,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "tags": {
-          "char": "t",
-          "description": "Filter by tags (comma-separated)",
-          "name": "tags",
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        },
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "scenario:list",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "list.js"]
-    },
-    "scenario:run": {
-      "aliases": [],
-      "args": {
-        "collection": {
-          "description": "Collection ID or slug",
-          "name": "collection",
-          "required": true
-        }
-      },
-      "description": "Run all scenarios for a collection",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> my-collection",
-        "<%= config.bin %> <%= command.id %> my-collection --json",
-        "<%= config.bin %> <%= command.id %> my-collection --verbose"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "limit": {
-          "char": "l",
-          "description": "Maximum number of scenarios to run",
-          "name": "limit",
-          "default": 50,
-          "hasDynamicHelp": false,
-          "multiple": false,
-          "type": "option"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "scenario:run",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "run.js"]
-    },
-    "scenario:test": {
-      "aliases": [],
-      "args": {
-        "scenarioId": {
-          "description": "Scenario ID to run",
-          "name": "scenarioId",
-          "required": true
-        }
-      },
-      "description": "Run a single scenario by ID",
-      "examples": [
-        "<%= config.bin %> <%= command.id %> clu123abc456",
-        "<%= config.bin %> <%= command.id %> clu123abc456 --json",
-        "<%= config.bin %> <%= command.id %> clu123abc456 --verbose"
-      ],
-      "flags": {
-        "json": {
-          "description": "Output in JSON format",
-          "name": "json",
-          "allowNo": false,
-          "type": "boolean"
-        },
-        "verbose": {
-          "char": "v",
-          "description": "Show verbose output including full reason",
-          "name": "verbose",
-          "allowNo": false,
-          "type": "boolean"
-        }
-      },
-      "hasDynamicHelp": false,
-      "hiddenAliases": [],
-      "id": "scenario:test",
-      "pluginAlias": "@tpmjs/cli",
-      "pluginName": "@tpmjs/cli",
-      "pluginType": "core",
-      "strict": true,
-      "enableJsonFlag": false,
-      "isESM": true,
-      "relativePath": ["dist", "commands", "scenario", "test.js"]
     }
   },
   "version": "0.1.5"
