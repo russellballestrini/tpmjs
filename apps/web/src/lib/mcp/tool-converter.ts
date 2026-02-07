@@ -60,103 +60,92 @@ export function sanitizeInputSchema(
   }
 }
 
-function sanitizeSchemaNode(
-  node: Record<string, unknown>,
-  isRoot: boolean
-): Record<string, unknown> {
-  // Remove $schema declarations (old drafts cause rejection)
-  delete node.$schema;
+function isSchemaObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
-  // Strip unsupported keywords
+/** Recursively sanitize a child schema node */
+function sanitizeChild(value: unknown): unknown {
+  return isSchemaObject(value) ? sanitizeSchemaNode(value, false) : value;
+}
+
+/** Sanitize all values in an object-of-schemas (e.g. properties, $defs) */
+function sanitizeObjectMap(map: Record<string, unknown>): void {
+  for (const [key, value] of Object.entries(map)) {
+    if (isSchemaObject(value)) {
+      map[key] = sanitizeSchemaNode(value, false);
+    }
+  }
+}
+
+/** Strip unsupported keywords and fix value-level issues */
+function stripUnsupportedKeywords(node: Record<string, unknown>): void {
+  delete node.$schema;
   for (const key of UNSUPPORTED_KEYWORDS) {
     delete node[key];
   }
-
-  // Fix minItems: only 0 and 1 are supported
-  if ('minItems' in node && typeof node.minItems === 'number') {
-    if (node.minItems > 1) delete node.minItems;
+  // minItems: only 0 and 1 are supported
+  if (typeof node.minItems === 'number' && node.minItems > 1) {
+    delete node.minItems;
   }
+}
 
-  // Fix array-style type like ["string", "null"] → anyOf
-  if (Array.isArray(node.type)) {
-    const types = node.type as string[];
-    if (types.length === 1) {
-      node.type = types[0];
-    } else {
-      delete node.type;
-      node.anyOf = types.map((t) => ({ type: t }));
-    }
+/** Normalize array-style type (e.g. ["string", "null"]) into anyOf */
+function normalizeType(node: Record<string, unknown>): void {
+  if (!Array.isArray(node.type)) return;
+  const types = node.type as string[];
+  if (types.length === 1) {
+    node.type = types[0];
+  } else {
+    delete node.type;
+    node.anyOf = types.map((t) => ({ type: t }));
   }
+}
 
-  // Wrap top-level oneOf/allOf/anyOf inside an object property
-  // Claude rejects these at the root level
-  if (isRoot && !node.type && (node.oneOf || node.allOf || node.anyOf)) {
-    return {
-      type: 'object',
-      properties: {},
-    };
-  }
-
-  // Remove external $ref (keep internal ones like "#/$defs/Foo")
+/** Remove external $ref URIs (keep internal refs like "#/$defs/Foo") */
+function stripExternalRefs(node: Record<string, unknown>): void {
   if (typeof node.$ref === 'string' && /^https?:\/\//.test(node.$ref)) {
     delete node.$ref;
     if (!node.type) node.type = 'object';
   }
+}
 
-  // Recurse into properties
-  if (node.properties && typeof node.properties === 'object') {
-    for (const [key, value] of Object.entries(node.properties as Record<string, unknown>)) {
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        (node.properties as Record<string, unknown>)[key] = sanitizeSchemaNode(
-          value as Record<string, unknown>,
-          false
-        );
-      }
-    }
-  }
-
-  // Recurse into items (array items schema)
-  if (node.items && typeof node.items === 'object' && !Array.isArray(node.items)) {
+/** Recurse into all nested schema locations */
+function sanitizeNestedSchemas(node: Record<string, unknown>): void {
+  if (isSchemaObject(node.properties))
+    sanitizeObjectMap(node.properties as Record<string, unknown>);
+  if (isSchemaObject(node.items))
     node.items = sanitizeSchemaNode(node.items as Record<string, unknown>, false);
-  }
-
-  // Recurse into additionalProperties when it's a schema object
-  if (
-    node.additionalProperties &&
-    typeof node.additionalProperties === 'object' &&
-    !Array.isArray(node.additionalProperties)
-  ) {
+  if (isSchemaObject(node.additionalProperties)) {
     node.additionalProperties = sanitizeSchemaNode(
       node.additionalProperties as Record<string, unknown>,
       false
     );
   }
-
-  // Recurse into composition keywords
   for (const keyword of ['anyOf', 'oneOf', 'allOf'] as const) {
     if (Array.isArray(node[keyword])) {
-      node[keyword] = (node[keyword] as Record<string, unknown>[]).map((item) =>
-        typeof item === 'object' && item !== null && !Array.isArray(item)
-          ? sanitizeSchemaNode(item as Record<string, unknown>, false)
-          : item
-      );
+      node[keyword] = (node[keyword] as unknown[]).map(sanitizeChild);
     }
   }
-
-  // Recurse into $defs / definitions
   for (const defsKey of ['$defs', 'definitions'] as const) {
-    if (node[defsKey] && typeof node[defsKey] === 'object') {
-      for (const [key, value] of Object.entries(node[defsKey] as Record<string, unknown>)) {
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          (node[defsKey] as Record<string, unknown>)[key] = sanitizeSchemaNode(
-            value as Record<string, unknown>,
-            false
-          );
-        }
-      }
-    }
+    if (isSchemaObject(node[defsKey])) sanitizeObjectMap(node[defsKey] as Record<string, unknown>);
+  }
+}
+
+function sanitizeSchemaNode(
+  node: Record<string, unknown>,
+  isRoot: boolean
+): Record<string, unknown> {
+  stripUnsupportedKeywords(node);
+  normalizeType(node);
+
+  // Claude rejects top-level oneOf/allOf/anyOf
+  if (isRoot && !node.type && (node.oneOf || node.allOf || node.anyOf)) {
+    return { type: 'object', properties: {} };
   }
 
+  stripExternalRefs(node);
+  sanitizeNestedSchemas(node);
   return node;
 }
 
