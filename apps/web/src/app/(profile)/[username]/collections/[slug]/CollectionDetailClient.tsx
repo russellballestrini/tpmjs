@@ -126,14 +126,15 @@ function McpUrlSection({
     setTimeout(() => setCopiedUrl(null), 2000);
   };
 
+  // Claude Code CLI command (correct arg order: options before name and url)
+  const claudeCodeCommand = `claude mcp add --transport http tpmjs-${slug} ${httpUrl}`;
+
+  // Claude Desktop native HTTP config
   const configSnippet = `{
   "mcpServers": {
     "tpmjs-${slug}": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "${httpUrl}"
-      ]
+      "type": "http",
+      "url": "${httpUrl}"
     }
   }
 }`;
@@ -231,6 +232,27 @@ const response = await fetch("${httpUrl}", {
           </p>
         </div>
       )}
+
+      {/* Claude Code CLI command */}
+      <div className="mt-4 pt-4 border-t border-border/50">
+        <h4 className="text-sm font-medium text-foreground mb-2">Add to Claude Code</h4>
+        <div className="relative">
+          <pre className="p-3 bg-surface border border-border rounded-lg text-xs font-mono text-foreground-secondary overflow-x-auto whitespace-pre-wrap break-all">
+            {claudeCodeCommand}
+          </pre>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigator.clipboard.writeText(claudeCodeCommand)}
+            className="absolute top-1.5 right-1.5"
+          >
+            <Icon icon="copy" className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+        <p className="mt-1.5 text-xs text-foreground-tertiary">
+          Run <code className="font-mono">/mcp</code> in Claude Code to verify the connection.
+        </p>
+      </div>
 
       {/* Config snippet toggle */}
       <div className="mt-4 pt-4 border-t border-border/50 space-y-2">

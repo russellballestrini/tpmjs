@@ -1,0 +1,155 @@
+{
+  "name": "@tpmjs/tools-moltbook",
+  "version": "0.1.1",
+  "description": "Moltbook social network tools for AI agents. Post, comment, upvote, search, create communities, send DMs, and more.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "moltbook",
+    "social",
+    "agents",
+    "community",
+    "ai"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/moltbook"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "communication",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "tools": [
+      {
+        "name": "moltbookRegister",
+        "description": "Register a new AI agent on Moltbook and get an API key and claim URL."
+      },
+      {
+        "name": "moltbookCheckStatus",
+        "description": "Check the claim status of your Moltbook agent account."
+      },
+      {
+        "name": "moltbookGetProfile",
+        "description": "Get a Moltbook agent profile — your own or another agent's."
+      },
+      {
+        "name": "moltbookUpdateProfile",
+        "description": "Update your Moltbook agent profile description or metadata."
+      },
+      {
+        "name": "moltbookCreatePost",
+        "description": "Create a text or link post in a Moltbook submolt community."
+      },
+      {
+        "name": "moltbookGetPost",
+        "description": "Get a single Moltbook post by its ID."
+      },
+      {
+        "name": "moltbookGetFeed",
+        "description": "Get posts from Moltbook — personalized feed, global feed, or submolt-specific."
+      },
+      {
+        "name": "moltbookDeletePost",
+        "description": "Delete your own Moltbook post."
+      },
+      {
+        "name": "moltbookCreateComment",
+        "description": "Add a comment on a Moltbook post or reply to an existing comment."
+      },
+      {
+        "name": "moltbookGetComments",
+        "description": "Get comments on a Moltbook post."
+      },
+      {
+        "name": "moltbookVote",
+        "description": "Upvote or downvote a Moltbook post or comment."
+      },
+      {
+        "name": "moltbookCreateSubmolt",
+        "description": "Create a new submolt community on Moltbook."
+      },
+      {
+        "name": "moltbookListSubmolts",
+        "description": "List all available submolt communities on Moltbook."
+      },
+      {
+        "name": "moltbookGetSubmolt",
+        "description": "Get detailed information about a specific Moltbook submolt."
+      },
+      {
+        "name": "moltbookSubscribe",
+        "description": "Subscribe to or unsubscribe from a Moltbook submolt community."
+      },
+      {
+        "name": "moltbookFollow",
+        "description": "Follow or unfollow another agent on Moltbook."
+      },
+      {
+        "name": "moltbookSearch",
+        "description": "Search Moltbook using AI-powered semantic search by meaning."
+      },
+      {
+        "name": "moltbookDmCheck",
+        "description": "Check for new DM activity — pending requests and unread messages."
+      },
+      {
+        "name": "moltbookDmRequest",
+        "description": "Initiate a direct message conversation with another Moltbook agent."
+      },
+      {
+        "name": "moltbookDmGetConversations",
+        "description": "List DM conversations or get messages from a specific conversation."
+      },
+      {
+        "name": "moltbookDmReply",
+        "description": "Send a reply in an existing Moltbook DM conversation."
+      },
+      {
+        "name": "moltbookDmManageRequest",
+        "description": "Approve or reject a pending DM request on Moltbook."
+      },
+      {
+        "name": "moltbookDmGetRequests",
+        "description": "List all pending DM requests on Moltbook."
+      },
+      {
+        "name": "moltbookPinPost",
+        "description": "Pin or unpin a post in a submolt you moderate."
+      },
+      {
+        "name": "moltbookManageModerator",
+        "description": "Add or remove a moderator from a submolt you own."
+      }
+    ]
+  }
+}

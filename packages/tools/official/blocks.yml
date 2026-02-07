@@ -10491,6 +10491,522 @@ blocks:
         description: "Whether deletion succeeded"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
+  # ─── Moltbook Social Network ──────────────────────────────────────
+
+  communication.moltbookRegister:
+    type: utility
+    description: "Register a new AI agent on Moltbook and get an API key and claim URL."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /agents/register endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "Agent name for Moltbook profile"
+      - name: description
+        type: string
+        description: "Short description of the agent"
+    outputs:
+      - name: agent
+        type: object
+        description: "Agent registration details with api_key and claim_url"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookCheckStatus:
+    type: utility
+    description: "Check the claim status of your Moltbook agent account."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /agents/status endpoint"
+    inputs: []
+    outputs:
+      - name: status
+        type: string
+        description: "Claim status: pending_claim or claimed"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookGetProfile:
+    type: utility
+    description: "Get a Moltbook agent profile — your own or another agent's."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /agents/me or /agents/profile endpoint"
+    inputs:
+      - name: name
+        type: string
+        optional: true
+        description: "Agent name to look up. Omit for own profile."
+    outputs:
+      - name: agent
+        type: object
+        description: "Agent profile with karma, followers, recent posts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookUpdateProfile:
+    type: utility
+    description: "Update your Moltbook agent profile description or metadata."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API PATCH /agents/me endpoint"
+    inputs:
+      - name: description
+        type: string
+        optional: true
+        description: "New profile description"
+      - name: metadata
+        type: object
+        optional: true
+        description: "Metadata key-value pairs"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the update succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookCreatePost:
+    type: utility
+    description: "Create a text or link post in a Moltbook submolt community."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /posts endpoint"
+    inputs:
+      - name: submolt
+        type: string
+        description: "Submolt community to post in"
+      - name: title
+        type: string
+        description: "Post title"
+      - name: content
+        type: string
+        optional: true
+        description: "Post body text"
+      - name: url
+        type: string
+        optional: true
+        description: "URL to share for link posts"
+    outputs:
+      - name: post
+        type: object
+        description: "Created post data"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookGetPost:
+    type: utility
+    description: "Get a single Moltbook post by its ID."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /posts/{id} endpoint"
+    inputs:
+      - name: postId
+        type: string
+        description: "The post ID to retrieve"
+    outputs:
+      - name: post
+        type: object
+        description: "Post data with votes and metadata"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookGetFeed:
+    type: utility
+    description: "Get posts from Moltbook — personalized feed, global feed, or submolt-specific."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /feed, /posts, or /submolts/{name}/feed endpoint"
+    inputs:
+      - name: feedType
+        type: string
+        optional: true
+        description: "Feed type: personalized or global"
+      - name: submolt
+        type: string
+        optional: true
+        description: "Filter to a specific submolt"
+      - name: sort
+        type: string
+        optional: true
+        description: "Sort order: hot, new, top, rising"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max posts to return"
+    outputs:
+      - name: posts
+        type: array
+        description: "Array of post objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDeletePost:
+    type: utility
+    description: "Delete your own Moltbook post."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API DELETE /posts/{id} endpoint"
+    inputs:
+      - name: postId
+        type: string
+        description: "The post ID to delete"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether deletion succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookCreateComment:
+    type: utility
+    description: "Add a comment on a Moltbook post or reply to an existing comment."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /posts/{id}/comments endpoint"
+    inputs:
+      - name: postId
+        type: string
+        description: "The post ID to comment on"
+      - name: content
+        type: string
+        description: "Comment text"
+      - name: parentId
+        type: string
+        optional: true
+        description: "Parent comment ID for threaded replies"
+    outputs:
+      - name: comment
+        type: object
+        description: "Created comment data"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookGetComments:
+    type: utility
+    description: "Get comments on a Moltbook post."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /posts/{id}/comments endpoint"
+    inputs:
+      - name: postId
+        type: string
+        description: "The post ID to get comments for"
+      - name: sort
+        type: string
+        optional: true
+        description: "Sort order: top, new, controversial"
+    outputs:
+      - name: comments
+        type: array
+        description: "Array of comment objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookVote:
+    type: utility
+    description: "Upvote or downvote a Moltbook post or comment."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /posts/{id}/upvote or /comments/{id}/upvote endpoint"
+    inputs:
+      - name: targetType
+        type: string
+        description: "Whether voting on a post or comment"
+      - name: targetId
+        type: string
+        description: "The post or comment ID"
+      - name: direction
+        type: string
+        description: "Vote direction: upvote or downvote"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the vote succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookCreateSubmolt:
+    type: utility
+    description: "Create a new submolt community on Moltbook."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /submolts endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "URL-safe submolt name"
+      - name: displayName
+        type: string
+        description: "Display name"
+      - name: description
+        type: string
+        description: "Community description"
+    outputs:
+      - name: submolt
+        type: object
+        description: "Created submolt data"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookListSubmolts:
+    type: utility
+    description: "List all available submolt communities on Moltbook."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /submolts endpoint"
+    inputs: []
+    outputs:
+      - name: submolts
+        type: array
+        description: "Array of submolt objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookGetSubmolt:
+    type: utility
+    description: "Get detailed information about a specific Moltbook submolt."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /submolts/{name} endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "Submolt name to look up"
+    outputs:
+      - name: submolt
+        type: object
+        description: "Submolt details with member count and role"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookSubscribe:
+    type: utility
+    description: "Subscribe to or unsubscribe from a Moltbook submolt community."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST or DELETE /submolts/{name}/subscribe endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "Submolt name"
+      - name: action
+        type: string
+        description: "subscribe or unsubscribe"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the action succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookFollow:
+    type: utility
+    description: "Follow or unfollow another agent on Moltbook."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST or DELETE /agents/{name}/follow endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "Agent name to follow or unfollow"
+      - name: action
+        type: string
+        description: "follow or unfollow"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the action succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookSearch:
+    type: utility
+    description: "Search Moltbook using AI-powered semantic search by meaning."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /search endpoint with query parameter"
+    inputs:
+      - name: query
+        type: string
+        description: "Search query — natural language"
+      - name: type
+        type: string
+        optional: true
+        description: "What to search: all, posts, comments"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+    outputs:
+      - name: results
+        type: array
+        description: "Array of search results with similarity scores"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmCheck:
+    type: utility
+    description: "Check for new DM activity — pending requests and unread messages."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /agents/dm/check endpoint"
+    inputs: []
+    outputs:
+      - name: activity
+        type: object
+        description: "DM activity summary with requests and unread counts"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmRequest:
+    type: utility
+    description: "Initiate a direct message conversation with another Moltbook agent."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /agents/dm/request endpoint"
+    inputs:
+      - name: to
+        type: string
+        description: "Name of the agent to message"
+      - name: toOwner
+        type: string
+        optional: true
+        description: "Target agent owner's X handle"
+      - name: message
+        type: string
+        description: "Initial message (10-1000 chars)"
+    outputs:
+      - name: conversation
+        type: object
+        description: "Created conversation request data"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmGetConversations:
+    type: utility
+    description: "List DM conversations or get messages from a specific conversation."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /agents/dm/conversations endpoint"
+    inputs:
+      - name: conversationId
+        type: string
+        optional: true
+        description: "Specific conversation ID, or omit to list all"
+    outputs:
+      - name: conversations
+        type: array | object
+        description: "List of conversations or single conversation with messages"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmReply:
+    type: utility
+    description: "Send a reply in an existing Moltbook DM conversation."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /agents/dm/conversations/{id}/send endpoint"
+    inputs:
+      - name: conversationId
+        type: string
+        description: "Conversation ID to reply in"
+      - name: message
+        type: string
+        description: "Message to send"
+      - name: needsHumanInput
+        type: boolean
+        optional: true
+        description: "Flag for owner escalation"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the message was sent"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmManageRequest:
+    type: utility
+    description: "Approve or reject a pending DM request on Moltbook."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST /agents/dm/requests/{id}/approve or /reject endpoint"
+    inputs:
+      - name: conversationId
+        type: string
+        description: "Conversation ID of the pending request"
+      - name: action
+        type: string
+        description: "approve or reject"
+      - name: block
+        type: boolean
+        optional: true
+        description: "Block future requests when rejecting"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the action succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookDmGetRequests:
+    type: utility
+    description: "List all pending DM requests on Moltbook."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API GET /agents/dm/requests endpoint"
+    inputs: []
+    outputs:
+      - name: requests
+        type: array
+        description: "Array of pending DM requests"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookPinPost:
+    type: utility
+    description: "Pin or unpin a post in a submolt you moderate."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST or DELETE /posts/{id}/pin endpoint"
+    inputs:
+      - name: postId
+        type: string
+        description: "Post ID to pin or unpin"
+      - name: action
+        type: string
+        description: "pin or unpin"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the action succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  communication.moltbookManageModerator:
+    type: utility
+    description: "Add or remove a moderator from a submolt you own."
+    path: "moltbook"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Moltbook API POST or DELETE /submolts/{name}/moderators endpoint"
+    inputs:
+      - name: submoltName
+        type: string
+        description: "Submolt name"
+      - name: agentName
+        type: string
+        description: "Agent name to add or remove"
+      - name: action
+        type: string
+        description: "add or remove"
+    outputs:
+      - name: success
+        type: boolean
+        description: "Whether the action succeeded"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
 # =============================================================================
 # VALIDATORS - Which validators to run against each block
 # =============================================================================

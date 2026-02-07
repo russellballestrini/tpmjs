@@ -369,16 +369,18 @@ export default function CollectionDetailPage(): React.ReactElement {
   const httpUrl = `${baseUrl}/api/mcp/${collection.user.username}/${collection.slug}/http`;
   const sseUrl = `${baseUrl}/api/mcp/${collection.user.username}/${collection.slug}/sse`;
 
+  // Claude Code CLI command (correct arg order: options before name and url)
+  const claudeCodeCommand = `claude mcp add --transport http --header "Authorization: Bearer YOUR_TPMJS_API_KEY" ${collection.slug} ${httpUrl}`;
+
+  // Claude Desktop native HTTP config
   const configSnippet = `{
   "mcpServers": {
     "${collection.slug}": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "${httpUrl}",
-        "--header",
-        "Authorization: Bearer YOUR_TPMJS_API_KEY"
-      ]
+      "type": "http",
+      "url": "${httpUrl}",
+      "headers": {
+        "Authorization": "Bearer YOUR_TPMJS_API_KEY"
+      }
     }
   }
 }`;
@@ -573,7 +575,35 @@ export default function CollectionDetailPage(): React.ReactElement {
                 <McpUrlDisplay url={sseUrl} label="SSE Transport" sublabel="streaming" />
               </div>
 
+              {/* Claude Code CLI command */}
               <div className="mt-6 pt-4 border-t border-border">
+                <h4 className="text-sm font-medium text-foreground mb-2">Add to Claude Code</h4>
+                <div className="relative">
+                  <pre className="p-4 bg-surface-secondary border border-border rounded-lg text-xs font-mono text-foreground-secondary overflow-x-auto whitespace-pre-wrap break-all">
+                    {claudeCodeCommand}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigator.clipboard.writeText(claudeCodeCommand)}
+                    className="absolute top-2 right-2"
+                  >
+                    <Icon icon="copy" size="xs" />
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs text-foreground-tertiary">
+                  Replace <code className="font-mono">YOUR_TPMJS_API_KEY</code> with your{' '}
+                  <Link
+                    href="/dashboard/settings/tpmjs-api-keys"
+                    className="text-primary hover:underline"
+                  >
+                    TPMJS API key
+                  </Link>
+                  . Then run <code className="font-mono">/mcp</code> in Claude Code to verify.
+                </p>
+              </div>
+
+              <div className="mt-4">
                 <button
                   type="button"
                   onClick={() => setShowClaudeConfig(!showClaudeConfig)}

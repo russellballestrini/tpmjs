@@ -41,11 +41,14 @@ export function InstallationSection({
   const mcpUrl = `${baseUrl}/@${username}/collections/${collection.slug}/mcp`;
 
   // Build the claude mcp add command
-  const commandParts = ['claude mcp add', collection.slug, '--transport http', mcpUrl];
-
+  // Options must come before <name> <url>
+  const commandParts = ['claude mcp add'];
+  commandParts.push('--transport http');
   if (isPrivate) {
-    commandParts.push('--header "Authorization: Bearer YOUR_API_KEY"');
+    commandParts.push('--header "Authorization: Bearer YOUR_TPMJS_API_KEY"');
   }
+  commandParts.push(collection.slug);
+  commandParts.push(mcpUrl);
 
   const installCommand = commandParts.join(' \\\n  ');
 
@@ -58,7 +61,7 @@ export function InstallationSection({
               type: 'http',
               url: mcpUrl,
               headers: {
-                Authorization: 'Bearer YOUR_API_KEY',
+                Authorization: 'Bearer YOUR_TPMJS_API_KEY',
               },
             },
           },
@@ -87,8 +90,8 @@ export function InstallationSection({
   const copyCommand = async () => {
     // Copy the flat command (without line breaks for easy pasting)
     const flatCommand = isPrivate
-      ? `claude mcp add ${collection.slug} --transport http ${mcpUrl} --header "Authorization: Bearer YOUR_API_KEY"`
-      : `claude mcp add ${collection.slug} --transport http ${mcpUrl}`;
+      ? `claude mcp add --transport http --header "Authorization: Bearer YOUR_TPMJS_API_KEY" ${collection.slug} ${mcpUrl}`
+      : `claude mcp add --transport http ${collection.slug} ${mcpUrl}`;
 
     await navigator.clipboard.writeText(flatCommand);
     setCopiedCommand(true);
@@ -212,7 +215,7 @@ export function InstallationSection({
             <CodeBlock language="json" code={claudeDesktopConfig} />
             {isPrivate && (
               <p className="mt-2 text-xs text-foreground-tertiary">
-                Replace <code className="font-mono">YOUR_API_KEY</code> with your{' '}
+                Replace <code className="font-mono">YOUR_TPMJS_API_KEY</code> with your{' '}
                 <Link
                   href="/dashboard/settings/tpmjs-api-keys"
                   className="text-primary hover:underline"
