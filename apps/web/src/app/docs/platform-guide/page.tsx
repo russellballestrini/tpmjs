@@ -802,8 +802,8 @@ Invalid usernames:
                 <CodeBlock
                   language="bash"
                   code={`claude mcp add tpmjs-my-collection \\
-  -- npx mcp-remote https://tpmjs.com/api/mcp/YOUR_USERNAME/YOUR_COLLECTION_SLUG/http \\
-  --header "Authorization: Bearer YOUR_TPMJS_API_KEY"`}
+  https://tpmjs.com/api/mcp/YOUR_USERNAME/YOUR_COLLECTION_SLUG/http \\
+  -t http -H "Authorization: Bearer YOUR_TPMJS_API_KEY"`}
                 />
               </DocSubSection>
             </DocSection>

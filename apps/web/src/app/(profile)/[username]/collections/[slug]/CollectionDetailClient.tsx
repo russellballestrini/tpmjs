@@ -127,7 +127,7 @@ function McpUrlSection({
   };
 
   // Claude Code CLI command (correct arg order: options before name and url)
-  const claudeCodeCommand = `claude mcp add --transport http tpmjs-${slug} ${httpUrl}`;
+  const claudeCodeCommand = `claude mcp add tpmjs-${slug} ${httpUrl} -t http`;
 
   // Claude Desktop native HTTP config
   const configSnippet = `{

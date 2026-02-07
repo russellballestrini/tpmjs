@@ -41,14 +41,14 @@ export function InstallationSection({
   const mcpUrl = `${baseUrl}/@${username}/collections/${collection.slug}/mcp`;
 
   // Build the claude mcp add command
-  // Options must come before <name> <url>
+  // Positional args (name, url) must come before flags to avoid -H swallowing them
   const commandParts = ['claude mcp add'];
-  commandParts.push('--transport http');
-  if (isPrivate) {
-    commandParts.push('--header "Authorization: Bearer YOUR_TPMJS_API_KEY"');
-  }
   commandParts.push(collection.slug);
   commandParts.push(mcpUrl);
+  commandParts.push('-t http');
+  if (isPrivate) {
+    commandParts.push('-H "Authorization: Bearer YOUR_TPMJS_API_KEY"');
+  }
 
   const installCommand = commandParts.join(' \\\n  ');
 
@@ -90,8 +90,8 @@ export function InstallationSection({
   const copyCommand = async () => {
     // Copy the flat command (without line breaks for easy pasting)
     const flatCommand = isPrivate
-      ? `claude mcp add --transport http --header "Authorization: Bearer YOUR_TPMJS_API_KEY" ${collection.slug} ${mcpUrl}`
-      : `claude mcp add --transport http ${collection.slug} ${mcpUrl}`;
+      ? `claude mcp add ${collection.slug} ${mcpUrl} -t http -H "Authorization: Bearer YOUR_TPMJS_API_KEY"`
+      : `claude mcp add ${collection.slug} ${mcpUrl} -t http`;
 
     await navigator.clipboard.writeText(flatCommand);
     setCopiedCommand(true);

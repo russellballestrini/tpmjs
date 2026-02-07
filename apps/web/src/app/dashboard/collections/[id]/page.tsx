@@ -370,7 +370,7 @@ export default function CollectionDetailPage(): React.ReactElement {
   const sseUrl = `${baseUrl}/api/mcp/${collection.user.username}/${collection.slug}/sse`;
 
   // Claude Code CLI command (correct arg order: options before name and url)
-  const claudeCodeCommand = `claude mcp add --transport http --header "Authorization: Bearer YOUR_TPMJS_API_KEY" ${collection.slug} ${httpUrl}`;
+  const claudeCodeCommand = `claude mcp add ${collection.slug} ${httpUrl} -t http -H "Authorization: Bearer YOUR_TPMJS_API_KEY"`;
 
   // Claude Desktop native HTTP config
   const configSnippet = `{

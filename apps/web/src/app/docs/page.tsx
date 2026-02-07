@@ -1308,8 +1308,8 @@ export TPMJS_EXECUTOR_URL=https://executor.mycompany.com`}
                 <CodeBlock
                   language="bash"
                   code={`claude mcp add tpmjs-my-collection \\
-  -- npx mcp-remote https://tpmjs.com/api/mcp/<username>/<collection-slug>/http \\
-  --header "Authorization: Bearer YOUR_TPMJS_API_KEY"`}
+  https://tpmjs.com/api/mcp/<username>/<collection-slug>/http \\
+  -t http -H "Authorization: Bearer YOUR_TPMJS_API_KEY"`}
                 />
                 <p className="text-foreground-secondary mt-4">
                   This automatically adds the server to your Claude Code configuration.
