@@ -6,6 +6,9 @@ export interface McpToolDefinition {
   inputSchema: Record<string, unknown>;
 }
 
+/** Valid JSON Schema type values */
+const VALID_TYPES = new Set(['string', 'number', 'integer', 'boolean', 'object', 'array', 'null']);
+
 /**
  * Keywords that Claude's API does not support in tool input_schema.
  * These get stripped recursively from any schema before returning to clients.
@@ -90,15 +93,47 @@ function stripUnsupportedKeywords(node: Record<string, unknown>): void {
   }
 }
 
-/** Normalize array-style type (e.g. ["string", "null"]) into anyOf */
+/** Normalize and validate the `type` field */
 function normalizeType(node: Record<string, unknown>): void {
-  if (!Array.isArray(node.type)) return;
-  const types = node.type as string[];
-  if (types.length === 1) {
-    node.type = types[0];
-  } else {
+  if (Array.isArray(node.type)) {
+    // Array-style type like ["string", "null"] → anyOf
+    const types = (node.type as string[]).filter((t) => VALID_TYPES.has(t));
+    if (types.length === 1) {
+      node.type = types[0];
+    } else if (types.length > 1) {
+      delete node.type;
+      node.anyOf = types.map((t) => ({ type: t }));
+    } else {
+      delete node.type;
+    }
+  } else if (typeof node.type === 'string' && !VALID_TYPES.has(node.type)) {
+    // Invalid type like "string[]" or "'markdown' | 'mdx'" — remove it
     delete node.type;
-    node.anyOf = types.map((t) => ({ type: t }));
+  }
+}
+
+/** Fix conflicting type + oneOf/anyOf (e.g. type:"object" with oneOf:[{type:"string"}, ...]) */
+function fixConflictingComposition(node: Record<string, unknown>): void {
+  if (typeof node.type !== 'string') return;
+  for (const keyword of ['oneOf', 'anyOf'] as const) {
+    if (!Array.isArray(node[keyword])) continue;
+    const variants = node[keyword] as Record<string, unknown>[];
+    const hasConflict = variants.some(
+      (v) => isSchemaObject(v) && typeof v.type === 'string' && v.type !== node.type
+    );
+    if (hasConflict) {
+      // The composition keyword is more specific — drop the conflicting wrapper type
+      delete node.type;
+      // Also clean up empty properties/additionalProperties left from the wrapper
+      if (
+        isSchemaObject(node.properties) &&
+        Object.keys(node.properties as Record<string, unknown>).length === 0
+      ) {
+        delete node.properties;
+      }
+      delete node.additionalProperties;
+      break;
+    }
   }
 }
 
@@ -138,6 +173,7 @@ function sanitizeSchemaNode(
 ): Record<string, unknown> {
   stripUnsupportedKeywords(node);
   normalizeType(node);
+  fixConflictingComposition(node);
 
   // Claude rejects top-level oneOf/allOf/anyOf
   if (isRoot && !node.type && (node.oneOf || node.allOf || node.anyOf)) {
