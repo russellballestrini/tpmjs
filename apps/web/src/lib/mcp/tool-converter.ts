@@ -7,6 +7,160 @@ export interface McpToolDefinition {
 }
 
 /**
+ * Keywords that Claude's API does not support in tool input_schema.
+ * These get stripped recursively from any schema before returning to clients.
+ */
+const UNSUPPORTED_KEYWORDS = new Set([
+  // Numeric constraints
+  'minimum',
+  'maximum',
+  'exclusiveMinimum',
+  'exclusiveMaximum',
+  'multipleOf',
+  // String constraints
+  'minLength',
+  'maxLength',
+  // Array constraints
+  'maxItems',
+  'uniqueItems',
+  // Advanced schema features
+  'patternProperties',
+  'if',
+  'then',
+  'else',
+  'dependentRequired',
+  'dependentSchemas',
+  'prefixItems',
+  'unevaluatedProperties',
+  'unevaluatedItems',
+  'contentMediaType',
+  'contentEncoding',
+]);
+
+/**
+ * Sanitize a JSON Schema so it conforms to what Claude's API accepts
+ * (JSON Schema draft 2020-12 subset). Strips unsupported keywords,
+ * fixes array-style `type`, removes old `$schema` declarations, and
+ * wraps top-level composition keywords in an object wrapper.
+ */
+export function sanitizeInputSchema(
+  schema: Record<string, unknown> | null | undefined
+): Record<string, unknown> {
+  const fallback = { type: 'object' as const, properties: {} };
+  if (!schema || typeof schema !== 'object') return fallback;
+
+  try {
+    const cleaned = sanitizeSchemaNode(structuredClone(schema), true);
+    // Ensure root is always type: object
+    if (!cleaned.type) cleaned.type = 'object';
+    return cleaned;
+  } catch {
+    // If sanitization itself fails, return safe fallback
+    return fallback;
+  }
+}
+
+function sanitizeSchemaNode(
+  node: Record<string, unknown>,
+  isRoot: boolean
+): Record<string, unknown> {
+  // Remove $schema declarations (old drafts cause rejection)
+  delete node.$schema;
+
+  // Strip unsupported keywords
+  for (const key of UNSUPPORTED_KEYWORDS) {
+    delete node[key];
+  }
+
+  // Fix minItems: only 0 and 1 are supported
+  if ('minItems' in node && typeof node.minItems === 'number') {
+    if (node.minItems > 1) delete node.minItems;
+  }
+
+  // Fix array-style type like ["string", "null"] → anyOf
+  if (Array.isArray(node.type)) {
+    const types = node.type as string[];
+    if (types.length === 1) {
+      node.type = types[0];
+    } else {
+      delete node.type;
+      node.anyOf = types.map((t) => ({ type: t }));
+    }
+  }
+
+  // Wrap top-level oneOf/allOf/anyOf inside an object property
+  // Claude rejects these at the root level
+  if (isRoot && !node.type && (node.oneOf || node.allOf || node.anyOf)) {
+    return {
+      type: 'object',
+      properties: {},
+    };
+  }
+
+  // Remove external $ref (keep internal ones like "#/$defs/Foo")
+  if (typeof node.$ref === 'string' && /^https?:\/\//.test(node.$ref)) {
+    delete node.$ref;
+    if (!node.type) node.type = 'object';
+  }
+
+  // Recurse into properties
+  if (node.properties && typeof node.properties === 'object') {
+    for (const [key, value] of Object.entries(node.properties as Record<string, unknown>)) {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        (node.properties as Record<string, unknown>)[key] = sanitizeSchemaNode(
+          value as Record<string, unknown>,
+          false
+        );
+      }
+    }
+  }
+
+  // Recurse into items (array items schema)
+  if (node.items && typeof node.items === 'object' && !Array.isArray(node.items)) {
+    node.items = sanitizeSchemaNode(node.items as Record<string, unknown>, false);
+  }
+
+  // Recurse into additionalProperties when it's a schema object
+  if (
+    node.additionalProperties &&
+    typeof node.additionalProperties === 'object' &&
+    !Array.isArray(node.additionalProperties)
+  ) {
+    node.additionalProperties = sanitizeSchemaNode(
+      node.additionalProperties as Record<string, unknown>,
+      false
+    );
+  }
+
+  // Recurse into composition keywords
+  for (const keyword of ['anyOf', 'oneOf', 'allOf'] as const) {
+    if (Array.isArray(node[keyword])) {
+      node[keyword] = (node[keyword] as Record<string, unknown>[]).map((item) =>
+        typeof item === 'object' && item !== null && !Array.isArray(item)
+          ? sanitizeSchemaNode(item as Record<string, unknown>, false)
+          : item
+      );
+    }
+  }
+
+  // Recurse into $defs / definitions
+  for (const defsKey of ['$defs', 'definitions'] as const) {
+    if (node[defsKey] && typeof node[defsKey] === 'object') {
+      for (const [key, value] of Object.entries(node[defsKey] as Record<string, unknown>)) {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          (node[defsKey] as Record<string, unknown>)[key] = sanitizeSchemaNode(
+            value as Record<string, unknown>,
+            false
+          );
+        }
+      }
+    }
+  }
+
+  return node;
+}
+
+/**
  * Bridge tool definition from the BridgeConnection.tools JSON
  */
 export interface BridgeTool {
@@ -65,15 +219,13 @@ export function sanitizeBridgeToolName(serverId: string, toolName: string): stri
 
 /**
  * Convert a TPMJS Tool to an MCP tool definition.
+ * Sanitizes inputSchema to ensure it conforms to Claude's JSON Schema subset.
  */
 export function convertToMcpTool(tool: Tool & { package: Package }): McpToolDefinition {
   return {
     name: sanitizeMcpName(tool.package.npmPackageName, tool.name),
     description: tool.description,
-    inputSchema: (tool.inputSchema as Record<string, unknown>) ?? {
-      type: 'object',
-      properties: {},
-    },
+    inputSchema: sanitizeInputSchema(tool.inputSchema as Record<string, unknown>),
   };
 }
 
@@ -147,6 +299,7 @@ export function parseToolName(mcpName: string): ParsedToolName | null {
 
 /**
  * Convert a bridge tool definition to an MCP tool definition.
+ * Sanitizes inputSchema to ensure it conforms to Claude's JSON Schema subset.
  */
 export function convertBridgeToolToMcp(
   tool: BridgeTool,
@@ -157,9 +310,6 @@ export function convertBridgeToolToMcp(
     description: displayName
       ? `[${tool.serverName}] ${displayName}`
       : tool.description || `${tool.name} from ${tool.serverName}`,
-    inputSchema: tool.inputSchema ?? {
-      type: 'object',
-      properties: {},
-    },
+    inputSchema: sanitizeInputSchema(tool.inputSchema),
   };
 }
