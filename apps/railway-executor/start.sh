@@ -4,4 +4,5 @@ mkdir -p /tmp/deno-cache
 chown -R deno:deno /tmp/deno-cache
 
 # Switch to deno user and run the server
+# Deno 2.x: --allow-net, --allow-env, --allow-read, --allow-write, --allow-run for tool execution
 exec su deno -c "deno run --allow-net --allow-env --allow-read --allow-write --allow-run server.ts"

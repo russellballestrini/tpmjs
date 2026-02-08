@@ -1,30 +1,23 @@
 import { prisma } from '@tpmjs/db';
 import { fetchChanges, fetchLatestPackageWithMetadata } from '@tpmjs/npm-client';
-import type { TpmjsToolDefinition } from '@tpmjs/types/tpmjs';
 import { validateTpmjsField } from '@tpmjs/types/tpmjs';
 import { type NextRequest, NextResponse } from 'next/server';
 import { env } from '~/env';
-import { performHealthCheck } from '~/lib/health-check/health-check-service';
-import {
-  convertJsonSchemaToParameters,
-  extractToolSchema,
-  listToolExports,
-} from '~/lib/schema-extraction';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 5 minutes max for cron jobs
+export const maxDuration = 60;
 
 /**
  * POST /api/sync/changes
- * Sync tools from NPM changes feed
+ * Discovery-only sync: monitors NPM changes feed, upserts packages and tools.
+ * Does NOT call the executor for schema extraction or health checks — that's handled by /api/sync/enrich.
  *
- * This endpoint is called by Vercel Cron (every 2 minutes)
+ * Called by Vercel Cron (every 4 hours) or GitHub Actions.
  * Requires Authorization: Bearer <CRON_SECRET>
  */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex but straightforward CRUD operation
 export async function POST(request: NextRequest) {
-  // Verify cron secret for security
   const authHeader = request.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');
 
@@ -39,7 +32,6 @@ export async function POST(request: NextRequest) {
   const errorMessages: string[] = [];
 
   try {
-    // Get last checkpoint
     const checkpoint = await prisma.syncCheckpoint.findUnique({
       where: { source: 'changes-feed' },
     });
@@ -48,45 +40,36 @@ export async function POST(request: NextRequest) {
       ? String((checkpoint.checkpoint as { lastSeq?: string })?.lastSeq || '0')
       : '0';
 
-    // Fetch changes from NPM (limit to 30 per run to allow time for schema extraction)
+    // Increased limit since we no longer spend time on schema extraction
     const changesResult = await fetchChanges({
       since: lastSeq,
-      limit: 30,
+      limit: 100,
       includeDocs: false,
     });
 
-    // Process each change
     for (const change of changesResult.results) {
       try {
-        // Fetch full package metadata with README
         const pkg = await fetchLatestPackageWithMetadata(change.id);
 
-        // Skip if package not found
         if (!pkg) {
           skipped++;
           continue;
         }
 
-        // Check if package has tpmjs field
         if (!pkg.tpmjs) {
           skipped++;
           continue;
         }
 
-        // Validate tpmjs field (supports both new multi-tool and legacy formats)
         const validation = validateTpmjsField(pkg.tpmjs);
-        if (!validation.valid || !validation.packageData || !validation.tools) {
+        if (!validation.valid || !validation.packageData) {
           skipped++;
           continue;
         }
 
-        // Log auto-migration from legacy format
         if (validation.wasLegacyFormat) {
           console.log(`Auto-migrated legacy package: ${pkg.name}`);
         }
-
-        // Extract repository URL and GitHub stars
-        const githubStars: number | null = null;
 
         // Upsert Package record
         const packageRecord = await prisma.package.upsert({
@@ -109,8 +92,8 @@ export async function POST(request: NextRequest) {
             tier: validation.tier || 'minimal',
             discoveryMethod: 'changes-feed',
             isOfficial: pkg.keywords?.includes('tpmjs') || false,
-            npmDownloadsLastMonth: 0, // Will be updated by metrics sync
-            githubStars: githubStars,
+            npmDownloadsLastMonth: 0,
+            githubStars: null,
           },
           update: {
             npmVersion: pkg.version,
@@ -131,53 +114,30 @@ export async function POST(request: NextRequest) {
           },
         });
 
-        // Get existing tools for this package
+        // For auto-discovery packages, skip tool creation — enrichment will handle it
+        if (validation.needsAutoDiscovery) {
+          console.log(
+            `Package ${pkg.name} needs auto-discovery — enrichment will handle tool creation`
+          );
+          processed++;
+          continue;
+        }
+
+        // Upsert tools from the tpmjs.tools array (manual discovery only)
+        const toolsToProcess = validation.tools || [];
+
         const existingTools = await prisma.tool.findMany({
           where: { packageId: packageRecord.id },
         });
 
-        // Determine the tools to process
-        let toolsToProcess: TpmjsToolDefinition[] = validation.tools || [];
-        let toolDiscoverySource: 'auto' | 'manual' = 'manual';
-
-        // If tools need auto-discovery, call the executor to list exports
-        if (validation.needsAutoDiscovery) {
-          console.log(`Auto-discovering tools for ${pkg.name}...`);
-          const exportsResult = await listToolExports(pkg.name, pkg.version, null);
-
-          if (exportsResult.success) {
-            // Convert discovered tools to TpmjsToolDefinition format
-            toolsToProcess = exportsResult.tools
-              .filter((t) => t.isValidTool)
-              .map((t) => ({
-                name: t.name,
-                description: t.description,
-                parameters: undefined,
-                returns: undefined,
-                aiAgent: undefined,
-              }));
-            toolDiscoverySource = 'auto';
-            console.log(
-              `Auto-discovered ${toolsToProcess.length} tools for ${pkg.name}: ${toolsToProcess.map((t) => t.name).join(', ')}`
-            );
-          } else {
-            console.log(`Failed to auto-discover tools for ${pkg.name}: ${exportsResult.error}`);
-            // Skip this package if we can't discover tools
-            skipped++;
-            continue;
-          }
-        }
-
-        // Upsert each tool
         for (const toolDef of toolsToProcess) {
-          // Get tool name from validated schema
           const toolName = toolDef.name;
           if (!toolName) {
             console.warn(`Skipping tool without name in ${pkg.name}`);
             continue;
           }
 
-          const upsertedTool = await prisma.tool.upsert({
+          await prisma.tool.upsert({
             where: {
               packageId_name: {
                 packageId: packageRecord.id,
@@ -194,10 +154,9 @@ export async function POST(request: NextRequest) {
               returns: toolDef.returns ? (toolDef.returns as any) : undefined,
               // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
               aiAgent: toolDef.aiAgent ? (toolDef.aiAgent as any) : undefined,
-              qualityScore: null, // Will be calculated by metrics sync
-              // Schema will be extracted below
+              qualityScore: null,
               schemaSource: toolDef.parameters ? 'author' : null,
-              toolDiscoverySource,
+              toolDiscoverySource: 'manual',
             },
             update: {
               description: toolDef.description || undefined,
@@ -207,51 +166,8 @@ export async function POST(request: NextRequest) {
               returns: toolDef.returns ? (toolDef.returns as any) : undefined,
               // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
               aiAgent: toolDef.aiAgent ? (toolDef.aiAgent as any) : undefined,
-              toolDiscoverySource,
+              toolDiscoverySource: 'manual',
             },
-          });
-
-          // Extract schema synchronously from executor
-          const schemaResult = await extractToolSchema(pkg.name, toolName, pkg.version, null);
-
-          if (schemaResult.success) {
-            // Update tool with extracted schema (and description if not provided)
-            await prisma.tool.update({
-              where: { id: upsertedTool.id },
-              data: {
-                // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
-                inputSchema: schemaResult.inputSchema as any,
-                // Also update parameters array for backward compatibility
-                // biome-ignore lint/suspicious/noExplicitAny: Prisma Json type compatibility workaround
-                parameters: convertJsonSchemaToParameters(schemaResult.inputSchema) as any,
-                schemaSource: 'extracted',
-                schemaExtractedAt: new Date(),
-                // Update description if not provided by author
-                ...(!toolDef.description && schemaResult.description
-                  ? { description: schemaResult.description }
-                  : {}),
-              },
-            });
-            console.log(`Schema extracted for ${pkg.name}/${toolName}`);
-          } else {
-            // Extraction failed - mark schema source appropriately
-            console.log(
-              `Schema extraction failed for ${pkg.name}/${toolName}: ${schemaResult.error}`
-            );
-            await prisma.tool.update({
-              where: { id: upsertedTool.id },
-              data: {
-                schemaSource: toolDef.parameters ? 'author' : null,
-              },
-            });
-          }
-
-          // Trigger health check (non-blocking) for execution testing
-          performHealthCheck(upsertedTool.id, 'sync').catch((err) => {
-            console.error(
-              `Health check failed for ${pkg.name}/${toolName} (${upsertedTool.id}):`,
-              err
-            );
           });
         }
 
@@ -278,7 +194,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Update checkpoint with new sequence
     await prisma.syncCheckpoint.upsert({
       where: { source: 'changes-feed' },
       create: {
@@ -296,7 +211,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Log sync operation
     await prisma.syncLog.create({
       data: {
         source: 'changes-feed',
@@ -330,7 +244,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Changes feed sync failed:', error);
 
-    // Log failed sync
     await prisma.syncLog.create({
       data: {
         source: 'changes-feed',

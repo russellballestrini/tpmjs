@@ -7,16 +7,17 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max for cron jobs
 
+const BATCH_SIZE = 5;
+
 /**
  * POST /api/sync/metrics
  * Update download stats and quality scores for all packages and tools
  *
- * This endpoint is called by Vercel Cron (every hour)
+ * This endpoint is called by Vercel Cron (daily)
  * Requires Authorization: Bearer <CRON_SECRET>
  */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex but straightforward CRUD operation
 export async function POST(request: NextRequest) {
-  // Verify cron secret for security
   const authHeader = request.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');
 
@@ -31,62 +32,69 @@ export async function POST(request: NextRequest) {
   const errorMessages: string[] = [];
 
   try {
-    // Get all packages with their tools from database
     const packages = await prisma.package.findMany({
       include: {
         tools: true,
       },
     });
 
-    // Process each package
-    for (const pkg of packages) {
-      try {
-        // Fetch download stats from NPM (package-level metric)
-        const downloads = await fetchDownloadStats(pkg.npmPackageName);
+    // Process packages in batches of BATCH_SIZE concurrently
+    for (let i = 0; i < packages.length; i += BATCH_SIZE) {
+      const batch = packages.slice(i, i + BATCH_SIZE);
 
-        // Fetch GitHub stars if repository is available
-        const githubStars = await fetchGitHubStarsFromRepository(
-          pkg.npmRepository as { type?: string; url?: string } | string | null
-        );
+      const results = await Promise.allSettled(
+        batch.map(async (pkg) => {
+          // Fetch downloads and GitHub stars in parallel for each package
+          const [downloads, githubStars] = await Promise.all([
+            fetchDownloadStats(pkg.npmPackageName),
+            fetchGitHubStarsFromRepository(
+              pkg.npmRepository as { type?: string; url?: string } | string | null
+            ),
+          ]);
 
-        // Update package metrics
-        await prisma.package.update({
-          where: { id: pkg.id },
-          data: {
-            npmDownloadsLastMonth: downloads,
-            githubStars,
-          },
-        });
-
-        // Calculate and update quality score for each tool in this package
-        for (const tool of pkg.tools) {
-          const qualityScore = calculateQualityScore({
-            tier: pkg.tier, // Tier is at package level
-            downloads, // Package downloads
-            githubStars, // Use freshly fetched stars
-            hasParameters: !!tool.parameters,
-            hasReturns: !!tool.returns,
-            hasAiAgent: !!tool.aiAgent,
-          });
-
-          await prisma.tool.update({
-            where: { id: tool.id },
+          await prisma.package.update({
+            where: { id: pkg.id },
             data: {
-              qualityScore,
+              npmDownloadsLastMonth: downloads,
+              githubStars,
             },
           });
-        }
 
-        processed++;
-      } catch (error) {
-        errors++;
-        const errorMsg = `Failed to process ${pkg.npmPackageName}: ${error instanceof Error ? error.message : 'Unknown error'}`;
-        errorMessages.push(errorMsg);
-        console.error(errorMsg);
+          // Calculate and update quality score for each tool in this package
+          for (const tool of pkg.tools) {
+            const qualityScore = calculateQualityScore({
+              tier: pkg.tier,
+              downloads,
+              githubStars,
+              hasParameters: !!tool.parameters,
+              hasReturns: !!tool.returns,
+              hasAiAgent: !!tool.aiAgent,
+            });
+
+            await prisma.tool.update({
+              where: { id: tool.id },
+              data: {
+                qualityScore,
+              },
+            });
+          }
+
+          return pkg.npmPackageName;
+        })
+      );
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          processed++;
+        } else {
+          errors++;
+          const errorMsg = `Failed to process package: ${result.reason instanceof Error ? result.reason.message : 'Unknown error'}`;
+          errorMessages.push(errorMsg);
+          console.error(errorMsg);
+        }
       }
     }
 
-    // Update checkpoint with last run timestamp
     await prisma.syncCheckpoint.upsert({
       where: { source: 'metrics' },
       create: {
@@ -106,7 +114,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Log sync operation
     await prisma.syncLog.create({
       data: {
         source: 'metrics',
@@ -140,7 +147,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Metrics sync failed:', error);
 
-    // Log failed sync
     await prisma.syncLog.create({
       data: {
         source: 'metrics',

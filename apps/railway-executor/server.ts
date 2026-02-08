@@ -6,8 +6,24 @@
 // Import zod-to-json-schema for Zod v3 support
 import { zodToJsonSchema } from 'https://esm.sh/zod-to-json-schema@3.25.0';
 
+// ─── Crash Protection ───────────────────────────────────────────────────────
+// Catch unhandled promise rejections so they don't crash the process
+globalThis.addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
+  console.error('⚠️  Unhandled promise rejection (caught, process continues):', event.reason);
+});
+
+// Catch uncaught errors
+globalThis.addEventListener('error', (event) => {
+  console.error('⚠️  Uncaught error (caught, process continues):', event.error || event.message);
+  event.preventDefault();
+});
+
 // Cache TTL: 2 minutes
 const CACHE_TTL_MS = 2 * 60 * 1000;
+
+// Max cache entries to prevent unbounded memory growth
+const MAX_CACHE_SIZE = 200;
 
 // Cache entry with expiration
 interface CacheEntry {
@@ -41,6 +57,16 @@ function getCachedModule(cacheKey: string): CacheEntry | null {
  */
 // biome-ignore lint/suspicious/noExplicitAny: Tool types are dynamic and vary by package
 function setCachedModule(cacheKey: string, module: any, isFactory: boolean): void {
+  // Evict oldest entries if cache is full
+  if (moduleCache.size >= MAX_CACHE_SIZE) {
+    const entriesToEvict = Math.max(1, Math.floor(MAX_CACHE_SIZE * 0.2)); // Evict 20%
+    const keys = Array.from(moduleCache.keys());
+    for (let i = 0; i < entriesToEvict && i < keys.length; i++) {
+      moduleCache.delete(keys[i]);
+    }
+    console.log(`🗑️  Evicted ${entriesToEvict} cache entries (cache was full at ${MAX_CACHE_SIZE})`);
+  }
+
   moduleCache.set(cacheKey, {
     module,
     expiresAt: Date.now() + CACHE_TTL_MS,
@@ -845,6 +871,9 @@ async function listExports(req: Request): Promise<Response> {
   }
 }
 
+// Track startup time for uptime reporting
+const startedAt = Date.now();
+
 /**
  * Health check
  */
@@ -852,7 +881,9 @@ function health(): Response {
   return Response.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000),
     cacheSize: moduleCache.size,
+    maxCacheSize: MAX_CACHE_SIZE,
     denoVersion: Deno.version.deno,
     v8Version: Deno.version.v8,
     httpImports: true,
@@ -893,9 +924,15 @@ function clearCache(): Response {
 }
 
 /**
- * Main request handler
+ * Main request handler — wrapped with crash protection so no single request
+ * can take down the process.
  */
 async function handler(req: Request): Promise<Response> {
+  // Reject requests during shutdown
+  if (isShuttingDown) {
+    return new Response('Service shutting down', { status: 503 });
+  }
+
   const url = new URL(req.url);
 
   // Add CORS headers
@@ -945,6 +982,24 @@ async function handler(req: Request): Promise<Response> {
     );
   }
 }
+
+// ─── Graceful Shutdown ──────────────────────────────────────────────────────
+let isShuttingDown = false;
+
+function handleShutdown(signal: string) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.log(`\n🛑 Received ${signal}, shutting down gracefully...`);
+  moduleCache.clear();
+  // Give in-flight requests a moment to complete
+  setTimeout(() => {
+    console.log('👋 Goodbye');
+    Deno.exit(0);
+  }, 5000);
+}
+
+Deno.addSignalListener('SIGTERM', () => handleShutdown('SIGTERM'));
+Deno.addSignalListener('SIGINT', () => handleShutdown('SIGINT'));
 
 // Start server
 const port = Number.parseInt(Deno.env.get('PORT') || '3002', 10);
