@@ -235,6 +235,7 @@ export async function GET(request: NextRequest) {
           id: tool.id,
           name: tool.name,
           description: tool.description,
+          inputSchema: tool.inputSchema,
           qualityScore: tool.qualityScore,
           importHealth: tool.importHealth,
           executionHealth: tool.executionHealth,

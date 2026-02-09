@@ -204,6 +204,49 @@ async function searchRelevantTools(
 }
 
 /**
+ * Fetch the tool's inputSchema from the executor's loadAndDescribe endpoint.
+ * This is used when the schema isn't available in the database yet.
+ */
+async function fetchSchemaFromExecutor(toolMeta: {
+  packageName: string;
+  name: string;
+  version: string;
+  importUrl: string;
+}): Promise<unknown | null> {
+  try {
+    console.log(`📋 Fetching schema from executor for ${toolMeta.packageName}/${toolMeta.name}`);
+    const response = await fetch(`${EXECUTOR_URL}/load-and-describe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        packageName: toolMeta.packageName,
+        name: toolMeta.name,
+        version: toolMeta.version,
+        importUrl: toolMeta.importUrl,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `⚠️ Schema fetch failed (${response.status}) for ${toolMeta.packageName}/${toolMeta.name}`
+      );
+      return null;
+    }
+
+    // biome-ignore lint/suspicious/noExplicitAny: Executor response format varies
+    const result = (await response.json()) as any;
+    if (result.success && result.tool?.inputSchema) {
+      console.log(`✅ Got schema from executor for ${toolMeta.packageName}/${toolMeta.name}`);
+      return result.tool.inputSchema;
+    }
+    return null;
+  } catch (error) {
+    console.warn(`⚠️ Schema fetch error for ${toolMeta.packageName}/${toolMeta.name}:`, error);
+    return null;
+  }
+}
+
+/**
  * Create a dynamic tool wrapper that executes via the sandbox executor
  */
 async function createDynamicTool(
@@ -221,10 +264,16 @@ async function createDynamicTool(
   // Import tool() dynamically to avoid top-level await
   const { tool } = await import('ai');
 
+  // If inputSchema is missing from the database, fetch it from the executor
+  let schema = toolMeta.inputSchema;
+  if (!schema) {
+    schema = await fetchSchemaFromExecutor(toolMeta);
+  }
+
   return tool({
     description: toolMeta.description,
-    inputSchema: toolMeta.inputSchema
-      ? jsonSchema(toolMeta.inputSchema as Parameters<typeof jsonSchema>[0])
+    inputSchema: schema
+      ? jsonSchema(schema as Parameters<typeof jsonSchema>[0])
       : jsonSchema({
           type: 'object',
           properties: {},
