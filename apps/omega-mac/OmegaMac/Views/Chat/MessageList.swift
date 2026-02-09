@@ -71,7 +71,7 @@ struct MessageList: View {
 
             if isStreaming {
                 Rectangle()
-                    .fill(.accent)
+                    .fill(Color.accentColor)
                     .frame(width: 2, height: 16)
                     .opacity(0.8)
                     .modifier(PulseAnimation())

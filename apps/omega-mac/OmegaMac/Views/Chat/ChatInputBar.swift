@@ -32,7 +32,7 @@ struct ChatInputBar: View {
                 Button(action: onSend) {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(canSend ? .accent : .tertiary)
+                        .foregroundStyle(canSend ? Color.accentColor : Color.secondary)
                 }
                 .buttonStyle(.borderless)
                 .disabled(!canSend)

@@ -23,7 +23,7 @@ struct MessageBubble: View {
                 .font(.body)
                 .foregroundStyle(.white)
                 .padding(12)
-                .background(.accent)
+                .background(Color.accentColor)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .textSelection(.enabled)
         }

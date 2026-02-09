@@ -7,7 +7,7 @@ struct StreamingIndicator: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: "sparkles")
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
                 .font(.caption)
 
             Text("Omega is thinking" + String(repeating: ".", count: dotCount))

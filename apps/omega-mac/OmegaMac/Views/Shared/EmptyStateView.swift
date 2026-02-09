@@ -7,7 +7,7 @@ struct EmptyStateView: View {
         VStack(spacing: 20) {
             Image(systemName: "star.circle.fill")
                 .font(.system(size: 56))
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
                 .symbolEffect(.pulse, options: .repeating)
 
             Text("Omega")
@@ -43,7 +43,7 @@ struct EmptyStateView: View {
         HStack(spacing: 10) {
             Image(systemName: icon)
                 .frame(width: 20)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
             Text(text)
                 .font(.callout)
                 .foregroundStyle(.secondary)

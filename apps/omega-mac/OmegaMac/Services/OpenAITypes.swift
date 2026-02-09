@@ -89,7 +89,7 @@ struct JSONSchemaProperty: Encodable {
     }
 }
 
-enum JSONSchemaAdditional: Encodable {
+indirect enum JSONSchemaAdditional: Encodable {
     case bool(Bool)
     case typed(JSONSchemaProperty)
 
