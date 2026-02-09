@@ -52,7 +52,6 @@ const initialData = {
   items: [
     // External Services
     { id: 'npm', name: 'npm Registry', icon: 'cloud' },
-    { id: 'github', name: 'GitHub', icon: 'document' },
     { id: 'vercel', name: 'Vercel', icon: 'server' },
     { id: 'postgres', name: 'PostgreSQL', icon: 'storage' },
     { id: 'ai', name: 'AI Providers', icon: 'diamond' },
@@ -60,65 +59,58 @@ const initialData = {
     { id: 'web', name: 'tpmjs.com', icon: 'desktop' },
     { id: 'playground', name: 'Playground', icon: 'laptop' },
     { id: 'executor', name: 'Executor', icon: 'vm' },
-    // Key Published Packages
+    // Published Packages
     { id: 'cli', name: '@tpmjs/cli', icon: 'function-module' },
     { id: 'types', name: '@tpmjs/types', icon: 'cube' },
     { id: 'ui', name: '@tpmjs/ui', icon: 'block' },
-    { id: 'bridge', name: '@tpmjs/bridge', icon: 'router' },
     { id: 'mcp', name: '@tpmjs/mcp-client', icon: 'loadbalancer' },
-    // Internal
+    // Internal Packages
     { id: 'db', name: '@tpmjs/db', icon: 'storage' },
-    { id: 'npm-client', name: 'npm-client', icon: 'package-module' },
+    { id: 'npm-client', name: '@tpmjs/npm-client', icon: 'package-module' },
     // Official Tools
-    { id: 'tools', name: '191 AI Tools', icon: 'tower' }
+    { id: 'tools', name: '191+ AI Tools', icon: 'tower' }
   ],
   views: [{
     id: 'overview',
     name: 'Ecosystem Overview',
     items: [
-      // Top row: External Services — spread wider for readability
+      // Row 0: External Services (2-tile spacing, compact)
       { id: 'npm', tile: { x: 0, y: 0 } },
-      { id: 'github', tile: { x: 3, y: 0 } },
-      { id: 'vercel', tile: { x: 6, y: 0 } },
-      { id: 'postgres', tile: { x: 9, y: 0 } },
-      { id: 'ai', tile: { x: 12, y: 0 } },
-      // Middle row: Applications
-      { id: 'web', tile: { x: 3, y: 4 } },
-      { id: 'playground', tile: { x: 7, y: 4 } },
-      { id: 'executor', tile: { x: 11, y: 4 } },
-      // Published Packages row
-      { id: 'cli', tile: { x: 1, y: 8 } },
-      { id: 'types', tile: { x: 4, y: 8 } },
-      { id: 'ui', tile: { x: 7, y: 8 } },
-      { id: 'bridge', tile: { x: 10, y: 8 } },
-      { id: 'mcp', tile: { x: 13, y: 8 } },
-      // Internal row
-      { id: 'db', tile: { x: 3, y: 12 } },
-      { id: 'npm-client', tile: { x: 7, y: 12 } },
-      // Official tools
-      { id: 'tools', tile: { x: 11, y: 12 } }
+      { id: 'vercel', tile: { x: 2, y: 0 } },
+      { id: 'postgres', tile: { x: 4, y: 0 } },
+      { id: 'ai', tile: { x: 6, y: 0 } },
+      // Row 2: Applications
+      { id: 'web', tile: { x: 1, y: 2 } },
+      { id: 'playground', tile: { x: 3, y: 2 } },
+      { id: 'executor', tile: { x: 5, y: 2 } },
+      // Row 4: Published Packages
+      { id: 'cli', tile: { x: 0, y: 4 } },
+      { id: 'types', tile: { x: 2, y: 4 } },
+      { id: 'ui', tile: { x: 4, y: 4 } },
+      { id: 'mcp', tile: { x: 6, y: 4 } },
+      // Row 6: Internal + Tools
+      { id: 'db', tile: { x: 1, y: 6 } },
+      { id: 'npm-client', tile: { x: 3, y: 6 } },
+      { id: 'tools', tile: { x: 5, y: 6 } }
     ],
     connectors: [
       // External → Apps
-      { id: 'c1', color: 'orange', style: 'SOLID', anchors: [{ id: 'a1', ref: { item: 'npm' } }, { id: 'a2', ref: { item: 'web' } }] },
-      { id: 'c2', color: 'orange', style: 'SOLID', anchors: [{ id: 'a3', ref: { item: 'github' } }, { id: 'a4', ref: { item: 'web' } }] },
-      { id: 'c3', color: 'orange', style: 'SOLID', anchors: [{ id: 'a5', ref: { item: 'vercel' } }, { id: 'a6', ref: { item: 'web' } }] },
-      { id: 'c4', color: 'orange', style: 'DASHED', anchors: [{ id: 'a7', ref: { item: 'vercel' } }, { id: 'a8', ref: { item: 'playground' } }] },
-      { id: 'c5', color: 'orange', style: 'SOLID', anchors: [{ id: 'a9', ref: { item: 'ai' } }, { id: 'a10', ref: { item: 'web' } }] },
-      { id: 'c6', color: 'orange', style: 'DASHED', anchors: [{ id: 'a11', ref: { item: 'ai' } }, { id: 'a12', ref: { item: 'executor' } }] },
+      { id: 'c1', color: 'orange', style: 'SOLID', anchors: [{ id: 'a1', ref: { item: 'vercel' } }, { id: 'a2', ref: { item: 'web' } }] },
+      { id: 'c2', color: 'orange', style: 'DASHED', anchors: [{ id: 'a3', ref: { item: 'vercel' } }, { id: 'a4', ref: { item: 'playground' } }] },
+      { id: 'c3', color: 'orange', style: 'SOLID', anchors: [{ id: 'a5', ref: { item: 'ai' } }, { id: 'a6', ref: { item: 'web' } }] },
+      { id: 'c4', color: 'orange', style: 'DASHED', anchors: [{ id: 'a7', ref: { item: 'ai' } }, { id: 'a8', ref: { item: 'executor' } }] },
+      { id: 'c5', color: 'purple', style: 'SOLID', anchors: [{ id: 'a9', ref: { item: 'postgres' } }, { id: 'a10', ref: { item: 'db' } }] },
       // Apps → Packages
-      { id: 'c7', color: 'blue', style: 'SOLID', anchors: [{ id: 'a13', ref: { item: 'web' } }, { id: 'a14', ref: { item: 'types' } }] },
-      { id: 'c8', color: 'blue', style: 'SOLID', anchors: [{ id: 'a15', ref: { item: 'web' } }, { id: 'a16', ref: { item: 'ui' } }] },
-      { id: 'c9', color: 'blue', style: 'DASHED', anchors: [{ id: 'a17', ref: { item: 'web' } }, { id: 'a18', ref: { item: 'bridge' } }] },
-      { id: 'c10', color: 'blue', style: 'DASHED', anchors: [{ id: 'a19', ref: { item: 'web' } }, { id: 'a20', ref: { item: 'mcp' } }] },
+      { id: 'c6', color: 'blue', style: 'SOLID', anchors: [{ id: 'a11', ref: { item: 'web' } }, { id: 'a12', ref: { item: 'types' } }] },
+      { id: 'c7', color: 'blue', style: 'SOLID', anchors: [{ id: 'a13', ref: { item: 'web' } }, { id: 'a14', ref: { item: 'ui' } }] },
+      { id: 'c8', color: 'blue', style: 'DASHED', anchors: [{ id: 'a15', ref: { item: 'web' } }, { id: 'a16', ref: { item: 'mcp' } }] },
       // Internal → Apps
-      { id: 'c11', color: 'purple', style: 'SOLID', anchors: [{ id: 'a21', ref: { item: 'db' } }, { id: 'a22', ref: { item: 'web' } }] },
-      { id: 'c12', color: 'purple', style: 'SOLID', anchors: [{ id: 'a23', ref: { item: 'postgres' } }, { id: 'a24', ref: { item: 'db' } }] },
-      { id: 'c13', color: 'purple', style: 'DASHED', anchors: [{ id: 'a25', ref: { item: 'npm-client' } }, { id: 'a26', ref: { item: 'web' } }] },
-      { id: 'c14', color: 'orange', style: 'DASHED', anchors: [{ id: 'a27', ref: { item: 'npm' } }, { id: 'a28', ref: { item: 'npm-client' } }] },
+      { id: 'c9', color: 'purple', style: 'SOLID', anchors: [{ id: 'a17', ref: { item: 'db' } }, { id: 'a18', ref: { item: 'web' } }] },
+      { id: 'c10', color: 'purple', style: 'DASHED', anchors: [{ id: 'a19', ref: { item: 'npm-client' } }, { id: 'a20', ref: { item: 'web' } }] },
+      { id: 'c11', color: 'orange', style: 'DASHED', anchors: [{ id: 'a21', ref: { item: 'npm' } }, { id: 'a22', ref: { item: 'npm-client' } }] },
       // Tools pipeline
-      { id: 'c15', color: 'pink', style: 'SOLID', anchors: [{ id: 'a29', ref: { item: 'tools' } }, { id: 'a30', ref: { item: 'npm' } }] },
-      { id: 'c16', color: 'pink', style: 'DASHED', anchors: [{ id: 'a31', ref: { item: 'tools' } }, { id: 'a32', ref: { item: 'cli' } }] }
+      { id: 'c12', color: 'pink', style: 'SOLID', anchors: [{ id: 'a23', ref: { item: 'tools' } }, { id: 'a24', ref: { item: 'npm' } }] },
+      { id: 'c13', color: 'pink', style: 'DASHED', anchors: [{ id: 'a25', ref: { item: 'tools' } }, { id: 'a26', ref: { item: 'cli' } }] }
     ]
   }],
   fitToView: true,
