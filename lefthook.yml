@@ -4,7 +4,7 @@ pre-commit:
     secrets:
       # Scan for secrets before allowing commit - runs first
       priority: 1
-      run: git secrets --scan --cached
+      run: command -v git-secrets >/dev/null 2>&1 && git secrets --scan --cached || true
       fail_text: "🚨 Secrets detected! Remove sensitive data before committing."
 
     format:

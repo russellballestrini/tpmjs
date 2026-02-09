@@ -43,7 +43,7 @@ blocks:
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 ```
 
-**Category prefix** (before the dot): `research`, `web`, `data`, `documentation`, `engineering`, `security`, `statistics`, `ops`, `agent`, `sandbox`, `utilities`, `html`, `compliance`.
+**Category prefix** (before the dot): `research`, `web`, `data`, `documentation`, `engineering`, `security`, `statistics`, `ops`, `agent`, `sandbox`, `utilities`, `html`, `compliance`, `finance`, `legal`, `hr`, `marketing`, `cx`, `edu`, `sales`.
 
 For domain entities and quality measures, see [references/domain.md](references/domain.md).
 
@@ -222,8 +222,14 @@ Each tool gets its own entry in blocks.yml (same `path`) and in `tpmjs.tools` ar
 
 ## Step 4: Validate
 
+The blocks CLI domain validator requires an OpenAI API key. Source it from `.env.local` before running:
+
 ```bash
 cd packages/tools/official
+
+# Load the OpenAI API key for domain validation
+source ../../../.env.local
+export OPENAI_API_KEY
 
 pnpm blocks run <tool-name>            # Validate (schema → shape → domain)
 pnpm blocks run <tool-name> --force    # Force full validation (skip cache)

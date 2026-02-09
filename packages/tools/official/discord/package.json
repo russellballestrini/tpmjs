@@ -1,0 +1,114 @@
+{
+  "name": "@tpmjs/tools-discord",
+  "version": "0.1.0",
+  "description": "Discord API tools for AI agents. Send messages, manage guilds, channels, threads, members, reactions, and more.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "discord",
+    "messaging",
+    "ops",
+    "agent"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/discord"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "ops",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "tools": [
+      {
+        "name": "sendMessage",
+        "description": "Send a message to a Discord channel."
+      },
+      {
+        "name": "listGuilds",
+        "description": "List guilds (servers) the bot is a member of."
+      },
+      {
+        "name": "getGuild",
+        "description": "Get detailed information about a Discord guild."
+      },
+      {
+        "name": "listChannels",
+        "description": "List all channels in a Discord guild."
+      },
+      {
+        "name": "getChannel",
+        "description": "Get detailed information about a specific Discord channel."
+      },
+      {
+        "name": "listMessages",
+        "description": "Retrieve recent messages from a Discord channel."
+      },
+      {
+        "name": "createChannel",
+        "description": "Create a new text or voice channel in a Discord guild."
+      },
+      {
+        "name": "editMessage",
+        "description": "Edit a previously sent message in a Discord channel."
+      },
+      {
+        "name": "deleteMessage",
+        "description": "Delete a message from a Discord channel."
+      },
+      {
+        "name": "addReaction",
+        "description": "Add an emoji reaction to a Discord message."
+      },
+      {
+        "name": "listMembers",
+        "description": "List members of a Discord guild with pagination."
+      },
+      {
+        "name": "getMember",
+        "description": "Get detailed information about a specific guild member."
+      },
+      {
+        "name": "createThread",
+        "description": "Create a new thread from a message in a Discord channel."
+      },
+      {
+        "name": "listThreads",
+        "description": "List active threads in a Discord channel."
+      },
+      {
+        "name": "pinMessage",
+        "description": "Pin a message in a Discord channel."
+      }
+    ]
+  }
+}

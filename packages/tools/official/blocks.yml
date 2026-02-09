@@ -11007,6 +11007,2104 @@ blocks:
         description: "Whether the action succeeded"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
+  # ─── GitHub API ──────────────────────────────────────────────────────────
+
+  ops.githubGetRepo:
+    type: utility
+    description: "Get details of a GitHub repository including stars, forks, and language."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+    outputs:
+      - name: repository
+        type: object
+        description: "Repository details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListRepos:
+    type: utility
+    description: "List repositories for a user or organization with optional filtering."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /users/{username}/repos endpoint"
+    inputs:
+      - name: username
+        type: string
+        description: "GitHub username"
+      - name: sort
+        type: string
+        optional: true
+        description: "Sort field"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: repositories
+        type: array
+        description: "Array of repository objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubCreateIssue:
+    type: utility
+    description: "Create a new issue on a GitHub repository."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API POST /repos/{owner}/{repo}/issues endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: title
+        type: string
+        description: "Issue title"
+      - name: body
+        type: string
+        optional: true
+        description: "Issue body"
+    outputs:
+      - name: issue
+        type: object
+        description: "Created issue"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetIssue:
+    type: utility
+    description: "Get details of a specific issue by number."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/issues/{issue_number} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: issue_number
+        type: number
+        description: "Issue number"
+    outputs:
+      - name: issue
+        type: object
+        description: "Issue details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListIssues:
+    type: utility
+    description: "List issues on a repository with state and label filters."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/issues endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: state
+        type: string
+        optional: true
+        description: "Filter by state"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: issues
+        type: array
+        description: "Array of issue objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubCreateIssueComment:
+    type: utility
+    description: "Add a comment to an existing GitHub issue or pull request."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API POST /repos/{owner}/{repo}/issues/{issue_number}/comments endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: issue_number
+        type: number
+        description: "Issue number"
+      - name: body
+        type: string
+        description: "Comment body"
+    outputs:
+      - name: comment
+        type: object
+        description: "Created comment"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetPullRequest:
+    type: utility
+    description: "Get details of a specific pull request by number."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/pulls/{pull_number} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: pull_number
+        type: number
+        description: "Pull request number"
+    outputs:
+      - name: pullRequest
+        type: object
+        description: "Pull request details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListPullRequests:
+    type: utility
+    description: "List pull requests on a repository with state and head/base filters."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/pulls endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: state
+        type: string
+        optional: true
+        description: "Filter by state"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: pullRequests
+        type: array
+        description: "Array of pull request objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetFileContent:
+    type: utility
+    description: "Get the contents of a file or directory from a GitHub repository."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/contents/{path} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: path
+        type: string
+        description: "File path"
+      - name: ref
+        type: string
+        optional: true
+        description: "Branch or commit ref"
+    outputs:
+      - name: content
+        type: object
+        description: "File content or directory listing"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubSearchCode:
+    type: utility
+    description: "Search for code across GitHub repositories."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /search/code endpoint"
+    inputs:
+      - name: q
+        type: string
+        description: "Search query"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: results
+        type: object
+        description: "Search results with items"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubSearchRepositories:
+    type: utility
+    description: "Search GitHub repositories by query with sort and order options."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /search/repositories endpoint"
+    inputs:
+      - name: q
+        type: string
+        description: "Search query"
+      - name: sort
+        type: string
+        optional: true
+        description: "Sort field"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: results
+        type: object
+        description: "Search results with items"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListBranches:
+    type: utility
+    description: "List branches on a GitHub repository."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/branches endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: branches
+        type: array
+        description: "Array of branch objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetCommit:
+    type: utility
+    description: "Get details of a specific commit by SHA."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/commits/{ref} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: ref
+        type: string
+        description: "Commit SHA or ref"
+    outputs:
+      - name: commit
+        type: object
+        description: "Commit details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListCommits:
+    type: utility
+    description: "List commits on a repository with optional path and author filters."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/commits endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: path
+        type: string
+        optional: true
+        description: "File path filter"
+      - name: author
+        type: string
+        optional: true
+        description: "Author filter"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: commits
+        type: array
+        description: "Array of commit objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListReleases:
+    type: utility
+    description: "List releases on a GitHub repository."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/releases endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: releases
+        type: array
+        description: "Array of release objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetRelease:
+    type: utility
+    description: "Get details of a specific release by tag name."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/releases/tags/{tag} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: tag
+        type: string
+        description: "Release tag name"
+    outputs:
+      - name: release
+        type: object
+        description: "Release details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubCreateGist:
+    type: utility
+    description: "Create a new GitHub Gist with one or more files."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API POST /gists endpoint"
+    inputs:
+      - name: files
+        type: object
+        description: "Files to include in gist"
+      - name: description
+        type: string
+        optional: true
+        description: "Gist description"
+      - name: public
+        type: boolean
+        optional: true
+        description: "Whether gist is public"
+    outputs:
+      - name: gist
+        type: object
+        description: "Created gist"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListGists:
+    type: utility
+    description: "List gists for the authenticated user or a specific user."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /gists or GET /users/{username}/gists endpoint"
+    inputs:
+      - name: username
+        type: string
+        optional: true
+        description: "GitHub username"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: gists
+        type: array
+        description: "Array of gist objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubListWorkflowRuns:
+    type: utility
+    description: "List recent GitHub Actions workflow runs for a repository."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/actions/runs endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: status
+        type: string
+        optional: true
+        description: "Filter by status"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: workflowRuns
+        type: object
+        description: "Workflow runs with total count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.githubGetWorkflowRun:
+    type: utility
+    description: "Get details of a specific GitHub Actions workflow run."
+    path: "github"
+    domain_rules:
+      - id: api_integration
+        description: "Must call GitHub API GET /repos/{owner}/{repo}/actions/runs/{run_id} endpoint"
+    inputs:
+      - name: owner
+        type: string
+        description: "Repository owner"
+      - name: repo
+        type: string
+        description: "Repository name"
+      - name: run_id
+        type: number
+        description: "Workflow run ID"
+    outputs:
+      - name: workflowRun
+        type: object
+        description: "Workflow run details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ─── Vercel API ─────────────────────────────────────────────────────────
+
+  ops.vercelListDeployments:
+    type: utility
+    description: "List deployments for a project or team with optional state filtering."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v6/deployments endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        optional: true
+        description: "Project ID to filter"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+    outputs:
+      - name: deployments
+        type: array
+        description: "Array of deployment objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetDeployment:
+    type: utility
+    description: "Get details of a specific deployment by ID or URL."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v13/deployments/{idOrUrl} endpoint"
+    inputs:
+      - name: idOrUrl
+        type: string
+        description: "Deployment ID or URL"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: deployment
+        type: object
+        description: "Deployment details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelCancelDeployment:
+    type: utility
+    description: "Cancel a deployment that is currently building."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API PATCH /v12/deployments/{id}/cancel endpoint"
+    inputs:
+      - name: id
+        type: string
+        description: "Deployment ID"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: result
+        type: object
+        description: "Cancellation result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelListProjects:
+    type: utility
+    description: "List all projects in your Vercel account or team."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v9/projects endpoint"
+    inputs:
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+      - name: search
+        type: string
+        optional: true
+        description: "Search query"
+    outputs:
+      - name: projects
+        type: array
+        description: "Array of project objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetProject:
+    type: utility
+    description: "Get details of a specific Vercel project by name or ID."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v9/projects/{idOrName} endpoint"
+    inputs:
+      - name: idOrName
+        type: string
+        description: "Project ID or name"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: project
+        type: object
+        description: "Project details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelListDomains:
+    type: utility
+    description: "List all domains configured in your Vercel account."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v5/domains endpoint"
+    inputs:
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+    outputs:
+      - name: domains
+        type: array
+        description: "Array of domain objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetDomain:
+    type: utility
+    description: "Get details and configuration for a specific domain."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v5/domains/{name} endpoint"
+    inputs:
+      - name: name
+        type: string
+        description: "Domain name"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: domain
+        type: object
+        description: "Domain details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelListProjectDomains:
+    type: utility
+    description: "List all domains assigned to a specific project."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v9/projects/{idOrName}/domains endpoint"
+    inputs:
+      - name: idOrName
+        type: string
+        description: "Project ID or name"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: domains
+        type: array
+        description: "Array of project domain objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelListEnvVars:
+    type: utility
+    description: "List environment variables for a Vercel project."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v9/projects/{idOrName}/env endpoint"
+    inputs:
+      - name: idOrName
+        type: string
+        description: "Project ID or name"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: envVars
+        type: array
+        description: "Array of environment variable objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelCreateEnvVar:
+    type: utility
+    description: "Create a new environment variable on a Vercel project."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API POST /v10/projects/{idOrName}/env endpoint"
+    inputs:
+      - name: idOrName
+        type: string
+        description: "Project ID or name"
+      - name: key
+        type: string
+        description: "Variable name"
+      - name: value
+        type: string
+        description: "Variable value"
+      - name: target
+        type: array
+        description: "Target environments"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: envVar
+        type: object
+        description: "Created environment variable"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelDeleteEnvVar:
+    type: utility
+    description: "Delete an environment variable from a Vercel project."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API DELETE /v9/projects/{idOrName}/env/{envId} endpoint"
+    inputs:
+      - name: idOrName
+        type: string
+        description: "Project ID or name"
+      - name: envId
+        type: string
+        description: "Environment variable ID"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetDeploymentEvents:
+    type: utility
+    description: "Get build logs and runtime events for a deployment."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v3/deployments/{idOrUrl}/events endpoint"
+    inputs:
+      - name: idOrUrl
+        type: string
+        description: "Deployment ID or URL"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: events
+        type: array
+        description: "Array of deployment events"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetUsage:
+    type: utility
+    description: "Get billing usage and consumption data (requests, bandwidth, invocations) for a date range."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v1/billing/charges endpoint with JSONL response parsing"
+    inputs:
+      - name: from
+        type: string
+        description: "Start date in ISO 8601 UTC format (inclusive)"
+      - name: to
+        type: string
+        description: "End date in ISO 8601 UTC format (exclusive)"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: summary
+        type: array
+        description: "Usage aggregated by service name with total cost and quantity"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.vercelGetRuntimeLogs:
+    type: utility
+    description: "Get runtime request logs for a deployment (method, path, status code, source)."
+    path: "vercel"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Vercel API GET /v1/projects/{projectId}/deployments/{deploymentId}/runtime-logs endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Project ID"
+      - name: deploymentId
+        type: string
+        description: "Deployment ID"
+      - name: teamId
+        type: string
+        optional: true
+        description: "Team ID for scoping"
+    outputs:
+      - name: logs
+        type: array
+        description: "Array of runtime log entries"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ─── Neon Serverless Postgres ──────────────────────────────────────────
+
+  ops.neonListProjects:
+    type: utility
+    description: "List all Neon projects with optional search filtering."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects endpoint"
+    inputs:
+      - name: search
+        type: string
+        optional: true
+        description: "Search by project name or ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results (default 10, max 400)"
+    outputs:
+      - name: projects
+        type: array
+        description: "Array of project objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonGetProject:
+    type: utility
+    description: "Get details of a specific Neon project by ID."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id} endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+    outputs:
+      - name: project
+        type: object
+        description: "Project details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonCreateProject:
+    type: utility
+    description: "Create a new Neon project with a default branch and database."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API POST /projects endpoint"
+    inputs:
+      - name: name
+        type: string
+        optional: true
+        description: "Project name"
+      - name: regionId
+        type: string
+        optional: true
+        description: "Deployment region"
+      - name: pgVersion
+        type: number
+        optional: true
+        description: "PostgreSQL major version"
+    outputs:
+      - name: project
+        type: object
+        description: "Created project with connection URIs"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonDeleteProject:
+    type: utility
+    description: "Permanently delete a Neon project and all its resources."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API DELETE /projects/{project_id} endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID to delete"
+    outputs:
+      - name: project
+        type: object
+        description: "Deleted project details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonListBranches:
+    type: utility
+    description: "List all branches in a Neon project."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id}/branches endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+    outputs:
+      - name: branches
+        type: array
+        description: "Array of branch objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonCreateBranch:
+    type: utility
+    description: "Create a new branch from a parent branch in a Neon project."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API POST /projects/{project_id}/branches endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: name
+        type: string
+        optional: true
+        description: "Branch name"
+      - name: parentBranchId
+        type: string
+        optional: true
+        description: "Parent branch ID to fork from"
+    outputs:
+      - name: branch
+        type: object
+        description: "Created branch with endpoints"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonDeleteBranch:
+    type: utility
+    description: "Delete a branch from a Neon project."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API DELETE /projects/{project_id}/branches/{branch_id} endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: branchId
+        type: string
+        description: "Branch ID to delete"
+    outputs:
+      - name: branch
+        type: object
+        description: "Deleted branch details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonListDatabases:
+    type: utility
+    description: "List all databases on a specific branch."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id}/branches/{branch_id}/databases endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: branchId
+        type: string
+        description: "Branch ID"
+    outputs:
+      - name: databases
+        type: array
+        description: "Array of database objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonCreateDatabase:
+    type: utility
+    description: "Create a new database on a branch."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API POST /projects/{project_id}/branches/{branch_id}/databases endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: branchId
+        type: string
+        description: "Branch ID"
+      - name: name
+        type: string
+        description: "Database name"
+      - name: ownerName
+        type: string
+        description: "Owner role name"
+    outputs:
+      - name: database
+        type: object
+        description: "Created database details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonDeleteDatabase:
+    type: utility
+    description: "Delete a database from a branch."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API DELETE /projects/{project_id}/branches/{branch_id}/databases/{database_name} endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: branchId
+        type: string
+        description: "Branch ID"
+      - name: databaseName
+        type: string
+        description: "Database name to delete"
+    outputs:
+      - name: database
+        type: object
+        description: "Deleted database details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonListEndpoints:
+    type: utility
+    description: "List compute endpoints for a Neon project."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id}/endpoints endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+    outputs:
+      - name: endpoints
+        type: array
+        description: "Array of endpoint objects with status and config"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonStartEndpoint:
+    type: utility
+    description: "Start a suspended compute endpoint."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API POST /projects/{project_id}/endpoints/{endpoint_id}/start endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: endpointId
+        type: string
+        description: "Endpoint ID to start"
+    outputs:
+      - name: endpoint
+        type: object
+        description: "Started endpoint details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonSuspendEndpoint:
+    type: utility
+    description: "Suspend a running compute endpoint to save costs."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API POST /projects/{project_id}/endpoints/{endpoint_id}/suspend endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: endpointId
+        type: string
+        description: "Endpoint ID to suspend"
+    outputs:
+      - name: endpoint
+        type: object
+        description: "Suspended endpoint details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonGetConnectionUri:
+    type: utility
+    description: "Get a PostgreSQL connection string for a database."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id}/connection_uri endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: databaseName
+        type: string
+        description: "Database name"
+      - name: roleName
+        type: string
+        description: "Role name"
+      - name: branchId
+        type: string
+        optional: true
+        description: "Branch ID (defaults to default branch)"
+    outputs:
+      - name: uri
+        type: string
+        description: "PostgreSQL connection URI"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonListOperations:
+    type: utility
+    description: "List recent operations for a Neon project."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /projects/{project_id}/operations endpoint"
+    inputs:
+      - name: projectId
+        type: string
+        description: "Neon project ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+    outputs:
+      - name: operations
+        type: array
+        description: "Array of operation objects with status and duration"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.neonGetConsumption:
+    type: utility
+    description: "Get usage metrics (compute time, storage, data written) for a date range."
+    path: "neon"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Neon API GET /consumption_history/account or /consumption_history/projects endpoint"
+    inputs:
+      - name: from
+        type: string
+        description: "Start date in ISO 8601 format"
+      - name: to
+        type: string
+        description: "End date in ISO 8601 format"
+      - name: granularity
+        type: string
+        description: "Time granularity: hourly, daily, or monthly"
+      - name: projectIds
+        type: string
+        optional: true
+        description: "Comma-separated project IDs to filter"
+    outputs:
+      - name: consumption
+        type: object
+        description: "Usage metrics by time period"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ─── Cloudflare API ─────────────────────────────────────────────────────
+
+  ops.cloudflareListZones:
+    type: utility
+    description: "List Cloudflare zones with optional name and status filtering."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /zones endpoint"
+    inputs:
+      - name: name
+        type: string
+        optional: true
+        description: "Zone name filter"
+      - name: status
+        type: string
+        optional: true
+        description: "Zone status filter"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: zones
+        type: array
+        description: "Array of zone objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareGetZone:
+    type: utility
+    description: "Get details of a specific Cloudflare zone by ID."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /zones/{zone_id} endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+    outputs:
+      - name: zone
+        type: object
+        description: "Zone details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflarePurgeCache:
+    type: utility
+    description: "Purge cached content from a Cloudflare zone by URLs or purge everything."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API POST /zones/{zone_id}/purge_cache endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+      - name: purge_everything
+        type: boolean
+        optional: true
+        description: "Purge all cached content"
+      - name: files
+        type: array
+        optional: true
+        description: "Specific URLs to purge"
+    outputs:
+      - name: result
+        type: object
+        description: "Purge result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareListDnsRecords:
+    type: utility
+    description: "List DNS records for a Cloudflare zone with type and name filters."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /zones/{zone_id}/dns_records endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+      - name: type
+        type: string
+        optional: true
+        description: "Record type filter"
+      - name: name
+        type: string
+        optional: true
+        description: "Record name filter"
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: records
+        type: array
+        description: "Array of DNS record objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareCreateDnsRecord:
+    type: utility
+    description: "Create a new DNS record in a Cloudflare zone."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API POST /zones/{zone_id}/dns_records endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+      - name: type
+        type: string
+        description: "Record type (A, AAAA, CNAME, etc.)"
+      - name: name
+        type: string
+        description: "Record name"
+      - name: content
+        type: string
+        description: "Record content"
+      - name: proxied
+        type: boolean
+        optional: true
+        description: "Whether proxied through Cloudflare"
+    outputs:
+      - name: record
+        type: object
+        description: "Created DNS record"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareUpdateDnsRecord:
+    type: utility
+    description: "Update an existing DNS record in a Cloudflare zone."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API PUT /zones/{zone_id}/dns_records/{record_id} endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+      - name: record_id
+        type: string
+        description: "DNS record ID"
+      - name: type
+        type: string
+        description: "Record type"
+      - name: name
+        type: string
+        description: "Record name"
+      - name: content
+        type: string
+        description: "Record content"
+      - name: proxied
+        type: boolean
+        optional: true
+        description: "Whether proxied through Cloudflare"
+    outputs:
+      - name: record
+        type: object
+        description: "Updated DNS record"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareDeleteDnsRecord:
+    type: utility
+    description: "Delete a DNS record from a Cloudflare zone."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API DELETE /zones/{zone_id}/dns_records/{record_id} endpoint"
+    inputs:
+      - name: zone_id
+        type: string
+        description: "Zone ID"
+      - name: record_id
+        type: string
+        description: "DNS record ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareListWorkers:
+    type: utility
+    description: "List all Workers scripts in your Cloudflare account."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /accounts/{account_id}/workers/scripts endpoint"
+    inputs: []
+    outputs:
+      - name: workers
+        type: array
+        description: "Array of Worker script objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareGetWorker:
+    type: utility
+    description: "Get metadata and bindings for a specific Worker script."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /accounts/{account_id}/workers/scripts/{script_name}/settings endpoint"
+    inputs:
+      - name: script_name
+        type: string
+        description: "Worker script name"
+    outputs:
+      - name: worker
+        type: object
+        description: "Worker metadata and bindings"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareDeleteWorker:
+    type: utility
+    description: "Delete a Worker script from your Cloudflare account."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API DELETE /accounts/{account_id}/workers/scripts/{script_name} endpoint"
+    inputs:
+      - name: script_name
+        type: string
+        description: "Worker script name"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareListKvNamespaces:
+    type: utility
+    description: "List KV namespaces in your Cloudflare account."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /accounts/{account_id}/storage/kv/namespaces endpoint"
+    inputs:
+      - name: per_page
+        type: number
+        optional: true
+        description: "Results per page"
+    outputs:
+      - name: namespaces
+        type: array
+        description: "Array of KV namespace objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareListKvKeys:
+    type: utility
+    description: "List keys in a Cloudflare KV namespace with optional prefix filter."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys endpoint"
+    inputs:
+      - name: namespace_id
+        type: string
+        description: "KV namespace ID"
+      - name: prefix
+        type: string
+        optional: true
+        description: "Key prefix filter"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max results"
+    outputs:
+      - name: keys
+        type: array
+        description: "Array of key objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareGetKvValue:
+    type: utility
+    description: "Get the value of a key from a Cloudflare KV namespace."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API GET /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name} endpoint"
+    inputs:
+      - name: namespace_id
+        type: string
+        description: "KV namespace ID"
+      - name: key_name
+        type: string
+        description: "Key name"
+    outputs:
+      - name: value
+        type: string
+        description: "The stored value"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflarePutKvValue:
+    type: utility
+    description: "Write a key-value pair to a Cloudflare KV namespace."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API PUT /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name} endpoint"
+    inputs:
+      - name: namespace_id
+        type: string
+        description: "KV namespace ID"
+      - name: key_name
+        type: string
+        description: "Key name"
+      - name: value
+        type: string
+        description: "Value to store"
+    outputs:
+      - name: result
+        type: object
+        description: "Write confirmation"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.cloudflareDeleteKvKey:
+    type: utility
+    description: "Delete a key from a Cloudflare KV namespace."
+    path: "cloudflare"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Cloudflare API DELETE /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name} endpoint"
+    inputs:
+      - name: namespace_id
+        type: string
+        description: "KV namespace ID"
+      - name: key_name
+        type: string
+        description: "Key name"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ─── Slack Tools ─────────────────────────────────────────────────────────────
+
+  ops.slackSendMessage:
+    type: utility
+    description: "Send a message to a Slack channel or thread."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API chat.postMessage endpoint"
+    inputs:
+      - name: channel
+        type: string
+        description: "Channel ID or name"
+      - name: text
+        type: string
+        description: "Message text"
+      - name: thread_ts
+        type: string
+        optional: true
+        description: "Thread timestamp to reply in"
+      - name: unfurl_links
+        type: boolean
+        optional: true
+        description: "Enable link unfurling"
+    outputs:
+      - name: message
+        type: object
+        description: "Sent message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackListChannels:
+    type: utility
+    description: "List public and private channels in a Slack workspace."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API conversations.list endpoint"
+    inputs:
+      - name: types
+        type: string
+        optional: true
+        description: "Channel types filter"
+      - name: limit
+        type: number
+        optional: true
+        description: "Results per page"
+      - name: cursor
+        type: string
+        optional: true
+        description: "Pagination cursor"
+    outputs:
+      - name: channels
+        type: array
+        description: "Array of channel objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackGetChannel:
+    type: utility
+    description: "Get detailed information about a specific Slack channel."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API conversations.info endpoint"
+    inputs:
+      - name: channel
+        type: string
+        description: "Channel ID"
+    outputs:
+      - name: channel
+        type: object
+        description: "Channel details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackListUsers:
+    type: utility
+    description: "List all users in a Slack workspace."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API users.list endpoint"
+    inputs:
+      - name: limit
+        type: number
+        optional: true
+        description: "Results per page"
+      - name: cursor
+        type: string
+        optional: true
+        description: "Pagination cursor"
+    outputs:
+      - name: members
+        type: array
+        description: "Array of user objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackGetUser:
+    type: utility
+    description: "Get profile details of a specific Slack user."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API users.info endpoint"
+    inputs:
+      - name: user
+        type: string
+        description: "User ID"
+    outputs:
+      - name: user
+        type: object
+        description: "User profile details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackAddReaction:
+    type: utility
+    description: "Add an emoji reaction to a Slack message."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API reactions.add endpoint"
+    inputs:
+      - name: channel
+        type: string
+        description: "Channel ID"
+      - name: timestamp
+        type: string
+        description: "Message timestamp"
+      - name: name
+        type: string
+        description: "Emoji name without colons"
+    outputs:
+      - name: result
+        type: object
+        description: "Reaction result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackUploadFile:
+    type: utility
+    description: "Upload a text file or snippet to a Slack channel."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API files.upload endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: content
+        type: string
+        description: "File content"
+      - name: filename
+        type: string
+        description: "Filename"
+      - name: title
+        type: string
+        optional: true
+        description: "File title"
+      - name: initial_comment
+        type: string
+        optional: true
+        description: "Comment with the file"
+    outputs:
+      - name: file
+        type: object
+        description: "Uploaded file details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackSetChannelTopic:
+    type: utility
+    description: "Set the topic of a Slack channel."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API conversations.setTopic endpoint"
+    inputs:
+      - name: channel
+        type: string
+        description: "Channel ID"
+      - name: topic
+        type: string
+        description: "New topic text"
+    outputs:
+      - name: channel
+        type: object
+        description: "Updated channel"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackListMessages:
+    type: utility
+    description: "Retrieve recent messages from a Slack channel."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API conversations.history endpoint"
+    inputs:
+      - name: channel
+        type: string
+        description: "Channel ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Number of messages"
+      - name: cursor
+        type: string
+        optional: true
+        description: "Pagination cursor"
+      - name: oldest
+        type: string
+        optional: true
+        description: "Messages after this Unix timestamp"
+      - name: latest
+        type: string
+        optional: true
+        description: "Messages before this Unix timestamp"
+    outputs:
+      - name: messages
+        type: array
+        description: "Array of message objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.slackSearchMessages:
+    type: utility
+    description: "Search for messages across a Slack workspace."
+    path: "slack"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Slack API search.messages endpoint"
+    inputs:
+      - name: query
+        type: string
+        description: "Search query"
+      - name: sort
+        type: string
+        optional: true
+        description: "Sort by score or timestamp"
+      - name: count
+        type: number
+        optional: true
+        description: "Number of results"
+    outputs:
+      - name: messages
+        type: object
+        description: "Search results"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  # ─── Discord Tools ──────────────────────────────────────────────────────────
+
+  ops.discordSendMessage:
+    type: utility
+    description: "Send a message to a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API POST /channels/{channel_id}/messages endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: content
+        type: string
+        description: "Message content"
+      - name: tts
+        type: boolean
+        optional: true
+        description: "Text-to-speech"
+    outputs:
+      - name: message
+        type: object
+        description: "Sent message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordListGuilds:
+    type: utility
+    description: "List guilds (servers) the bot is a member of."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /users/@me/guilds endpoint"
+    inputs:
+      - name: limit
+        type: number
+        optional: true
+        description: "Number of guilds"
+      - name: before
+        type: string
+        optional: true
+        description: "Get guilds before this ID"
+      - name: after
+        type: string
+        optional: true
+        description: "Get guilds after this ID"
+    outputs:
+      - name: guilds
+        type: array
+        description: "Array of guild objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordGetGuild:
+    type: utility
+    description: "Get detailed information about a Discord guild."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /guilds/{guild_id} endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+      - name: with_counts
+        type: boolean
+        optional: true
+        description: "Include member and presence counts"
+    outputs:
+      - name: guild
+        type: object
+        description: "Guild details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordListChannels:
+    type: utility
+    description: "List all channels in a Discord guild."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /guilds/{guild_id}/channels endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+    outputs:
+      - name: channels
+        type: array
+        description: "Array of channel objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordGetChannel:
+    type: utility
+    description: "Get detailed information about a specific Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /channels/{channel_id} endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+    outputs:
+      - name: channel
+        type: object
+        description: "Channel details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordListMessages:
+    type: utility
+    description: "Retrieve recent messages from a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /channels/{channel_id}/messages endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Number of messages (1-100)"
+      - name: before
+        type: string
+        optional: true
+        description: "Get messages before this ID"
+      - name: after
+        type: string
+        optional: true
+        description: "Get messages after this ID"
+      - name: around
+        type: string
+        optional: true
+        description: "Get messages around this ID"
+    outputs:
+      - name: messages
+        type: array
+        description: "Array of message objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordCreateChannel:
+    type: utility
+    description: "Create a new text or voice channel in a Discord guild."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API POST /guilds/{guild_id}/channels endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+      - name: name
+        type: string
+        description: "Channel name"
+      - name: type
+        type: number
+        optional: true
+        description: "Channel type (0=text, 2=voice, 4=category, 5=announcement)"
+      - name: topic
+        type: string
+        optional: true
+        description: "Channel topic"
+      - name: parent_id
+        type: string
+        optional: true
+        description: "Parent category ID"
+    outputs:
+      - name: channel
+        type: object
+        description: "Created channel details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordEditMessage:
+    type: utility
+    description: "Edit a previously sent message in a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API PATCH /channels/{channel_id}/messages/{message_id} endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+      - name: content
+        type: string
+        description: "New message content"
+    outputs:
+      - name: message
+        type: object
+        description: "Updated message"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordDeleteMessage:
+    type: utility
+    description: "Delete a message from a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API DELETE /channels/{channel_id}/messages/{message_id} endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Deletion confirmation"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordAddReaction:
+    type: utility
+    description: "Add an emoji reaction to a Discord message."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API PUT /channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+      - name: emoji
+        type: string
+        description: "URL-encoded emoji or custom emoji name:id"
+    outputs:
+      - name: result
+        type: object
+        description: "Reaction result"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordListMembers:
+    type: utility
+    description: "List members of a Discord guild with pagination."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /guilds/{guild_id}/members endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Number of members (1-1000)"
+      - name: after
+        type: string
+        optional: true
+        description: "Get members after this user ID"
+    outputs:
+      - name: members
+        type: array
+        description: "Array of member objects"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordGetMember:
+    type: utility
+    description: "Get detailed information about a specific guild member."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /guilds/{guild_id}/members/{user_id} endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+      - name: user_id
+        type: string
+        description: "User ID"
+    outputs:
+      - name: member
+        type: object
+        description: "Member details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordCreateThread:
+    type: utility
+    description: "Create a new thread from a message in a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API POST /channels/{channel_id}/messages/{message_id}/threads endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+      - name: name
+        type: string
+        description: "Thread name"
+      - name: auto_archive_duration
+        type: number
+        optional: true
+        description: "Auto-archive duration in minutes"
+    outputs:
+      - name: thread
+        type: object
+        description: "Created thread details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordListThreads:
+    type: utility
+    description: "List active threads in a Discord guild."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API GET /guilds/{guild_id}/threads/active endpoint"
+    inputs:
+      - name: guild_id
+        type: string
+        description: "Guild ID"
+    outputs:
+      - name: threads
+        type: object
+        description: "Active threads and members"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.discordPinMessage:
+    type: utility
+    description: "Pin a message in a Discord channel."
+    path: "discord"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Discord API PUT /channels/{channel_id}/pins/{message_id} endpoint"
+    inputs:
+      - name: channel_id
+        type: string
+        description: "Channel ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: result
+        type: object
+        description: "Pin confirmation"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
 # =============================================================================
 # VALIDATORS - Which validators to run against each block
 # =============================================================================

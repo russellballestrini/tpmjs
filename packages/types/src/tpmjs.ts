@@ -30,6 +30,14 @@ export const TPMJS_CATEGORIES = [
   'automation',
   'ai-ml',
   'monitoring',
+  // Business categories
+  'finance',
+  'legal',
+  'hr',
+  'marketing',
+  'cx',
+  'edu',
+  'sales',
   // Aliases
   'doc',
   'text',

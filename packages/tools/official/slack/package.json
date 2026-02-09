@@ -1,0 +1,94 @@
+{
+  "name": "@tpmjs/tools-slack",
+  "version": "0.1.0",
+  "description": "Slack API tools for AI agents. Send messages, manage channels, list users, search messages, upload files, and more.",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "slack",
+    "messaging",
+    "ops",
+    "agent"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/slack"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "ops",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "tools": [
+      {
+        "name": "sendMessage",
+        "description": "Send a message to a Slack channel or thread."
+      },
+      {
+        "name": "listChannels",
+        "description": "List public and private channels in a Slack workspace."
+      },
+      {
+        "name": "getChannel",
+        "description": "Get detailed information about a specific Slack channel."
+      },
+      {
+        "name": "listUsers",
+        "description": "List all users in a Slack workspace."
+      },
+      {
+        "name": "getUser",
+        "description": "Get profile details of a specific Slack user."
+      },
+      {
+        "name": "addReaction",
+        "description": "Add an emoji reaction to a Slack message."
+      },
+      {
+        "name": "uploadFile",
+        "description": "Upload a text file or snippet to a Slack channel."
+      },
+      {
+        "name": "setChannelTopic",
+        "description": "Set the topic of a Slack channel."
+      },
+      {
+        "name": "listMessages",
+        "description": "Retrieve recent messages from a Slack channel."
+      },
+      {
+        "name": "searchMessages",
+        "description": "Search for messages across a Slack workspace."
+      }
+    ]
+  }
+}
