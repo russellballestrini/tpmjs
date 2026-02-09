@@ -67,7 +67,7 @@ function cleanupMemoryStore() {
 /**
  * Get client identifier from request (IP address)
  */
-function getClientId(request: NextRequest): string {
+export function getClientId(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   const realIp = request.headers.get('x-real-ip');
 

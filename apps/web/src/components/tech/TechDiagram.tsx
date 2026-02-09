@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Spinner } from '@tpmjs/ui/Spinner/Spinner';
+import { useState } from 'react';
 
 export function TechDiagram() {
   const [isLoading, setIsLoading] = useState(true);
@@ -10,13 +10,8 @@ export function TechDiagram() {
   if (hasError) {
     return (
       <div className="w-full h-[700px] border border-border rounded-lg overflow-hidden flex flex-col items-center justify-center gap-4 p-8 text-center">
-        <p className="text-foreground-secondary">
-          The interactive diagram failed to load.
-        </p>
-        <a
-          href="/architecture"
-          className="text-blue-500 hover:underline text-sm"
-        >
+        <p className="text-foreground-secondary">The interactive diagram failed to load.</p>
+        <a href="/architecture" className="text-blue-500 hover:underline text-sm">
           View the alternative architecture diagram &rarr;
         </a>
       </div>

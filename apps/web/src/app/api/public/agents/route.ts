@@ -86,6 +86,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         provider: agent.provider,
         modelId: agent.modelId,
         likeCount: agent.likeCount,
+        forkCount: agent.forkCount,
         toolCount: agent._count.tools,
         collectionCount: agent._count.collections,
         createdAt: agent.createdAt,

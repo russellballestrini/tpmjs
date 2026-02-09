@@ -10,6 +10,8 @@ interface HeroSectionProps {
     packageCount: number;
     toolCount: number;
     categoryCount: number;
+    totalDownloads: number;
+    totalStars: number;
   };
 }
 
@@ -79,6 +81,15 @@ export function HeroSection({ stats }: HeroSectionProps): React.ReactElement {
               <span className="text-foreground">{formatNumber(stats.toolCount)}</span>
               <span className="text-foreground-secondary">TOOLS</span>
             </div>
+            {stats.totalDownloads > 0 && (
+              <>
+                <span className="text-foreground-tertiary">/</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground">{formatNumber(stats.totalDownloads)}</span>
+                  <span className="text-foreground-secondary">DOWNLOADS</span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Subheading */}

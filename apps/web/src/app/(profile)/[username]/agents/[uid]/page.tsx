@@ -11,6 +11,7 @@ import { AppHeader } from '~/components/AppHeader';
 import { ForkButton } from '~/components/ForkButton';
 import { ForkedFromBadge } from '~/components/ForkedFromBadge';
 import { LikeButton } from '~/components/LikeButton';
+import { useTrackView } from '~/hooks/useTrackView';
 import { useSession } from '~/lib/auth-client';
 
 interface AgentTool {
@@ -183,6 +184,7 @@ const response = await fetch(\`${apiUrl}/\${conversation.id}\`, {
   );
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: large detail page with many conditional sections
 export default function PrettyAgentDetailPage(): React.ReactElement {
   const params = useParams();
   const rawUsername = params.username as string;
@@ -193,6 +195,9 @@ export default function PrettyAgentDetailPage(): React.ReactElement {
   const [agent, setAgent] = useState<PublicAgent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Track page view
+  useTrackView('agent', agent?.id ?? '');
 
   // Check if current user is the owner
   const isOwner = session?.user?.id && agent?.createdBy?.id === session.user.id;

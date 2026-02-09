@@ -14,6 +14,7 @@ import { ScenariosSection } from '~/components/ScenariosSection';
 import { ShareButton } from '~/components/ShareButton';
 import { SkillsSection } from '~/components/skills/SkillsSection';
 import { UseCasesSection } from '~/components/UseCasesSection';
+import { useTrackView } from '~/hooks/useTrackView';
 import { useSession } from '~/lib/auth-client';
 
 /**
@@ -312,6 +313,9 @@ export function CollectionDetailClient({
 }: CollectionDetailClientProps) {
   const { data: session } = useSession();
   const [collection, setCollection] = useState(initialCollection);
+
+  // Track page view
+  useTrackView('collection', collection.id);
 
   // Check if current user is the owner
   const isOwner = session?.user?.id && collection.createdBy?.id === session.user.id;

@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") // Direct connection for migrations (bypasses pooler)
+  directUrl = env("DATABASE_URL_UNPOOLED") // Direct connection for migrations (bypasses pooler)
 }
 
 /// Package table - stores NPM package metadata (package-level)
@@ -95,6 +95,9 @@ model Tool {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // View tracking (denormalized, rolled up daily)
+  viewCount    Int      @default(0) @map("view_count")
+
   // Rating aggregates
   averageRating Decimal? @map("average_rating") @db.Decimal(2, 1) // 1.0 to 5.0
   ratingCount   Int      @default(0) @map("rating_count")
@@ -116,6 +119,7 @@ model Tool {
   @@index([likeCount])
   @@index([averageRating])
   @@index([ratingCount])
+  @@index([viewCount])
   @@index([reviewCount])
   @@index([importHealth])
   @@index([executionHealth])
@@ -326,11 +330,31 @@ model StatsSnapshot {
   // Category Breakdown (stored as JSON)
   categories Json? @db.JsonB
 
+  // Social Proof Fields (added for homepage real data)
+  activeDevs7d     Int @default(0) @map("active_devs_7d")
+  totalCollections Int @default(0) @map("total_collections")
+  totalAgents      Int @default(0) @map("total_agents")
+  totalSimulations Int @default(0) @map("total_simulations")
+
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([date])
   @@map("stats_snapshots")
+}
+
+/// PageView - daily-bucketed view counts for entities (tools, collections, agents)
+model PageView {
+  id         String   @id @default(cuid())
+  entityType String   @map("entity_type") @db.VarChar(20) // 'tool' | 'collection' | 'agent'
+  entityId   String   @map("entity_id")
+  viewCount  Int      @default(0) @map("view_count")
+  date       DateTime @db.Date
+
+  @@unique([entityType, entityId, date])
+  @@index([entityType, entityId])
+  @@index([date])
+  @@map("page_views")
 }
 
 // ============================================================================
@@ -442,6 +466,9 @@ model Collection {
   isPublic    Boolean  @default(false) @map("is_public")
   likeCount   Int      @default(0) @map("like_count")
 
+  // View tracking (denormalized, rolled up daily)
+  viewCount   Int      @default(0) @map("view_count")
+
   // Executor configuration (optional - uses system default if not set)
   executorType   String? @map("executor_type") @db.VarChar(50)
   executorConfig Json?   @map("executor_config") @db.JsonB
@@ -489,6 +516,7 @@ model Collection {
   @@index([slug])
   @@index([isPublic])
   @@index([likeCount])
+  @@index([viewCount])
   @@index([createdAt])
   @@index([forkedFromId])
   @@index([forkCount])
@@ -567,6 +595,9 @@ model Agent {
   isPublic             Boolean    @default(true) @map("is_public")
   likeCount            Int        @default(0) @map("like_count")
 
+  // View tracking (denormalized, rolled up daily)
+  viewCount            Int        @default(0) @map("view_count")
+
   // Executor configuration (optional - uses system default if not set)
   // Agent executor overrides collection executor overrides system default
   executorType         String?    @map("executor_type") @db.VarChar(50)
@@ -597,6 +628,7 @@ model Agent {
   @@index([uid])
   @@index([isPublic])
   @@index([likeCount])
+  @@index([viewCount])
   @@index([createdAt])
   @@index([forkedFromId])
   @@index([forkCount])

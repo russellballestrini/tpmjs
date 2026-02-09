@@ -79,6 +79,7 @@ async function getTool(slug: string[]): Promise<Tool | null> {
     healthCheckError: tool.healthCheckError ?? null,
     lastHealthCheck: tool.lastHealthCheck?.toISOString() ?? null,
     likeCount: tool.likeCount,
+    viewCount: tool.viewCount,
     averageRating: tool.averageRating?.toString() ?? null,
     ratingCount: tool.ratingCount,
     reviewCount: tool.reviewCount,

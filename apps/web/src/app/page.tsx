@@ -5,6 +5,7 @@ import { Container } from '@tpmjs/ui/Container/Container';
 import { Icon } from '@tpmjs/ui/Icon/Icon';
 import Link from 'next/link';
 import { AppHeader } from '../components/AppHeader';
+import { EcosystemStats } from '../components/home/EcosystemStats';
 import { FeaturesSection } from '../components/home/FeaturesSection';
 import { HeroSection } from '../components/home/HeroSection';
 
@@ -13,95 +14,127 @@ export const dynamic = 'force-dynamic';
 async function getHomePageData() {
   try {
     // Fetch stats in parallel
-    const [packageCount, toolCount, featuredTools, categoryStats, featuredScenarios] =
-      await Promise.all([
-        // Total package count
-        prisma.package.count(),
+    const [
+      packageCount,
+      toolCount,
+      featuredTools,
+      categoryStats,
+      featuredScenarios,
+      latestSnapshot,
+    ] = await Promise.all([
+      // Total package count
+      prisma.package.count(),
 
-        // Total tool count
-        prisma.tool.count(),
+      // Total tool count
+      prisma.tool.count(),
 
-        // Top 6 featured tools by quality score
-        prisma.tool.findMany({
-          orderBy: [{ qualityScore: 'desc' }, { package: { npmDownloadsLastMonth: 'desc' } }],
-          take: 6,
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            qualityScore: true,
-            package: {
+      // Top 6 featured tools by quality score
+      prisma.tool.findMany({
+        orderBy: [{ qualityScore: 'desc' }, { package: { npmDownloadsLastMonth: 'desc' } }],
+        take: 6,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          qualityScore: true,
+          likeCount: true,
+          package: {
+            select: {
+              npmPackageName: true,
+              category: true,
+              npmDownloadsLastMonth: true,
+              isOfficial: true,
+            },
+          },
+        },
+      }),
+
+      // Category distribution for stats (group by package category)
+      prisma.package.groupBy({
+        by: ['category'],
+        _count: {
+          _all: true,
+        },
+      }),
+
+      // Featured scenarios - mix of high quality, diverse, and fresh
+      (async () => {
+        // Get high quality scenarios
+        const highQuality = await prisma.scenario.findMany({
+          where: {
+            collection: { isPublic: true },
+            qualityScore: { gte: 0.3 },
+            totalRuns: { gte: 1 },
+          },
+          orderBy: { qualityScore: 'desc' },
+          take: 3,
+          include: {
+            collection: {
               select: {
-                npmPackageName: true,
-                category: true,
-                npmDownloadsLastMonth: true,
-                isOfficial: true,
+                id: true,
+                name: true,
+                slug: true,
+                user: { select: { username: true } },
               },
             },
           },
-        }),
+        });
 
-        // Category distribution for stats (group by package category)
-        prisma.package.groupBy({
-          by: ['category'],
-          _count: {
-            _all: true,
+        // Get fresh scenarios (excluding already selected)
+        const seenIds = new Set(highQuality.map((s) => s.id));
+        const fresh = await prisma.scenario.findMany({
+          where: {
+            collection: { isPublic: true },
+            id: { notIn: Array.from(seenIds) },
           },
-        }),
-
-        // Featured scenarios - mix of high quality, diverse, and fresh
-        (async () => {
-          // Get high quality scenarios
-          const highQuality = await prisma.scenario.findMany({
-            where: {
-              collection: { isPublic: true },
-              qualityScore: { gte: 0.3 },
-              totalRuns: { gte: 1 },
-            },
-            orderBy: { qualityScore: 'desc' },
-            take: 3,
-            include: {
-              collection: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                  user: { select: { username: true } },
-                },
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+          include: {
+            collection: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                user: { select: { username: true } },
               },
             },
-          });
+          },
+        });
 
-          // Get fresh scenarios (excluding already selected)
-          const seenIds = new Set(highQuality.map((s) => s.id));
-          const fresh = await prisma.scenario.findMany({
-            where: {
-              collection: { isPublic: true },
-              id: { notIn: Array.from(seenIds) },
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 3,
-            include: {
-              collection: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                  user: { select: { username: true } },
-                },
-              },
-            },
-          });
+        return [...highQuality, ...fresh].slice(0, 6);
+      })(),
 
-          return [...highQuality, ...fresh].slice(0, 6);
-        })(),
-      ]);
+      // Latest stats snapshot (pre-computed daily)
+      prisma.statsSnapshot.findFirst({
+        orderBy: { date: 'desc' },
+        select: {
+          totalTools: true,
+          totalPackages: true,
+          totalNpmDownloads: true,
+          totalGithubStars: true,
+          executionsTotal: true,
+          executionsAvgTimeMs: true,
+          activeDevs7d: true,
+          totalSimulations: true,
+          categories: true,
+        },
+      }),
+    ]);
 
     return {
       stats: {
         packageCount,
         toolCount,
         categoryCount: categoryStats.length,
+        totalDownloads: latestSnapshot?.totalNpmDownloads ?? 0,
+        totalStars: latestSnapshot?.totalGithubStars ?? 0,
+      },
+      ecosystemStats: {
+        publishedTools: latestSnapshot?.totalTools ?? toolCount,
+        activeDevelopers: latestSnapshot?.activeDevs7d ?? 0,
+        totalExecutions: latestSnapshot?.totalSimulations ?? 0,
+        avgResponseMs: latestSnapshot?.executionsAvgTimeMs ?? null,
+        totalDownloads: latestSnapshot?.totalNpmDownloads ?? 0,
       },
       featuredTools,
       categories: categoryStats.slice(0, 5).map((c) => ({
@@ -117,6 +150,15 @@ async function getHomePageData() {
         packageCount: 0,
         toolCount: 0,
         categoryCount: 0,
+        totalDownloads: 0,
+        totalStars: 0,
+      },
+      ecosystemStats: {
+        publishedTools: 0,
+        activeDevelopers: 0,
+        totalExecutions: 0,
+        avgResponseMs: null,
+        totalDownloads: 0,
       },
       featuredTools: [],
       categories: [],
@@ -135,8 +177,11 @@ export default async function HomePage(): Promise<React.ReactElement> {
         {/* Hero Section - Dithered Design */}
         <HeroSection stats={data.stats} />
 
+        {/* Ecosystem Stats */}
+        <EcosystemStats stats={data.ecosystemStats} />
+
         {/* Features Section */}
-        <FeaturesSection />
+        <FeaturesSection toolCount={data.stats.toolCount} />
 
         {/* Architecture Diagram Section - temporarily disabled
         <section className="py-16 bg-background border-b border-border">
@@ -200,14 +245,20 @@ export default async function HomePage(): Promise<React.ReactElement> {
                       </div>
 
                       <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-foreground-tertiary">
-                        {tool.qualityScore && Number(tool.qualityScore) > 0 ? (
-                          <span className="flex items-center gap-1">
-                            <span className="text-brutalist-accent">★</span>
-                            {Number(tool.qualityScore).toFixed(2)}
-                          </span>
-                        ) : (
-                          <span />
-                        )}
+                        <div className="flex items-center gap-3">
+                          {tool.qualityScore && Number(tool.qualityScore) > 0 ? (
+                            <span className="flex items-center gap-1">
+                              <span className="text-brutalist-accent">★</span>
+                              {Number(tool.qualityScore).toFixed(2)}
+                            </span>
+                          ) : null}
+                          {tool.likeCount > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Icon icon="heart" className="w-3 h-3 text-error" />
+                              {tool.likeCount}
+                            </span>
+                          )}
+                        </div>
                         <span>
                           {(tool.package.npmDownloadsLastMonth ?? 0) > 0
                             ? `${tool.package.npmDownloadsLastMonth?.toLocaleString()} downloads/mo`
@@ -459,7 +510,9 @@ export default async function HomePage(): Promise<React.ReactElement> {
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
                 <p className="font-mono text-xs text-foreground-secondary">
                   add to config → instant access to{' '}
-                  <span className="text-primary font-medium">170+ tools</span>
+                  <span className="text-primary font-medium">
+                    {data.stats.toolCount > 0 ? `${data.stats.toolCount}+` : '100+'} tools
+                  </span>
                 </p>
               </div>
             </fieldset>

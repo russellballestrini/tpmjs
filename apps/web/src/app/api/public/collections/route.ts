@@ -84,6 +84,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         name: collection.name,
         description: collection.description,
         likeCount: collection.likeCount,
+        forkCount: collection.forkCount,
         toolCount: collection._count.tools,
         createdAt: collection.createdAt,
         createdBy: collection.user,

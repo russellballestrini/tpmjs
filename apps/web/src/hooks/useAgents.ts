@@ -8,6 +8,7 @@ export interface PublicAgent {
   provider: string;
   modelId: string;
   likeCount: number;
+  forkCount: number;
   toolCount: number;
   collectionCount: number;
   createdAt: string;

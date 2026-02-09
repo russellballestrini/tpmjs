@@ -21,6 +21,7 @@ interface PublicCollection {
   name: string;
   description: string | null;
   likeCount: number;
+  forkCount: number;
   toolCount: number;
   createdAt: string;
   createdBy: {
@@ -53,6 +54,7 @@ function truncateText(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength).trim()}...`;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: large page component with table rendering
 export default function PublicCollectionsPage(): React.ReactElement {
   const [collections, setCollections] = useState<PublicCollection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,8 +128,9 @@ export default function PublicCollectionsPage(): React.ReactElement {
     () => (
       <tr className="bg-surface-secondary text-left text-xs font-semibold uppercase tracking-wider text-foreground-secondary border-b border-border">
         <th className="px-4 py-3 w-[250px]">Name</th>
-        <th className="px-4 py-3 w-[300px]">Description</th>
+        <th className="px-4 py-3 w-[250px]">Description</th>
         <th className="px-4 py-3 w-[80px] text-center">Tools</th>
+        <th className="px-4 py-3 w-[70px] text-center">Forks</th>
         <th className="px-4 py-3 w-[80px] text-center">Likes</th>
         <th className="px-4 py-3 w-[150px]">Creator</th>
         <th className="px-4 py-3 w-[100px] text-right">Copy</th>
@@ -158,6 +161,9 @@ export default function PublicCollectionsPage(): React.ReactElement {
           <Badge variant="secondary" size="sm">
             {collection.toolCount}
           </Badge>
+        </td>
+        <td className="px-4 py-3 text-center text-sm text-foreground-secondary">
+          {collection.forkCount > 0 ? collection.forkCount : '—'}
         </td>
         <td className="px-4 py-3 text-center">
           <LikeButton

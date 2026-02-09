@@ -18,7 +18,13 @@ interface FeatureCardProps {
   href?: string;
 }
 
-function FeatureCard({ icon, title, description, badge, href }: FeatureCardProps): React.ReactElement {
+function FeatureCard({
+  icon,
+  title,
+  description,
+  badge,
+  href,
+}: FeatureCardProps): React.ReactElement {
   const content = (
     <div className="group h-full p-6 border border-dashed border-border bg-surface hover:border-primary hover:bg-primary/5 transition-all duration-200">
       {/* Icon */}
@@ -60,13 +66,18 @@ function FeatureCard({ icon, title, description, badge, href }: FeatureCardProps
 // Main Features Section
 // ============================================================================
 
-export function FeaturesSection(): React.ReactElement {
+interface FeaturesSectionProps {
+  toolCount?: number;
+}
+
+export function FeaturesSection({ toolCount }: FeaturesSectionProps): React.ReactElement {
+  const toolCountLabel = toolCount && toolCount > 0 ? `${toolCount.toLocaleString()}` : '100+';
+
   const features = [
     {
       icon: 'search',
       title: 'tool registry',
-      description:
-        'Browse 1M+ AI tools from npm. Auto-discovered within minutes of publication with quality scoring and health monitoring.',
+      description: `Browse ${toolCountLabel} AI tools from npm. Auto-discovered within minutes of publication with quality scoring and health monitoring.`,
       badge: 'auto-sync',
       href: '/tool/tool-search',
     },

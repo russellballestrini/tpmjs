@@ -17,6 +17,7 @@ import { LikeButton } from '~/components/LikeButton';
 import { Markdown } from '~/components/Markdown';
 import { Rating } from '~/components/Rating';
 import { ToolPlayground } from '~/components/ToolPlayground';
+import { useTrackView } from '~/hooks/useTrackView';
 
 interface Package {
   id: string;
@@ -70,6 +71,7 @@ export interface Tool {
   healthCheckError?: string | null;
   lastHealthCheck?: string | null;
   likeCount?: number;
+  viewCount?: number;
   averageRating?: string | null;
   ratingCount?: number;
   reviewCount?: number;
@@ -87,6 +89,9 @@ interface ToolDetailClientProps {
 export function ToolDetailClient({ tool, slug }: ToolDetailClientProps): React.ReactElement {
   const [recheckLoading, setRecheckLoading] = useState(false);
   const [extractSchemaLoading, setExtractSchemaLoading] = useState(false);
+
+  // Track page view
+  useTrackView('tool', tool.id);
 
   const pkg = tool.package;
   const authorName = typeof pkg.npmAuthor === 'string' ? pkg.npmAuthor : pkg.npmAuthor?.name;
@@ -194,6 +199,7 @@ export function ToolDetailClient({ tool, slug }: ToolDetailClientProps): React.R
     <div className="min-h-screen bg-background">
       <script
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: required for structured data ld+json
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
       />
       <AppHeader />
@@ -597,6 +603,22 @@ console.log(result.text);`}
                     <p className="text-sm text-foreground-secondary mb-1">GitHub Stars</p>
                     <p className="text-2xl font-bold text-foreground">
                       {pkg.githubStars.toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {(tool.viewCount ?? 0) > 0 && (
+                  <div>
+                    <p className="text-sm text-foreground-secondary mb-1">Views</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {tool.viewCount?.toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {(tool.reviewCount ?? 0) > 0 && (
+                  <div>
+                    <p className="text-sm text-foreground-secondary mb-1">Reviews</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {tool.reviewCount?.toLocaleString()}
                     </p>
                   </div>
                 )}

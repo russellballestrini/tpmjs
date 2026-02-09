@@ -10,6 +10,7 @@ export const maxDuration = 60;
  * Captures a daily snapshot of registry statistics for historical tracking.
  * Should be run once per day via cron.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: cron handler with many parallel queries
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
@@ -74,6 +75,12 @@ export async function POST(request: NextRequest) {
 
       // Daily health checks
       dailyHealthChecks,
+
+      // Social proof
+      activeDevsResult,
+      publicCollectionsCount,
+      publicAgentsCount,
+      totalSimulationsCount,
 
       // Quality distribution
       qualityDistribution,
@@ -141,6 +148,17 @@ export async function POST(request: NextRequest) {
       prisma.healthCheck.count({
         where: { createdAt: { gte: yesterday, lt: today } },
       }),
+
+      // Social proof fields
+      prisma.userActivity.groupBy({
+        by: ['userId'],
+        where: {
+          createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        },
+      }),
+      prisma.collection.count({ where: { isPublic: true } }),
+      prisma.agent.count({ where: { isPublic: true } }),
+      prisma.simulation.count(),
 
       // Quality score distribution
       prisma.$queryRaw<{ bucket: string; count: bigint }[]>`
@@ -241,6 +259,12 @@ export async function POST(request: NextRequest) {
 
         // Categories
         categories,
+
+        // Social proof
+        activeDevs7d: activeDevsResult.length,
+        totalCollections: publicCollectionsCount,
+        totalAgents: publicAgentsCount,
+        totalSimulations: totalSimulationsCount,
       },
     });
 

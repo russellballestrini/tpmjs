@@ -38,6 +38,7 @@ function truncateText(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength).trim()}...`;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: large page component with table rendering
 export default function PublicAgentsPage(): React.ReactElement {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortOption>('likes');
@@ -70,9 +71,10 @@ export default function PublicAgentsPage(): React.ReactElement {
     () => (
       <tr className="bg-surface-secondary text-left text-xs font-semibold uppercase tracking-wider text-foreground-secondary border-b border-border">
         <th className="px-4 py-3 w-[200px]">Name</th>
-        <th className="px-4 py-3 w-[250px]">Description</th>
+        <th className="px-4 py-3 w-[200px]">Description</th>
         <th className="px-4 py-3 w-[100px]">Provider</th>
         <th className="px-4 py-3 w-[80px] text-center">Tools</th>
+        <th className="px-4 py-3 w-[70px] text-center">Forks</th>
         <th className="px-4 py-3 w-[80px] text-center">Likes</th>
         <th className="px-4 py-3 w-[150px]">Creator</th>
         <th className="px-4 py-3 w-[80px] text-center">Chat</th>
@@ -105,6 +107,9 @@ export default function PublicAgentsPage(): React.ReactElement {
           <Badge variant="secondary" size="sm">
             {agent.toolCount}
           </Badge>
+        </td>
+        <td className="px-4 py-3 text-center text-sm text-foreground-secondary">
+          {agent.forkCount > 0 ? agent.forkCount : '—'}
         </td>
         <td className="px-4 py-3 text-center">
           <LikeButton

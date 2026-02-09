@@ -62,6 +62,10 @@
       "schedule": "0 0 * * *"
     },
     {
+      "path": "/api/sync/view-rollup",
+      "schedule": "30 0 * * *"
+    },
+    {
       "path": "/api/sync/cleanup-activity",
       "schedule": "0 3 * * *"
     },
