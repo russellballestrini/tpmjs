@@ -49,7 +49,7 @@ actor TPMJSRegistryService {
                 name: tool.name,
                 description: tool.description ?? "Tool: \(tool.name)",
                 version: tool.package.npmVersion,
-                importUrl: "https://esm.sh/\(tool.package.npmPackageName)@\(tool.package.npmVersion)",
+                importUrl: tool.importUrl ?? "https://esm.sh/\(tool.package.npmPackageName)@\(tool.package.npmVersion)",
                 inputSchema: tool.inputSchema,
                 env: tool.package.env
             )

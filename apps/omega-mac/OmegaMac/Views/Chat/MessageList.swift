@@ -16,13 +16,13 @@ struct MessageList: View {
                     }
 
                     // Live tool calls
-                    ForEach(liveToolCalls) { tc in
+                    ForEach(isStreaming ? liveToolCalls : []) { tc in
                         ToolCallView(toolCall: tc)
                             .id("live-tc-\(tc.id)")
                     }
 
                     // Streaming content
-                    if !streamingContent.isEmpty {
+                    if isStreaming && !streamingContent.isEmpty {
                         HStack(alignment: .top) {
                             assistantBubble(content: streamingContent, isStreaming: true)
                             Spacer(minLength: 60)

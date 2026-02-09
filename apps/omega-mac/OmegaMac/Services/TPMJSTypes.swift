@@ -16,10 +16,11 @@ struct TPMJSToolResult: Decodable {
     let inputSchema: JSONValue?
     let qualityScore: Double?
     let executionHealth: String?
+    let importUrl: String?
     let package: TPMJSPackageInfo
 
     enum CodingKeys: String, CodingKey {
-        case name, description, inputSchema, qualityScore, executionHealth
+        case name, description, inputSchema, qualityScore, executionHealth, importUrl
         case package = "package"
     }
 }
@@ -28,13 +29,7 @@ struct TPMJSPackageInfo: Decodable {
     let npmPackageName: String
     let npmVersion: String
     let category: String?
-    let env: [TPMJSEnvVarDef]?
-}
-
-struct TPMJSEnvVarDef: Decodable, Sendable {
-    let name: String
-    let description: String?
-    let required: Bool?
+    let env: [String]?
 }
 
 // MARK: - Executor API Types
@@ -65,7 +60,7 @@ struct ToolMeta: Sendable {
     let version: String
     let importUrl: String
     let inputSchema: JSONValue?
-    let env: [TPMJSEnvVarDef]?
+    let env: [String]?
 
     /// Convert to an OpenAI function tool definition
     func toChatTool() -> ChatTool {
