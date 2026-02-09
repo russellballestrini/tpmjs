@@ -129,6 +129,15 @@ try {
     }),
     document.getElementById('root')
   );
+
+  // After fitToView renders, zoom in for better label readability
+  setTimeout(() => {
+    const zoomIn = document.querySelector('[aria-label="Zoom in"]') ||
+      [...document.querySelectorAll('button')].find(b => b.textContent.trim() === '+');
+    if (zoomIn) {
+      for (let i = 0; i < 4; i++) setTimeout(() => zoomIn.click(), i * 100);
+    }
+  }, 1500);
 } catch (err) {
   console.error('Isoflow load error:', err);
   document.getElementById('root').innerHTML =
