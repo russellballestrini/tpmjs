@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TPMJS Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; font-family: system-ui, sans-serif; color: #666;
+  }
+  .error { color: #666; text-align: center; }
+  .error a { color: #3b82f6; }
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">Loading diagram...</div></div>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+    "isoflow": "https://esm.sh/isoflow@1.1.1?external=react,react-dom",
+    "@isoflow/isopacks/dist/isoflow": "https://esm.sh/@isoflow/isopacks@0.0.10/dist/isoflow.js"
+  }
+}
+</script>
+<script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom';
+import isoflowPack from '@isoflow/isopacks/dist/isoflow';
+
+const collection = isoflowPack.default || isoflowPack;
+const icons = (collection.icons || []).map(icon => ({
+  id: icon.id, name: icon.name, url: icon.url,
+  collection: collection.name || 'Isoflow', isIsometric: icon.isIsometric
+}));
+
+const initialData = {
+  title: 'TPMJS Ecosystem',
+  icons,
+  colors: [
+    { id: 'orange', value: '#f97316' },
+    { id: 'blue', value: '#3b82f6' },
+    { id: 'green', value: '#22c55e' },
+    { id: 'purple', value: '#a855f7' },
+    { id: 'pink', value: '#ec4899' }
+  ],
+  items: [
+    // External Services
+    { id: 'npm', name: 'npm Registry', icon: 'cloud' },
+    { id: 'github', name: 'GitHub', icon: 'document' },
+    { id: 'vercel', name: 'Vercel', icon: 'server' },
+    { id: 'postgres', name: 'PostgreSQL', icon: 'storage' },
+    { id: 'ai', name: 'AI Providers', icon: 'diamond' },
+    // Applications
+    { id: 'web', name: 'tpmjs.com', icon: 'desktop' },
+    { id: 'playground', name: 'Playground', icon: 'laptop' },
+    { id: 'executor', name: 'Executor', icon: 'vm' },
+    // Key Published Packages
+    { id: 'cli', name: '@tpmjs/cli', icon: 'function-module' },
+    { id: 'types', name: '@tpmjs/types', icon: 'cube' },
+    { id: 'ui', name: '@tpmjs/ui', icon: 'block' },
+    { id: 'bridge', name: '@tpmjs/bridge', icon: 'router' },
+    { id: 'mcp', name: '@tpmjs/mcp-client', icon: 'loadbalancer' },
+    // Internal
+    { id: 'db', name: '@tpmjs/db', icon: 'storage' },
+    { id: 'npm-client', name: 'npm-client', icon: 'package-module' },
+    // Official Tools
+    { id: 'tools', name: '191 AI Tools', icon: 'tower' }
+  ],
+  views: [{
+    id: 'overview',
+    name: 'Ecosystem Overview',
+    items: [
+      // Top row: External Services — spread wider for readability
+      { id: 'npm', tile: { x: 0, y: 0 } },
+      { id: 'github', tile: { x: 3, y: 0 } },
+      { id: 'vercel', tile: { x: 6, y: 0 } },
+      { id: 'postgres', tile: { x: 9, y: 0 } },
+      { id: 'ai', tile: { x: 12, y: 0 } },
+      // Middle row: Applications
+      { id: 'web', tile: { x: 3, y: 4 } },
+      { id: 'playground', tile: { x: 7, y: 4 } },
+      { id: 'executor', tile: { x: 11, y: 4 } },
+      // Published Packages row
+      { id: 'cli', tile: { x: 1, y: 8 } },
+      { id: 'types', tile: { x: 4, y: 8 } },
+      { id: 'ui', tile: { x: 7, y: 8 } },
+      { id: 'bridge', tile: { x: 10, y: 8 } },
+      { id: 'mcp', tile: { x: 13, y: 8 } },
+      // Internal row
+      { id: 'db', tile: { x: 3, y: 12 } },
+      { id: 'npm-client', tile: { x: 7, y: 12 } },
+      // Official tools
+      { id: 'tools', tile: { x: 11, y: 12 } }
+    ],
+    connectors: [
+      // External → Apps
+      { id: 'c1', color: 'orange', style: 'SOLID', anchors: [{ id: 'a1', ref: { item: 'npm' } }, { id: 'a2', ref: { item: 'web' } }] },
+      { id: 'c2', color: 'orange', style: 'SOLID', anchors: [{ id: 'a3', ref: { item: 'github' } }, { id: 'a4', ref: { item: 'web' } }] },
+      { id: 'c3', color: 'orange', style: 'SOLID', anchors: [{ id: 'a5', ref: { item: 'vercel' } }, { id: 'a6', ref: { item: 'web' } }] },
+      { id: 'c4', color: 'orange', style: 'DASHED', anchors: [{ id: 'a7', ref: { item: 'vercel' } }, { id: 'a8', ref: { item: 'playground' } }] },
+      { id: 'c5', color: 'orange', style: 'SOLID', anchors: [{ id: 'a9', ref: { item: 'ai' } }, { id: 'a10', ref: { item: 'web' } }] },
+      { id: 'c6', color: 'orange', style: 'DASHED', anchors: [{ id: 'a11', ref: { item: 'ai' } }, { id: 'a12', ref: { item: 'executor' } }] },
+      // Apps → Packages
+      { id: 'c7', color: 'blue', style: 'SOLID', anchors: [{ id: 'a13', ref: { item: 'web' } }, { id: 'a14', ref: { item: 'types' } }] },
+      { id: 'c8', color: 'blue', style: 'SOLID', anchors: [{ id: 'a15', ref: { item: 'web' } }, { id: 'a16', ref: { item: 'ui' } }] },
+      { id: 'c9', color: 'blue', style: 'DASHED', anchors: [{ id: 'a17', ref: { item: 'web' } }, { id: 'a18', ref: { item: 'bridge' } }] },
+      { id: 'c10', color: 'blue', style: 'DASHED', anchors: [{ id: 'a19', ref: { item: 'web' } }, { id: 'a20', ref: { item: 'mcp' } }] },
+      // Internal → Apps
+      { id: 'c11', color: 'purple', style: 'SOLID', anchors: [{ id: 'a21', ref: { item: 'db' } }, { id: 'a22', ref: { item: 'web' } }] },
+      { id: 'c12', color: 'purple', style: 'SOLID', anchors: [{ id: 'a23', ref: { item: 'postgres' } }, { id: 'a24', ref: { item: 'db' } }] },
+      { id: 'c13', color: 'purple', style: 'DASHED', anchors: [{ id: 'a25', ref: { item: 'npm-client' } }, { id: 'a26', ref: { item: 'web' } }] },
+      { id: 'c14', color: 'orange', style: 'DASHED', anchors: [{ id: 'a27', ref: { item: 'npm' } }, { id: 'a28', ref: { item: 'npm-client' } }] },
+      // Tools pipeline
+      { id: 'c15', color: 'pink', style: 'SOLID', anchors: [{ id: 'a29', ref: { item: 'tools' } }, { id: 'a30', ref: { item: 'npm' } }] },
+      { id: 'c16', color: 'pink', style: 'DASHED', anchors: [{ id: 'a31', ref: { item: 'tools' } }, { id: 'a32', ref: { item: 'cli' } }] }
+    ]
+  }],
+  fitToView: true,
+  view: 'overview'
+};
+
+try {
+  const { default: Isoflow } = await import('isoflow');
+  ReactDOM.render(
+    React.createElement(Isoflow, {
+      initialData,
+      editorMode: 'EXPLORABLE_READONLY',
+      width: '100%',
+      height: '100%',
+      renderer: { showGrid: true }
+    }),
+    document.getElementById('root')
+  );
+} catch (err) {
+  console.error('Isoflow load error:', err);
+  document.getElementById('root').innerHTML =
+    '<div class="loading error"><p>Failed to load diagram. <a href="/architecture">View alternative</a></p></div>';
+}
+</script>
+</body>
+</html>
