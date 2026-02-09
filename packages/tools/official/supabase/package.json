@@ -1,0 +1,107 @@
+{
+  "name": "@tpmjs/tools-supabase",
+  "version": "0.1.0",
+  "description": "Supabase REST API tools for AI agents — query, insert, update, delete rows, call RPC functions, and more",
+  "type": "module",
+  "keywords": [
+    "tpmjs",
+    "ops",
+    "ai",
+    "supabase",
+    "database",
+    "postgres"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@tpmjs/tsconfig": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ai": "6.0.49"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tpmjs/tpmjs.git",
+    "directory": "packages/tools/official/supabase"
+  },
+  "homepage": "https://tpmjs.com",
+  "license": "MIT",
+  "tpmjs": {
+    "category": "ops",
+    "frameworks": [
+      "vercel-ai"
+    ],
+    "env": [
+      {
+        "name": "SUPABASE_URL",
+        "description": "Supabase project URL (e.g. https://xyz.supabase.co)",
+        "required": true
+      },
+      {
+        "name": "SUPABASE_SERVICE_ROLE_KEY",
+        "description": "Supabase service role key for full database access",
+        "required": true
+      }
+    ],
+    "tools": [
+      {
+        "name": "queryRows",
+        "description": "Query rows from a Supabase table with filtering, ordering, and pagination."
+      },
+      {
+        "name": "getRowById",
+        "description": "Get a single row from a Supabase table by its primary key value."
+      },
+      {
+        "name": "insertRows",
+        "description": "Insert one or more rows into a Supabase table and return the inserted data."
+      },
+      {
+        "name": "updateRows",
+        "description": "Update rows in a Supabase table matching a PostgREST filter condition."
+      },
+      {
+        "name": "deleteRows",
+        "description": "Delete rows from a Supabase table matching a PostgREST filter condition."
+      },
+      {
+        "name": "upsertRows",
+        "description": "Insert or update rows in a Supabase table using merge-duplicates strategy."
+      },
+      {
+        "name": "callRpc",
+        "description": "Call a Supabase PostgreSQL function (RPC) with optional parameters."
+      },
+      {
+        "name": "countRows",
+        "description": "Count rows in a Supabase table, optionally filtered by conditions."
+      },
+      {
+        "name": "listTables",
+        "description": "List all available tables in the Supabase database via the OpenAPI schema."
+      },
+      {
+        "name": "searchRows",
+        "description": "Search rows in a Supabase table using case-insensitive pattern matching."
+      }
+    ]
+  }
+}

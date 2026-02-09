@@ -13387,6 +13387,272 @@ blocks:
         description: "Sent message details"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
+  # ---------------------------------------------------------------------------
+  # Supabase Tools (database REST API for AI agents)
+  # ---------------------------------------------------------------------------
+  ops.supabaseQueryRows:
+    type: utility
+    description: "Query rows from a Supabase table with filtering, ordering, and pagination using PostgREST syntax."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST GET /rest/v1/{table} endpoint with filter params"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name to query"
+      - name: select
+        type: string
+        optional: true
+        description: "Columns to select"
+      - name: filter
+        type: string
+        optional: true
+        description: "PostgREST filter string"
+      - name: order
+        type: string
+        optional: true
+        description: "Order by column(s)"
+      - name: limit
+        type: number
+        optional: true
+        description: "Maximum rows to return"
+      - name: offset
+        type: number
+        optional: true
+        description: "Rows to skip for pagination"
+    outputs:
+      - name: result
+        type: QueryResult
+        description: "Array of rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseGetRowById:
+    type: utility
+    description: "Get a single row from a Supabase table by its primary key value."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST GET /rest/v1/{table} with eq filter and limit=1"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: value
+        type: string
+        description: "Primary key value"
+      - name: column
+        type: string
+        optional: true
+        description: "Primary key column name"
+      - name: select
+        type: string
+        optional: true
+        description: "Columns to select"
+    outputs:
+      - name: result
+        type: RowResult
+        description: "Single row or null"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseInsertRows:
+    type: utility
+    description: "Insert one or more rows into a Supabase table and return the inserted data."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST POST /rest/v1/{table} with Prefer: return=representation"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: rows
+        type: array
+        description: "Array of row objects to insert"
+      - name: on_conflict
+        type: string
+        optional: true
+        description: "Conflict resolution columns"
+      - name: returning
+        type: string
+        optional: true
+        description: "Columns to return"
+    outputs:
+      - name: result
+        type: InsertResult
+        description: "Inserted rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseUpdateRows:
+    type: utility
+    description: "Update rows in a Supabase table matching a PostgREST filter condition."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST PATCH /rest/v1/{table} with filter params and Prefer: return=representation"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: filter
+        type: string
+        description: "PostgREST filter string (required)"
+      - name: data
+        type: object
+        description: "Fields to update"
+      - name: returning
+        type: string
+        optional: true
+        description: "Columns to return"
+    outputs:
+      - name: result
+        type: UpdateResult
+        description: "Updated rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseDeleteRows:
+    type: utility
+    description: "Delete rows from a Supabase table matching a PostgREST filter condition."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST DELETE /rest/v1/{table} with filter params and Prefer: return=representation"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: filter
+        type: string
+        description: "PostgREST filter string (required)"
+      - name: returning
+        type: string
+        optional: true
+        description: "Columns to return"
+    outputs:
+      - name: result
+        type: DeleteResult
+        description: "Deleted rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseUpsertRows:
+    type: utility
+    description: "Insert or update rows in a Supabase table using merge-duplicates strategy."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST POST /rest/v1/{table} with Prefer: resolution=merge-duplicates"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: rows
+        type: array
+        description: "Array of row objects to upsert"
+      - name: on_conflict
+        type: string
+        optional: true
+        description: "Conflict resolution columns"
+      - name: returning
+        type: string
+        optional: true
+        description: "Columns to return"
+    outputs:
+      - name: result
+        type: UpsertResult
+        description: "Upserted rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseCallRpc:
+    type: utility
+    description: "Call a Supabase PostgreSQL function (RPC) with optional parameters."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST POST /rest/v1/rpc/{function_name} endpoint"
+    inputs:
+      - name: function_name
+        type: string
+        description: "PostgreSQL function name"
+      - name: params
+        type: object
+        optional: true
+        description: "Function parameters"
+    outputs:
+      - name: result
+        type: RpcResult
+        description: "Function return value"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseCountRows:
+    type: utility
+    description: "Count rows in a Supabase table, optionally filtered by conditions."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST HEAD /rest/v1/{table} with Prefer: count=exact and parse content-range header"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name"
+      - name: filter
+        type: string
+        optional: true
+        description: "PostgREST filter string"
+    outputs:
+      - name: result
+        type: CountResult
+        description: "Row count and table name"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseListTables:
+    type: utility
+    description: "List all available tables in the Supabase database via the OpenAPI schema."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST GET /rest/v1/ endpoint and extract table names from paths"
+    inputs: []
+    outputs:
+      - name: result
+        type: ListTablesResult
+        description: "Sorted list of table names"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.supabaseSearchRows:
+    type: utility
+    description: "Search rows in a Supabase table by column+query pattern matching (ilike). Uses column and query inputs to build the ilike filter internally — no separate filter param needed."
+    path: "supabase"
+    domain_rules:
+      - id: api_integration
+        description: "Must call Supabase PostgREST GET /rest/v1/{table} with ilike.* filter built from column and query inputs"
+    inputs:
+      - name: table
+        type: string
+        description: "Table name to search"
+      - name: column
+        type: string
+        description: "Column to apply ilike search on"
+      - name: query
+        type: string
+        description: "Search term (wrapped in wildcards for contains matching)"
+      - name: select
+        type: string
+        optional: true
+        description: "Columns to select"
+      - name: limit
+        type: number
+        optional: true
+        description: "Maximum rows to return"
+      - name: order
+        type: string
+        optional: true
+        description: "Order by column(s)"
+    outputs:
+      - name: result
+        type: SearchResult
+        description: "Matching rows with count"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
 # =============================================================================
 # VALIDATORS - Which validators to run against each block
 # =============================================================================
