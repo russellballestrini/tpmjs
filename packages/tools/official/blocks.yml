@@ -13105,6 +13105,288 @@ blocks:
         description: "Pin confirmation"
         measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
 
+  # ---------------------------------------------------------------------------
+  # AgentMail Tools (email for AI agents)
+  # ---------------------------------------------------------------------------
+  ops.agentmailCreateInbox:
+    type: utility
+    description: "Create a new email inbox for an AI agent."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API POST /v0/inboxes endpoint"
+    inputs:
+      - name: username
+        type: string
+        optional: true
+        description: "Username for the email address"
+      - name: domain
+        type: string
+        optional: true
+        description: "Domain for the email address"
+      - name: display_name
+        type: string
+        optional: true
+        description: "Display name for the inbox"
+    outputs:
+      - name: inbox
+        type: InboxResult
+        description: "Created inbox details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailListInboxes:
+    type: utility
+    description: "List all email inboxes in the account."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes endpoint"
+    inputs:
+      - name: limit
+        type: number
+        optional: true
+        description: "Max inboxes to return (1-100)"
+      - name: page_token
+        type: string
+        optional: true
+        description: "Pagination token"
+    outputs:
+      - name: result
+        type: ListInboxesResult
+        description: "List of inboxes with pagination"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailGetInbox:
+    type: utility
+    description: "Get details of a specific email inbox."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes/{inbox_id} endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+    outputs:
+      - name: inbox
+        type: InboxResult
+        description: "Inbox details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailDeleteInbox:
+    type: utility
+    description: "Delete an email inbox and all its messages."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API DELETE /v0/inboxes/{inbox_id} endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+    outputs:
+      - name: result
+        type: SuccessResult
+        description: "Deletion confirmation"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailSendMessage:
+    type: utility
+    description: "Send an email message from an inbox."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API POST /v0/inboxes/{inbox_id}/messages endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID to send from"
+      - name: to
+        type: string
+        description: "Recipient email address"
+      - name: subject
+        type: string
+        description: "Email subject"
+      - name: text
+        type: string
+        description: "Plain text body"
+      - name: html
+        type: string
+        optional: true
+        description: "HTML body"
+    outputs:
+      - name: message
+        type: MessageResult
+        description: "Sent message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailReplyToMessage:
+    type: utility
+    description: "Reply to an existing email message in a thread."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API POST /v0/inboxes/{inbox_id}/messages/{message_id}/reply endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: message_id
+        type: string
+        description: "Message ID to reply to"
+      - name: text
+        type: string
+        description: "Reply text"
+      - name: html
+        type: string
+        optional: true
+        description: "Reply HTML body"
+    outputs:
+      - name: message
+        type: MessageResult
+        description: "Reply message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailListMessages:
+    type: utility
+    description: "List email messages in an inbox."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes/{inbox_id}/messages endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max messages to return (1-100)"
+      - name: page_token
+        type: string
+        optional: true
+        description: "Pagination token"
+    outputs:
+      - name: result
+        type: ListMessagesResult
+        description: "List of messages with pagination"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailGetMessage:
+    type: utility
+    description: "Get the full details of a specific email message."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes/{inbox_id}/messages/{message_id} endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: message_id
+        type: string
+        description: "Message ID"
+    outputs:
+      - name: message
+        type: MessageResult
+        description: "Full message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailListThreads:
+    type: utility
+    description: "List email threads in an inbox, optionally filtered by labels."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes/{inbox_id}/threads endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: limit
+        type: number
+        optional: true
+        description: "Max threads to return (1-100)"
+      - name: labels
+        type: array
+        optional: true
+        description: "Filter by labels"
+    outputs:
+      - name: result
+        type: ListThreadsResult
+        description: "List of threads with pagination"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailGetThread:
+    type: utility
+    description: "Get a thread with all its messages for viewing a full conversation."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API GET /v0/inboxes/{inbox_id}/threads/{thread_id} endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: thread_id
+        type: string
+        description: "Thread ID"
+    outputs:
+      - name: thread
+        type: ThreadDetailResult
+        description: "Thread with all messages"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailCreateDraft:
+    type: utility
+    description: "Create an email draft for human-in-the-loop approval."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API POST /v0/inboxes/{inbox_id}/drafts endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: to
+        type: string
+        description: "Recipient email"
+      - name: subject
+        type: string
+        description: "Email subject"
+      - name: text
+        type: string
+        description: "Plain text body"
+      - name: html
+        type: string
+        optional: true
+        description: "HTML body"
+    outputs:
+      - name: draft
+        type: DraftResult
+        description: "Created draft details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
+  ops.agentmailSendDraft:
+    type: utility
+    description: "Send a previously created draft, converting it to a sent message."
+    path: "agentmail"
+    domain_rules:
+      - id: api_integration
+        description: "Must call AgentMail API POST /v0/inboxes/{inbox_id}/drafts/{draft_id}/send endpoint"
+    inputs:
+      - name: inbox_id
+        type: string
+        description: "Inbox ID"
+      - name: draft_id
+        type: string
+        description: "Draft ID"
+    outputs:
+      - name: message
+        type: MessageResult
+        description: "Sent message details"
+        measures: [working_implementation, valid_output_structure, proper_error_handling, ai_sdk_compliance]
+
 # =============================================================================
 # VALIDATORS - Which validators to run against each block
 # =============================================================================
